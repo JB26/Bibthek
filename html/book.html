@@ -1,0 +1,53 @@
+<%include file="header.html" args="book='book'"/>
+
+<%include file="menu.html" args="series='series'"/>
+
+<div id="content">
+<form method="post" action="/save${'?book_id=' + book['_id']}" id="book_form">
+  <div class="bookContent">
+    <div id="bookISBN">
+    <input type="text" id="isbn" name="isbn" value="${book['isbn']}"/>
+    </div>
+    <div class="bookRight">
+    <input type="text" id="title" name="title" value="${book['title']}" />
+    </div>
+  </div>
+  <div class="bookContent">
+    <div id="bookFront">
+    <img src="/static/${book['front']}" alt="Cover" width="100%" id="cover">
+    </div>
+    <div class="bookRight">
+    <div class="bookl">
+    <label for="pubd">Published</label>
+    <span><input type="text" id="release_date" name="release_date" value="${book['release_date']}"></span>
+    <label for="series">Series</label>
+    <span><input type="text" id="series" name="series" value="${book['series']}"></span>
+    <label for="lang">Language</label>
+    <span><input type="text" id="language" name="language" value="${book['language']}"></span>
+    </div>
+    <div class="bookr">
+    <label for="pub">Publisher</label>
+    <span><input type="text" id="publisher" name="publisher" value="${book['publisher']}"></span>
+    <label for="num">Order</label>
+    <span><input type="text" id="order" name="order" value="${book['order']}"></span>
+    <label for="pages">Pages</label>
+    <span><input type="text" id="pages" name="pages" value="${book['pages']}"></span>
+    </div>
+    </div>
+  <input type="file" name="front">
+  <h2>Description</h2>
+    <div id="bookDesc">
+    <textarea id="description" name="description" rows="15">${book['description']}</textarea>
+    </div>
+  <button type="submit" name="save">Save!</button>
+  % if new == True:
+  <button type="submit" name="isbn_search" id="isbn_search" style="display:block;">ISBN search</button>
+  % else:
+  <button type="submit" name="isbn_search" id="isbn_search" style="display:none;">ISBN search</button>
+  % endif
+  </div>
+</form>  
+</div>
+<script src="/static/local.js"></script>
+</body>
+</html>

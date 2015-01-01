@@ -1,0 +1,23 @@
+<div id="left" style="clear:right;">
+<p class="menutitle">Books</p>
+
+<ul>
+% for name in series:
+  <li>
+  <div id='${name['series_hash']}' class="drop_down">${name['_id']}</div>
+  <div class="tree" id="show_${name['series_hash']}">
+  <ul>
+  % for title in name['books']:
+    <li><a href="/book?book_id=${title['_id']}" class="book_title" id="${title['_id']}" >
+    % if 'order' in title and title['order'] != '':
+      ${title['order']} - 
+    % endif
+    ${title['title']}</a></li>
+  % endfor
+  </ul>
+  </div>
+  </li>
+% endfor
+</ul>
+
+</div>
