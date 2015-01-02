@@ -1,23 +1,55 @@
 function load_book(book_id){
+  $('#goodreads').hide();
   $.getJSON( "/book", {book_id:book_id, json_data:"True"},function(data) {
-    $.each(data,function(input_id, input_value){
-      $('#' + input_id).val(input_value)
+    $.each(data, function(input_id, input_value){
+      if ($.isArray(input_value)) {
+        $('#' + input_id).val(input_value.join(" & "));
+      } else {
+        $('#' + input_id).val(input_value);
+      };
     });
     $('#cover').attr('src', '/static/' + data.front);
     $('#book_form').attr('action', '/save/?book_id=' + data._id);
-    $('#isbn_search').hide()
+    $('#delete').attr('href', '/delete/?book_id=' + data._id);
+    $('#delete').show();
+    $('#isbn_search').hide();
   });
+  goodreads_id(book_id, '_id');
 };
 
 function empty_book(){
+  $('#goodreads').hide();
+  $('#delete').hide();
   $.getJSON( "/", {json_data:"True"},function(data) {
     $.each(data,function(input_id, input_value){
       $('#' + input_id).val(input_value)
     });
     $('#cover').attr('src', '/static/icons/circle-x.svg');
-    $('#book_form').attr('action', '/save/?book_id=' + data._id);
+    $('#book_form').attr('action', '/save/?book_id=new_book');
     $('#isbn_search').show();
   });
+};
+
+function isbn_book(isbn){
+  $.getJSON( "/new_isbn", {isbn:isbn},function(data) {
+    $.each(data,function(input_id, input_value){
+      $('#' + input_id).val(input_value)
+    });
+    $('#isbn_search').show();
+  });
+  goodreads_id(isbn, 'isbn');
+  $('#isbn_image').attr('href', 'https://www.google.de/search?q=' + isbn + '&tbm=isch');
+  $('#amazon').attr('href', 'https://www.amazon.de/gp/search?keywords=' + isbn);
+};
+
+function goodreads_id(book_i, type){
+  if (book_i != 'new_book') {
+    if (type == '_id') {var send = {book_id:book_i}} else if (type == 'isbn') {var send = {isbn:book_i}};
+    $.getJSON( "/gr_id", send, function(data) {
+      $('#goodreads').attr('href','https://www.goodreads.com/book/show/' + data.gr_id);
+      $('#goodreads').show();
+    });
+  };
 };
 
 $( '.drop_down' ).click(function () {
@@ -37,7 +69,7 @@ $( '.book_title' ).click(function( event ) {
   event.preventDefault();
   var book_id = $(this).attr('id');
   history.pushState(book_id, '', '/book?book_id=' + book_id);
-  load_book(book_id);
+  load_book(book_id, '_id');
 });
 
 $('#link_new_book').click(function( event ) {
@@ -60,4 +92,10 @@ window.onload = function (){
     history.replaceState(book_id, '', '/');
   } else {
     history.replaceState(book_id, '', '/book?book_id=' + book_id)};
+  goodreads_id(book_id, '_id');
 };
+
+$('#isbn_search').click(function(event) {
+  event.preventDefault();
+  isbn_book($('#isbn').val());  
+});

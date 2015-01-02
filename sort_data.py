@@ -7,7 +7,7 @@ from variables import articles
 def sorted_series(data):
     data = library_sorted(data, '_id', False)  #Sort series titles
     for i in range(len(data)):  #Sort book titles in series
-       data[i]['books'] = library_sorted(data[i]['books'], 'title', True)
+        if 'series_hash' in data[i] : data[i]['books'] = library_sorted(data[i]['books'], 'title', True)
     return data
     
 
@@ -26,4 +26,3 @@ def library_sorted(data, field, sort_by_order):
            temp[-1] = temp[-1] + row[field]
     index = index_humansorted(temp)
     return order_by_index(data, index)
-    

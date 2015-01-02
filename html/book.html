@@ -17,6 +17,8 @@
     <img src="/static/${book['front']}" alt="Cover" width="100%" id="cover">
     </div>
     <div class="bookRight">
+    <label for="pubd">Author</label>
+    <span><input type="text" id="authors" name="authors" value="${book['authors']}"></span>
     <div class="bookl">
     <label for="pubd">Published</label>
     <span><input type="text" id="release_date" name="release_date" value="${book['release_date']}"></span>
@@ -24,6 +26,8 @@
     <span><input type="text" id="series" name="series" value="${book['series']}"></span>
     <label for="lang">Language</label>
     <span><input type="text" id="language" name="language" value="${book['language']}"></span>
+    <label for="pages">Genre</label>
+    <span><input type="text" id="genre" name="genre" value="${book['genre']}"></span>
     </div>
     <div class="bookr">
     <label for="pub">Publisher</label>
@@ -32,6 +36,8 @@
     <span><input type="text" id="order" name="order" value="${book['order']}"></span>
     <label for="pages">Pages</label>
     <span><input type="text" id="pages" name="pages" value="${book['pages']}"></span>
+    <label for="pages">Binding</label>
+    <span><input type="text" id="binding" name="binding" value="${book['binding']}"></span>
     </div>
     </div>
   <input type="file" name="front">
@@ -41,11 +47,16 @@
     </div>
   <button type="submit" name="save">Save!</button>
   % if new == True:
-  <button type="submit" name="isbn_search" id="isbn_search" style="display:block;">ISBN search</button>
+  <button type="submit" name="isbn_search" id="isbn_search" style="display:inline;">ISBN search</button>
+  <a href="/delete${'?book_id=' + book['_id']}" id="delete" style="display:none;">Delete!</a>
   % else:
   <button type="submit" name="isbn_search" id="isbn_search" style="display:none;">ISBN search</button>
+  <a href="/delete${'?book_id=' + book['_id']}" id="delete" style="display:inline;">Delete!</a>
   % endif
   </div>
+  <a href="https://www.google.de/search?q=${book['isbn']}&tbm=isch" id='isbn_image' target="_blank">Cover search</a>
+  <a href="/" id='goodreads' target="_blank">GoodReads</a>
+  <a href="https://www.amazon.de/gp/search?keywords=${book['isbn']}" id='amazon' target="_blank">Amazon search</a>
 </form>  
 </div>
 <script src="/static/local.js"></script>

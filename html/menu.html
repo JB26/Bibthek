@@ -4,6 +4,7 @@
 <ul>
 % for name in series:
   <li>
+  % if 'series_hash' in name:
   <div id='${name['series_hash']}' class="drop_down">${name['_id']}</div>
   <div class="tree" id="show_${name['series_hash']}">
   <ul>
@@ -16,6 +17,9 @@
   % endfor
   </ul>
   </div>
+  % else:
+  <a href="/book?book_id=${name['books']['_id']}" class="book_title" id="${name['books']['_id']}" >${name['_id']}</a>
+  % endif
   </li>
 % endfor
 </ul>

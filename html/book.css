@@ -44,3 +44,7 @@ float:right;
 #bookDesc {
 padding-right:15px;
 }
+
+#goodreads {
+display:none;
+}

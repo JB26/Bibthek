@@ -3,4 +3,4 @@ The goal of this Project is to make a replacemant for GCstar and LibraryThing
 Short term goal: Rudimental User Managment 
 
 To test the site use:
-uwsgi --ini cookie-uwsgi.ini
+python bibthek_app.py
