@@ -1,5 +1,4 @@
 function load_book(book_id){
-  $('#goodreads').hide();
   $.getJSON( "/book", {book_id:book_id, json_data:"True"},function(data) {
     $.each(data, function(input_id, input_value){
       if ($.isArray(input_value)) {
@@ -44,11 +43,9 @@ function isbn_book(isbn){
 
 function goodreads_id(book_i, type){
   if (book_i != 'new_book') {
-    if (type == '_id') {var send = {book_id:book_i}} else if (type == 'isbn') {var send = {isbn:book_i}};
-    $.getJSON( "/gr_id", send, function(data) {
-      $('#goodreads').attr('href','https://www.goodreads.com/book/show/' + data.gr_id);
-      $('#goodreads').show();
-    });
+    if (type == '_id') {var send = "?book_id=" + book_i} else if (type == 'isbn') {var send = "?isbn=" + book_i};
+    $('#goodreads').attr('href','/gr_id' + send);
+    $('#goodreads').show();
   };
 };
 
