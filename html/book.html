@@ -1,4 +1,4 @@
-<%include file="header.html" args="book='book'"/>
+<%include file="header.html" args="book='book', shelfs='shelfs', selected='selected'"/>
 
 <%include file="menu.html" args="series='series'"/>
 
@@ -28,6 +28,8 @@
     <span><input type="text" id="language" name="language" value="${book['language']}"></span>
     <label for="pages">Genre</label>
     <span><input type="text" id="genre" name="genre" value="${book['genre']}"></span>
+    <label for="pages">Date added</label>
+    <span><input type="text" id="add_date" name="add_date" value="${book['add_date']}"></span>
     </div>
     <div class="bookr">
     <label for="pub">Publisher</label>
@@ -38,6 +40,8 @@
     <span><input type="text" id="pages" name="pages" value="${book['pages']}"></span>
     <label for="pages">Binding</label>
     <span><input type="text" id="binding" name="binding" value="${book['binding']}"></span>
+    <label for="pages">Shelf</label>
+    <span><input type="text" id="shelf" name="shelf" value="${book['shelf']}"></span>
     </div>
     </div>
   <input type="file" name="front">

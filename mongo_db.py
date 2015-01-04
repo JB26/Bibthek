@@ -27,12 +27,18 @@ class mongo_db:
     def get_by_id(self, book_id):
         return self.collection.find_one({'_id' : ObjectId(book_id)})
 
-    def series(self):
-        data = self.collection.aggregate([{"$match" : {"series" : {"$ne": ''} } } , { "$group" : { "_id" : '$series', "series_hash" : {"$last" : "$series"}, "books" :{ "$push": {"title": "$title", "_id": "$_id", "order": "$order"}}}}])
+    def series(self, shelf):
+        if shelf == 'All':
+            data = self.collection.aggregate([{"$match" : {"series" : {"$ne": ''}} }, { "$group" : { "_id" : '$series', "series_hash" : {"$last" : "$series"}, "books" :{ "$push": {"title": "$title", "_id": "$_id", "order": "$order"}}}}])
+        else:
+            data = self.collection.aggregate([{"$match" : {"series" : {"$ne": ''}, 'shelf' : shelf} }, { "$group" : { "_id" : '$series', "series_hash" : {"$last" : "$series"}, "books" :{ "$push": {"title": "$title", "_id": "$_id", "order": "$order"}}}}])
         for row in data['result']:
             row['series_hash'] = md5(row['series_hash'].encode('utf-8')).hexdigest()
         data = data['result']
-        data_temp = self.collection.find({"series":''}, {"title" : 1} )
+        if shelf == 'All':
+            data_temp = self.collection.find({"series":''}, {"title" : 1} )
+        else:
+            data_temp = self.collection.find({"series":'', "shelf": shelf}, {"title" : 1} )
         for row in data_temp:
             data.append({'_id' : row['title'], 'books' : {'_id' : row['_id']}}) #Append titles without a series
         return sorted_series(data)
@@ -46,6 +52,10 @@ class mongo_db:
 
     def delete_by_id(self, book_id):
         self.collection.remove({'_id' : ObjectId(book_id)})
+
+    def shelfs(self):
+        shelfs = self.collection.aggregate([{"$match" : {"shelf" : {"$ne": '', "$ne": None} } } , { "$group" : { "_id" : "$shelf"}}])
+        return shelfs['result']
 
 def mongo_add_user(username, password, user_id):
     user_info.insert({'username' : username, 'password' : pbkdf2_sha512.encrypt(password), 'user_id' : user_id})

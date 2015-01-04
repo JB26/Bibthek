@@ -19,4 +19,22 @@ display: block;
 <a href="/" id="link_new_book"><h1>New Book</h1></a>
 </div>
 <div id="title_r">
+<form action="/shelf"> 
+Shelf:
+    <select name="shelf" size="1">
+      % if 'All' == selected:
+      <option selected>All</option>
+      % else:
+      <option>All</option>
+      % endif
+      % for shelf in shelfs:
+        % if shelf['_id'] == selected:
+        <option selected>${shelf['_id']}</option>
+        % else:
+        <option>${shelf['_id']}</option>
+        % endif
+      % endfor
+    </select>
+    <button type="submit">Choose</button>
+</form>
 </div>

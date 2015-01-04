@@ -1,2 +1,2 @@
-fieldnames=['authors', 'description', 'release_date', 'genre', 'isbn', 'series', 'order', 'pages', 'language', 'title', 'front', 'publisher', 'binding', 'status', 'add_date']
+fieldnames=['authors', 'description', 'release_date', 'genre', 'isbn', 'series', 'order', 'pages', 'language', 'title', 'front', 'publisher', 'binding', 'status', 'add_date', 'shelf']
 articles = ["le","la","les","l","un","une","des","a","the","der","die","das","ein","eine","el","los","una"]

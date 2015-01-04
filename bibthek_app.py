@@ -18,46 +18,41 @@ book_empty['_id'] = 'new_book'
 class bibthek(object):
 
     @cherrypy.expose
-    def index(self, json_data = False):
-        if mongo_user(cherrypy.session.id) == None:
-            raise cherrypy.HTTPRedirect("/login")
-        if json_data:
-            return json.dumps(book_empty)
-        else:
-            mytemplate = mylookup.get_template("book.html")
-            print("testtest!!!!!!!!\n")
-            field = {'title' : 1, 'series': 1}
-            series = self.mongo.series()
-            return mytemplate.render(series=series, book=book_empty, new=True)
+    def index(self):
+        raise cherrypy.HTTPRedirect("/book")
 
     @cherrypy.expose
-    def book(self, book_id, json_data = False):
+    def book(self, shelf='All', book_id='new_book', json_data = False):
         if mongo_user(cherrypy.session.id) == None:
             raise cherrypy.HTTPRedirect("/login")
-        print("testtest!!!!!!!!\n")
-        book = self.mongo.get_by_id(book_id)
-
-        for k, v in book_empty.items():
-            try:
-                book[k]
-            except:
-                book[k] = v
-            if isinstance(book[k], list) : book[k] = ' & '.join(book[k])
-
-        book['_id'] = str(book['_id'])
-
+        if book_id=='new_book':
+            book = book_empty
+            book['shelf'] = shelf
+            new = True
+        else:
+            book = self.mongo.get_by_id(book_id)
+            for k, v in book_empty.items():
+                try:
+                    book[k]
+                except:
+                    book[k] = v
+            if isinstance(book[k], list):
+                book[k] = ' & '.join(book[k])
+            book['_id'] = str(book['_id'])
+            new = False
         if json_data:
             return json.dumps(book)
         else:
-            series = self.mongo.series()
             mytemplate = mylookup.get_template("book.html")
-            return mytemplate.render(series=series, book=book, new=False)
+            series = self.mongo.series(shelf)
+            shelfs = self.mongo.shelfs()
+            return mytemplate.render(series=series, book=book, new=new, shelfs=shelfs, selected=shelf)
 
     @cherrypy.expose
     def save(self, **params):
         if mongo_user(cherrypy.session.id) == None:
             raise cherrypy.HTTPRedirect("/login")
-        mongo.update(params)
+        self.mongo.update(params)
 
     @cherrypy.expose
     def new_isbn(self, isbn):
@@ -75,7 +70,6 @@ class bibthek(object):
             gr_id = get('https://www.goodreads.com/book/isbn_to_id/' + book['isbn']  + '?key=Fyl3BYyRgNUZAoD1M9rQ').text
         elif isbn != '':
             gr_id = get('https://www.goodreads.com/book/isbn_to_id/' + isbn  + '?key=Fyl3BYyRgNUZAoD1M9rQ').text
-        #return json.dumps(gr_id)
         raise cherrypy.HTTPRedirect("https://www.goodreads.com/book/show/" + gr_id)
 
     @cherrypy.expose
@@ -92,6 +86,13 @@ class bibthek(object):
         else:
             mytemplate = mylookup.get_template("register.html")
             return mytemplate.render()
+
+    @cherrypy.expose
+    def shelf(self, shelf):
+        if shelf=='All':
+            raise cherrypy.HTTPRedirect("/book")
+        else:
+           raise cherrypy.HTTPRedirect("/book/" + shelf) 
 
     @cherrypy.expose
     def login(self, username = '', password = ''):

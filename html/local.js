@@ -19,7 +19,7 @@ function load_book(book_id){
 function empty_book(){
   $('#goodreads').hide();
   $('#delete').hide();
-  $.getJSON( "/", {json_data:"True"},function(data) {
+  $.getJSON( "/book", {json_data:"True"},function(data) {
     $.each(data,function(input_id, input_value){
       $('#' + input_id).val(input_value)
     });
@@ -86,7 +86,7 @@ window.addEventListener('popstate', function(event){
 window.onload = function (){
   var book_id = $(' body ').attr('id');
   if (book_id == 'new_book') {
-    history.replaceState(book_id, '', '/');
+    history.replaceState(book_id, '', window.location);
   } else {
     history.replaceState(book_id, '', '/book?book_id=' + book_id)};
   goodreads_id(book_id, '_id');
