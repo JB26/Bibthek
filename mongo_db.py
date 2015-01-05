@@ -27,6 +27,12 @@ class mongo_db:
     def get_by_id(self, book_id):
         return self.collection.find_one({'_id' : ObjectId(book_id)})
 
+    def get_all(self):
+        data = []
+        for row in self.collection.find({}, {'_id':0}):
+            data.append(row)
+        return data
+
     def series(self, shelf):
         if shelf == 'All':
             data = self.collection.aggregate([{"$match" : {"series" : {"$ne": ''}} }, { "$group" : { "_id" : '$series', "series_hash" : {"$last" : "$series"}, "books" :{ "$push": {"title": "$title", "_id": "$_id", "order": "$order"}}}}])

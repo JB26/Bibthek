@@ -1,6 +1,7 @@
 from mako.template import Template
 from mako.lookup import TemplateLookup
 import cherrypy
+from cherrypy.lib import static
 import json
 from requests import get
 
@@ -13,6 +14,7 @@ from mongo_db import mongo_add_user, mongo_user, mongo_login
 from variables import fieldnames
 from get_data import google_books_data
 from import_sqlite3 import import_sqlite3
+from export_csv import export_csv
 
 mylookup = TemplateLookup(directories=['html'], output_encoding='utf-8', encoding_errors='replace')
 
@@ -50,12 +52,10 @@ class bibthek(object):
                     book[k]
                 except:
                     book[k] = v
-                    print(k + "=" + v)
             if isinstance(book[k], list):
                 book[k] = ' & '.join(book[k])
             book['_id'] = str(book['_id'])
             new = False
-        print(book['type'])
         if json_data:
             return json.dumps(book)
         else:
@@ -88,7 +88,11 @@ class bibthek(object):
 
     @cherrypy.expose
     def export(self):
-        return test
+        data = self.mongo.get_all()
+        file_name = export_csv(data, cherrypy.session['username'])
+        path = os.path.join(absDir, file_name)
+        return static.serve_file(path, "application/x-download",
+                                 "attachment", os.path.basename(path))
         
 
     @cherrypy.expose
@@ -143,7 +147,7 @@ class bibthek(object):
             mytemplate = mylookup.get_template("login.html")
             return mytemplate.render()
         elif mongo_login(username, password, cherrypy.session.id):
-            cherrypy.session['LogedIn'] = True #Make sure the session ID stops changing
+            cherrypy.session['username'] = username #Make sure the session ID stops changing
             self.mongo = mongo_db(username)
             raise cherrypy.HTTPRedirect("/")
         else:

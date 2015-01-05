@@ -2,9 +2,13 @@ The goal of this Project is to make a replacemant for GCstar
 
 TODO:
 import/export
+date added
 Set max_request_body_size = 104857600
 Set cover
 Sort options
+suggestions
+Don't save empty fields
+Sanity check for fields
 Batch delete
 Batch rename
 Combining Shelfs

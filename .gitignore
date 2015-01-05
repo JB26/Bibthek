@@ -7,4 +7,6 @@
 open-iconic-master
 mongodb
 *.sqlite
+*.csv
+export
 import
