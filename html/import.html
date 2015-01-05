@@ -9,9 +9,15 @@
 <body>
 <h1>Import</h1>
 <form method="post" enctype="multipart/form-data">
-<br>Import a csv<br>
+<br>Import a sqlite3<br>
 <input type="file" name="data_file"/>
 <input type="submit" value="Proceed" action="submit"/>
+<br />
+Author separator:
+<br />
+<input type="radio" name="separator" value="&" checked>&
+<input type="radio" name="separator" value=",">,
+<input type="radio" name="separator" value=";">;
 </form>
 <h1>Export</h1>
 <a href="export">Download</a>

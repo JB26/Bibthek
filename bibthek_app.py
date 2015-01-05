@@ -16,7 +16,8 @@ from get_data import google_books_data
 from import_sqlite3 import import_sqlite3
 from export_csv import export_csv
 
-mylookup = TemplateLookup(directories=['html'], output_encoding='utf-8', encoding_errors='replace')
+mylookup = TemplateLookup(directories=['html'], output_encoding='utf-8',
+                          encoding_errors='replace')
 
 class bibthek(object):
 
@@ -32,7 +33,8 @@ class bibthek(object):
         raise cherrypy.HTTPRedirect("/book")
 
     @cherrypy.expose
-    def book(self, shelf='All', book_id='new_book', book_type='book', json_data = False):
+    def book(self, shelf='All', book_id='new_book', book_type='book',
+             json_data = False):
         if mongo_user(cherrypy.session.id) == None:
             raise cherrypy.HTTPRedirect("/login")
         book_empty = self.book_empty_default()
@@ -52,8 +54,6 @@ class bibthek(object):
                     book[k]
                 except:
                     book[k] = v
-            if isinstance(book[k], list):
-                book[k] = ' & '.join(book[k])
             book['_id'] = str(book['_id'])
             new = False
         if json_data:
@@ -62,7 +62,8 @@ class bibthek(object):
             mytemplate = mylookup.get_template("book.html")
             series = self.mongo.series(shelf)
             shelfs = self.mongo.shelfs()
-            return mytemplate.render(series=series, book=book, new=new, shelfs=shelfs, selected=shelf)
+            return mytemplate.render(series=series, book=book, new=new,
+                                     shelfs=shelfs, selected=shelf)
 
     @cherrypy.expose
     def menu(self, shelf='All'):
@@ -72,7 +73,7 @@ class bibthek(object):
         return mytemplate.render(series=series, shelfs=shelfs)
 
     @cherrypy.expose
-    def import_books(self, data_file=None):
+    def import_books(self, data_file=None, separator=None):
         if data_file == None:
             mytemplate = mylookup.get_template("import.html")
             return mytemplate.render()
@@ -81,7 +82,7 @@ class bibthek(object):
             new_name =  cherrypy.session.id + '_' + data_file.filename
             with open('import/' + new_name , 'wb') as f:
                 f.write(data)
-            data = import_sqlite3('import/' + new_name)
+            data = import_sqlite3('import/' + new_name, separator)
             for row in data:
                 self.mongo.insert(row)
             return 'Upload complete'
@@ -114,10 +115,13 @@ class bibthek(object):
             raise cherrypy.HTTPRedirect("/login")
         if book_id != '':
             book = self.mongo.get_by_id(book_id)
-            gr_id = get('https://www.goodreads.com/book/isbn_to_id/' + book['isbn']  + '?key=Fyl3BYyRgNUZAoD1M9rQ').text
+            gr_id = get('https://www.goodreads.com/book/isbn_to_id/' +
+                        book['isbn']  + '?key=Fyl3BYyRgNUZAoD1M9rQ').text
         elif isbn != '':
-            gr_id = get('https://www.goodreads.com/book/isbn_to_id/' + isbn  + '?key=Fyl3BYyRgNUZAoD1M9rQ').text
-        raise cherrypy.HTTPRedirect("https://www.goodreads.com/book/show/" + gr_id)
+            gr_id = get('https://www.goodreads.com/book/isbn_to_id/' +
+                        isbn  + '?key=Fyl3BYyRgNUZAoD1M9rQ').text
+        raise cherrypy.HTTPRedirect("https://www.goodreads.com/book/show/" +
+                                    gr_id)
 
     @cherrypy.expose
     def delete(self, book_id):
@@ -147,7 +151,8 @@ class bibthek(object):
             mytemplate = mylookup.get_template("login.html")
             return mytemplate.render()
         elif mongo_login(username, password, cherrypy.session.id):
-            cherrypy.session['username'] = username #Make sure the session ID stops changing
+            #Make sure the session ID stops changing
+            cherrypy.session['username'] = username
             self.mongo = mongo_db(username)
             raise cherrypy.HTTPRedirect("/")
         else:

@@ -9,8 +9,6 @@ def is_int(s):
         return False
 
 def clean_import(row):
-    if 'authros' in row : row['authors'] = row['authors'].split(', ')
-    if 'genre' in row : row['genre'] = row['genre'].split(', ')
     if 'isbn' in row : row['isbn'] = row['isbn'].replace("-","")
     row['title'] = title_clean(row['title'])
     row['order'], row['title'] = number_clean(row['title'])

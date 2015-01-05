@@ -5,31 +5,54 @@ from hashlib import md5
 from passlib.hash import pbkdf2_sha512
 
 from sort_data import sorted_series
+from variables import name_fields
 
 client = MongoClient('localhost', 9090)
 user_info = client.bibthek_users.info
+
+def array_to_str(data):
+    for field in name_fields:
+            if field in data:
+                data[field] = ' & '.join(data[field])
+    if 'genre' in data:
+        data['genre'] = ', '.join(data['genre'])
+    return data
+
+def str_to_array(data):
+    for field in name_fields:
+            if field in data:
+                data[field] = data[field].split(' & ')
+    if 'genre' in data:
+        print(data['genre'])
+        data['genre'] = data['genre'].split(', ')
+    return data
 
 class mongo_db:
     def __init__(self, username):
         self.collection = client.bibthek[username]
 
     def insert(self, data):
+        data = str_to_array(data)
         self.collection.insert(data)
 
     def update(self, data):
         book_id = data['book_id']
         del data['book_id']
+        data = str_to_array(data)
         if book_id == 'new_book':
             self.collection.insert(data)
         else:
             self.collection.update({'_id': ObjectId(book_id)}, {"$set" : data})
 
     def get_by_id(self, book_id):
-        return self.collection.find_one({'_id' : ObjectId(book_id)})
+        data = self.collection.find_one({'_id' : ObjectId(book_id)})
+        data = array_to_str(data)
+        return data
 
     def get_all(self):
         data = []
         for row in self.collection.find({}, {'_id':0}):
+            row = array_to_str(row)
             data.append(row)
         return data
 
