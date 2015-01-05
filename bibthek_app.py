@@ -4,6 +4,10 @@ import cherrypy
 import json
 from requests import get
 
+import os
+localDir = os.path.dirname(__file__)
+absDir = os.path.join(os.getcwd(), localDir)
+
 from mongo_db import mongo_db
 from mongo_db import mongo_add_user, mongo_user, mongo_login
 from variables import fieldnames
@@ -11,23 +15,32 @@ from get_data import google_books_data
 
 mylookup = TemplateLookup(directories=['html'], output_encoding='utf-8', encoding_errors='replace')
 
-book_empty = {name : '' for name in fieldnames}
-book_empty['front'] =  'icons/circle-x.svg'
-book_empty['_id'] = 'new_book'
-
 class bibthek(object):
+
+    def book_empty_default(self):
+        book_empty = {name : '' for name in fieldnames}
+        book_empty['front'] =  'icons/circle-x.svg'
+        book_empty['_id'] = 'new_book'
+        book_empty['type'] = 'book'
+        return book_empty
 
     @cherrypy.expose
     def index(self):
         raise cherrypy.HTTPRedirect("/book")
 
     @cherrypy.expose
-    def book(self, shelf='All', book_id='new_book', json_data = False):
+    def book(self, shelf='All', book_id='new_book', book_type='book', json_data = False):
         if mongo_user(cherrypy.session.id) == None:
             raise cherrypy.HTTPRedirect("/login")
+        book_empty = self.book_empty_default()
         if book_id=='new_book':
             book = book_empty
-            book['shelf'] = shelf
+            if book_type == 'comic':
+                book['type'] = 'comic'
+            else:
+                book['type'] = 'book'
+            if shelf != 'All':
+                book['shelf'] = shelf
             new = True
         else:
             book = self.mongo.get_by_id(book_id)
@@ -36,10 +49,12 @@ class bibthek(object):
                     book[k]
                 except:
                     book[k] = v
+                    print(k + "=" + v)
             if isinstance(book[k], list):
                 book[k] = ' & '.join(book[k])
             book['_id'] = str(book['_id'])
             new = False
+        print(book['type'])
         if json_data:
             return json.dumps(book)
         else:
@@ -47,6 +62,22 @@ class bibthek(object):
             series = self.mongo.series(shelf)
             shelfs = self.mongo.shelfs()
             return mytemplate.render(series=series, book=book, new=new, shelfs=shelfs, selected=shelf)
+
+    @cherrypy.expose
+    def menu(self, shelf='All'):
+        mytemplate = mylookup.get_template("menu.html")
+        series = self.mongo.series(shelf)
+        shelfs = self.mongo.shelfs()
+        return mytemplate.render(series=series, shelfs=shelfs)
+
+    @cherrypy.expose
+    def import_csv(self, csv_file=None):
+        if csv_file == None:
+            mytemplate = mylookup.get_template("import.html")
+            return mytemplate.render()
+        else:
+            data = csv_file.file.read()
+            return data
 
     @cherrypy.expose
     def save(self, **params):

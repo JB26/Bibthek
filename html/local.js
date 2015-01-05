@@ -12,6 +12,7 @@ function load_book(book_id){
     $('#delete').attr('href', '/delete/?book_id=' + data._id);
     $('#delete').show();
     $('#isbn_search').hide();
+    if (data.type == 'comic') {$('.comic').show()} else {$('.comic').hide()};
   });
   goodreads_id(book_id, '_id');
 };
@@ -41,6 +42,14 @@ function isbn_book(isbn){
   $('#amazon').attr('href', 'https://www.amazon.de/gp/search?keywords=' + isbn);
 };
 
+function menu_reload(){
+  shelf = window.location.pathname.split("/")[-1]
+  if (shelf === undefined) {shelf = ""} else {shelf = "?shelf=" + shelf}
+  $.get( "menu" + shelf, function( data ) {
+    $( "#menu" ).html( data );
+  });
+};
+
 function goodreads_id(book_i, type){
   if (book_i != 'new_book') {
     if (type == '_id') {var send = "?book_id=" + book_i} else if (type == 'isbn') {var send = "?isbn=" + book_i};
@@ -60,6 +69,7 @@ $( '#book_form' ).submit(function( event ) {
   url = $form.attr( "action" ),
   term = $form.serializeArray();
   $.post( url, term );
+  //menu_reload();
 });
 
 $( '.book_title' ).click(function( event ) {
@@ -69,11 +79,13 @@ $( '.book_title' ).click(function( event ) {
   load_book(book_id, '_id');
 });
 
+/*
 $('#link_new_book').click(function( event ) {
   event.preventDefault();
   empty_book();
   history.pushState('new_book', '', '/');
 });
+*/
 
 window.addEventListener('popstate', function(event){
   var book_id = event.state;

@@ -1,7 +1,7 @@
 <%include file="header.html" args="book='book', shelfs='shelfs', selected='selected'"/>
-
+<div id="menu">
 <%include file="menu.html" args="series='series'"/>
-
+</div>
 <div id="content">
 <form method="post" action="/save${'?book_id=' + book['_id']}" id="book_form">
   <div class="bookContent">
@@ -19,29 +19,56 @@
     <div class="bookRight">
     <label for="pubd">Author</label>
     <span><input type="text" id="authors" name="authors" value="${book['authors']}"></span>
+    <input type="text" id="type" name="type" value="${book['type']}" style="display:none">
     <div class="bookl">
+    % if book['type'] == 'comic':
+    <div class='comic' style="display:block">
+    <label for="artist">Artist</label>
+    <span><input type="text" id="artist" name="artist" value="${book['artist']}"></span>
+    </div>
+    % else:
+    <div class='comic' style="display:none">
+    <label for="artist">Artist</label>
+    <span><input type="text" id="artist" name="artist" value="${book['artist']}"></span>
+    </div>
+    % endif
     <label for="pubd">Published</label>
     <span><input type="text" id="release_date" name="release_date" value="${book['release_date']}"></span>
     <label for="series">Series</label>
     <span><input type="text" id="series" name="series" value="${book['series']}"></span>
     <label for="lang">Language</label>
     <span><input type="text" id="language" name="language" value="${book['language']}"></span>
-    <label for="pages">Genre</label>
+    <label for="genre">Genre</label>
     <span><input type="text" id="genre" name="genre" value="${book['genre']}"></span>
-    <label for="pages">Date added</label>
+    <label for="add_date">Date added</label>
     <span><input type="text" id="add_date" name="add_date" value="${book['add_date']}"></span>
+    <label for="start_date">Started</label>
+    <span><input type="text" id="start_date" name="start_date" value="${book['start_date']}"></span>
     </div>
     <div class="bookr">
+    % if book['type'] == 'comic':
+    <div class='comic' style="display:block">
+    <label for="colorist">Colorist</label>
+    <span><input type="text" id="colorist" name="colorist" value="${book['colorist']}"></span>
+    </div>
+    % else:
+    <div class='comic' style="display:none">
+    <label for="colorist">Colorist</label>
+    <span><input type="text" id="colorist" name="colorist" value="${book['colorist']}"></span>
+    </div>
+    % endif
     <label for="pub">Publisher</label>
     <span><input type="text" id="publisher" name="publisher" value="${book['publisher']}"></span>
     <label for="num">Order</label>
     <span><input type="text" id="order" name="order" value="${book['order']}"></span>
     <label for="pages">Pages</label>
     <span><input type="text" id="pages" name="pages" value="${book['pages']}"></span>
-    <label for="pages">Binding</label>
+    <label for="binding">Binding</label>
     <span><input type="text" id="binding" name="binding" value="${book['binding']}"></span>
-    <label for="pages">Shelf</label>
+    <label for="shelf">Shelf</label>
     <span><input type="text" id="shelf" name="shelf" value="${book['shelf']}"></span>
+    <label for="finish_date">Finished</label>
+    <span><input type="text" id="finish_date" name="finish_date" value="${book['finish_date']}"></span>
     </div>
     </div>
   <input type="file" name="front">

@@ -1,6 +1,15 @@
-The goal of this Project is to make a replacemant for GCstar and LibraryThing
+The goal of this Project is to make a replacemant for GCstar
 
-Short term goal: Rudimental User Managment 
+TODO:
+import/export
+Set max_request_body_size = 104857600
+Set cover
+Sort options
+Batch delete
+Batch rename
+Combining Shelfs
+Rudimental User Managment
+Better Layout
 
 To test the site use:
 python bibthek_app.py

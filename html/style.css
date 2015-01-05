@@ -35,6 +35,10 @@ width:24%;
 float:left;
 }
 
+#title_l h1 {
+display:inline;
+}
+
 #title_r {
 position: absolute;
 right:0px;
