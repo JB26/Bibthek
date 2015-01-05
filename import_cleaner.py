@@ -9,12 +9,13 @@ def is_int(s):
         return False
 
 def clean_import(row):
-    row['authors'] = row['authors'].split(', ')
-    row['genre'] = row['genre'].split(', ')
+    if 'authros' in row : row['authors'] = row['authors'].split(', ')
+    if 'genre' in row : row['genre'] = row['genre'].split(', ')
+    if 'isbn' in row : row['isbn'] = row['isbn'].replace("-","")
     row['title'] = title_clean(row['title'])
     row['order'], row['title'] = number_clean(row['title'])
-    for dates in ['release_date', 'add_date']:
-        row[dates] = date_clean(row[dates])
+    for _date in ['release_date', 'add_date', 'start_date', 'finish_date']:
+        if _date in row : row[_date] = date_clean(row[_date])
     return row
 
 def title_clean(title):

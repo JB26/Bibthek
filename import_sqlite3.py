@@ -1,16 +1,22 @@
 import sqlite3
 from datetime import date
-from import_cleaner import clean_import
 
-from mongo_db import mongo_insert
+from import_cleaner import clean_import
 from variables import fieldnames
 
-conn = sqlite3.connect('books.sqlite')
-c = conn.cursor()
+def import_sqlite3(sql_file):
+    conn = sqlite3.connect(sql_file)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    data = []
 
-for row in c.execute('SELECT * FROM items'):
-    row = {fieldnames[i]: row[i] for i in range(len(fieldnames))}
+    for row in c.execute('SELECT * FROM items'):
+        row_dict = {}
+        for fieldname in fieldnames:
+            if fieldname in row.keys():
+                row_dict[fieldname] = row[fieldname]
 
-    row = clean_import(row)
-    
-    mongo_insert(row)
+        if ('isbn' in row_dict and row_dict['isbn'] != '') or ('author' in row_dict and row_dict['author'] != ''):
+            row_dict = clean_import(row_dict)
+            data.append(row_dict)
+    return data

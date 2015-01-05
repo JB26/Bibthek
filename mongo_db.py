@@ -11,7 +11,7 @@ user_info = client.bibthek_users.info
 
 class mongo_db:
     def __init__(self, username):
-        self.collection = client.bibthek.jb_books
+        self.collection = client.bibthek[username]
 
     def insert(self, data):
         self.collection.insert(data)

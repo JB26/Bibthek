@@ -12,6 +12,7 @@ from mongo_db import mongo_db
 from mongo_db import mongo_add_user, mongo_user, mongo_login
 from variables import fieldnames
 from get_data import google_books_data
+from import_sqlite3 import import_sqlite3
 
 mylookup = TemplateLookup(directories=['html'], output_encoding='utf-8', encoding_errors='replace')
 
@@ -71,13 +72,24 @@ class bibthek(object):
         return mytemplate.render(series=series, shelfs=shelfs)
 
     @cherrypy.expose
-    def import_csv(self, csv_file=None):
-        if csv_file == None:
+    def import_books(self, data_file=None):
+        if data_file == None:
             mytemplate = mylookup.get_template("import.html")
             return mytemplate.render()
         else:
-            data = csv_file.file.read()
-            return data
+            data = data_file.file.read()
+            new_name =  cherrypy.session.id + '_' + data_file.filename
+            with open('import/' + new_name , 'wb') as f:
+                f.write(data)
+            data = import_sqlite3('import/' + new_name)
+            for row in data:
+                self.mongo.insert(row)
+            return 'Upload complete'
+
+    @cherrypy.expose
+    def export(self):
+        return test
+        
 
     @cherrypy.expose
     def save(self, **params):
