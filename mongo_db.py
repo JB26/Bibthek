@@ -23,7 +23,6 @@ def str_to_array(data):
             if field in data:
                 data[field] = data[field].split(' & ')
     if 'genre' in data:
-        print(data['genre'])
         data['genre'] = data['genre'].split(', ')
     return data
 
@@ -48,6 +47,9 @@ class mongo_db:
         data = self.collection.find_one({'_id' : ObjectId(book_id)})
         data = array_to_str(data)
         return data
+
+    def get_by_cover(self, cover):
+        return self.collection.find_one({'front' : cover}, {'_id':1})
 
     def get_all(self):
         data = []

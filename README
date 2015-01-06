@@ -2,7 +2,7 @@ The goal of this Project is to make a replacemant for GCstar
 
 TODO:
 import/export
-date added
+date added -> in form for New Book
 Set max_request_body_size = 104857600
 Set cover
 Sort options
@@ -13,6 +13,7 @@ Batch delete
 Batch rename
 javascript logout check
 Combining Shelfs
+Settings: current cover folder
 Rudimental User Managment
 Sort by field for authors
 Better Layout

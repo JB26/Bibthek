@@ -11,16 +11,21 @@
 <form method="post" enctype="multipart/form-data">
 <br>Import a sqlite3<br>
 <input type="file" name="data_file"/>
-<input type="submit" value="Proceed" action="submit"/>
+<br />
+Import covers (tar file):
+<input type="file" name="cover_front"/>
 <br />
 Author separator:
 <br />
 <input type="radio" name="separator" value="&" checked>&
 <input type="radio" name="separator" value=",">,
 <input type="radio" name="separator" value=";">;
+<br />
+<input type="submit" value="Proceed" action="submit"/>
 </form>
 <h1>Export</h1>
-<a href="export">Download</a>
+<a href="export">Download csv</a>
+<a href="export_covers">Download covers</a>
 </body>
 </html>
 

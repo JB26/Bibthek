@@ -9,5 +9,6 @@ def export_csv(data, username):
 
         writer.writeheader()
         for row in data:
+            row['front'] = row['front'].rsplit('/',1)[-1]
             writer.writerow(row)
         return 'export/books_' + username + '.csv'

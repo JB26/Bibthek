@@ -15,6 +15,9 @@ from variables import fieldnames
 from get_data import google_books_data
 from import_sqlite3 import import_sqlite3
 from export_csv import export_csv
+from import_csv import import_csv
+from export_cover import export_cover
+import import_front
 
 mylookup = TemplateLookup(directories=['html'], output_encoding='utf-8',
                           encoding_errors='replace')
@@ -73,18 +76,43 @@ class bibthek(object):
         return mytemplate.render(series=series, shelfs=shelfs)
 
     @cherrypy.expose
-    def import_books(self, data_file=None, separator=None):
+    def import_books(self, data_file=None, separator=None, cover_front=None):
         if data_file == None:
+            mytemplate = mylookup.get_template("import.html")
+            return mytemplate.render()
+        elif data_file.file == None:
             mytemplate = mylookup.get_template("import.html")
             return mytemplate.render()
         else:
             data = data_file.file.read()
-            new_name =  cherrypy.session.id + '_' + data_file.filename
+            username = cherrypy.session['username']
+            new_name = username + '_' + data_file.filename
             with open('import/' + new_name , 'wb') as f:
                 f.write(data)
-            data = import_sqlite3('import/' + new_name, separator)
+            if data_file.filename.rsplit('.',1)[-1] == 'sqlite':
+                data = import_sqlite3('import/' + new_name, separator)
+            elif data_file.filename.rsplit('.',1)[-1] == 'csv':
+                data = import_csv('import/' + new_name, separator)
+            else:
+                return "Only csv or sqlite"
             for row in data:
                 self.mongo.insert(row)
+            if cover_front.file != None:
+                data = cover_front.file.read()
+                new_name = username + '_front.tar'
+                with open('import/' + new_name , 'wb') as f:
+                    f.write(data)
+                cover_list, error = import_front.untar(username)
+                if error == 1: return 'Can not untar'
+                for cover in cover_list:
+                    book_id = self.mongo.get_by_cover(cover)
+                    if book_id == None:
+                        import_front.del_pic(cover, username)
+                    else:
+                        book_id = str(book_id['_id'])
+                        new_name = import_front.move(cover, username, book_id)
+                        self.mongo.update({'book_id' : book_id, 'front' : new_name})
+                import_front.del_dir(username)
             return 'Upload complete'
 
     @cherrypy.expose
@@ -94,8 +122,15 @@ class bibthek(object):
         path = os.path.join(absDir, file_name)
         return static.serve_file(path, "application/x-download",
                                  "attachment", os.path.basename(path))
-        
 
+    @cherrypy.expose
+    def export_covers(self):
+        data = self.mongo.get_all()
+        file_name = export_cover(data, cherrypy.session['username'])
+        path = os.path.join(absDir, file_name)
+        return static.serve_file(path, "application/x-download",
+                                 "attachment", os.path.basename(path))
+        
     @cherrypy.expose
     def save(self, **params):
         if mongo_user(cherrypy.session.id) == None:

@@ -13,7 +13,9 @@ def clean_import(row):
     row['title'] = title_clean(row['title'])
     row['order'], row['title'] = number_clean(row['title'])
     for _date in ['release_date', 'add_date', 'start_date', 'finish_date']:
-        if _date in row : row[_date] = date_clean(row[_date])
+        if _date in row :
+            if row[_date] != '':
+                row[_date] = date_clean(row[_date])
     return row
 
 def title_clean(title):
@@ -49,8 +51,6 @@ def date_clean(date):
     else:
         if date != '':
             date_temp = [date , "00", "00"]
-        else:
-            date_temp = ["0000", "00", "00"]
     for i in range(3):
         if is_int(date_temp[i]) == False:
             if i == 0:

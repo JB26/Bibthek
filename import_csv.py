@@ -1,18 +1,24 @@
 import csv
 from datetime import date
-import date_clean
 
-from mongo_db import mongo_insert
-from variables import fieldnames
+from import_cleaner import clean_import
+from variables import fieldnames, name_fields
 
-with open('export.csv') as csvfile:
-    csvimport = csv.DictReader(csvfile, fieldnames, delimiter=';')
-    next(csvimport) #ignore first line
-    for row in csvimport:
-        row['authors'] = row['authors'].split(', ')
-        row['genre'] = row['genre'].split(', ')
-        print(row['release_date'])
-        for dates in ['release_date', 'add_date']:
-            row[dates] = date_clean.cleaner(row[dates])
-        print(row['release_date'])
-        mongo_insert(row)
+def import_csv(csv_file, separator):
+    data = []
+    
+    with open(csv_file) as csvfile:
+        csvimport = csv.DictReader(csvfile, delimiter=';', quotechar='|')
+        for row in csvimport:
+            row_dict = {}
+            for fieldname in fieldnames:
+                if fieldname in row:
+                    row_dict[fieldname] = row[fieldname]
+                    if fieldname in name_fields and separator != '&':
+                        row_dict[fieldname] = row_dict[fieldname].replace(separator," &")
+            if ('isbn' in row_dict and
+            row_dict['isbn'] != '') or ('author' in row_dict and
+                                        row_dict['author'] != ''):
+                row_dict = clean_import(row_dict)
+                data.append(row_dict)
+    return data
