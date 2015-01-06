@@ -43,7 +43,8 @@ function isbn_book(isbn){
 };
 
 function menu_reload(){
-  shelf = window.location.pathname.split("/")[-1]
+  shelf = window.location.pathname.split("/")
+  shelf = shelf[shelf.length - 1]
   if (shelf === undefined) {shelf = ""} else {shelf = "?shelf=" + shelf}
   $.get( "menu" + shelf, function( data ) {
     $( "#menu" ).html( data );
@@ -67,9 +68,18 @@ $( '#book_form' ).submit(function( event ) {
   event.preventDefault();
   var $form = $( this ),
   url = $form.attr( "action" ),
-  term = $form.serializeArray();
-  $.post( url, term );
-  //menu_reload();
+  formData = new FormData($(this)[0]);
+  $.ajax({
+    url: url,
+    data: formData,
+    cache: false,
+    contentType: false,
+    processData: false,
+    type: 'POST',
+    success: function(data){
+        load_book(data);
+    }
+  });
 });
 
 $( '.book_title' ).click(function( event ) {

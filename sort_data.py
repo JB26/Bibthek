@@ -19,7 +19,6 @@ def library_sorted(data, field, sort_by_order):
             temp.append( str(row['order']) )
         else:
             temp.append('')
-
         if row[field].split(maxsplit=1)[0].lower() in articles:
             temp[-1] = temp[-1] + row[field].split(maxsplit=1)[1] + row[field].split(maxsplit=1)[0]
         else:

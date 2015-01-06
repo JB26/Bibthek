@@ -3,7 +3,7 @@
 <%include file="menu.html" args="series='series'"/>
 </div>
 <div id="content">
-<form method="post" action="/save${'?book_id=' + book['_id']}" id="book_form">
+<form method="post" action="/save${'?book_id=' + book['_id']}" enctype="multipart/form-data" id="book_form">
   <div class="bookContent">
     <div id="bookISBN">
     <input type="text" id="isbn" name="isbn" value="${book['isbn']}"/>

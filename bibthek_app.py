@@ -4,6 +4,9 @@ import cherrypy
 from cherrypy.lib import static
 import json
 from requests import get
+from datetime import date
+import hashlib
+from random import random
 
 import os
 localDir = os.path.dirname(__file__)
@@ -43,6 +46,7 @@ class bibthek(object):
         book_empty = self.book_empty_default()
         if book_id=='new_book':
             book = book_empty
+            book['add_date'] = str(date.today())
             if book_type == 'comic':
                 book['type'] = 'comic'
             else:
@@ -111,7 +115,8 @@ class bibthek(object):
                     else:
                         book_id = str(book_id['_id'])
                         new_name = import_front.move(cover, username, book_id)
-                        self.mongo.update({'book_id' : book_id, 'front' : new_name})
+                        self.mongo.update({'book_id' : book_id,
+                                           'front' : new_name})
                 import_front.del_dir(username)
             return 'Upload complete'
 
@@ -135,7 +140,28 @@ class bibthek(object):
     def save(self, **params):
         if mongo_user(cherrypy.session.id) == None:
             raise cherrypy.HTTPRedirect("/login")
+        if params['title'] == '':
+            return 'Please enter a title!'
+        if params['front'].file != None:
+            file_type =  params['front'].filename.rsplit('.',1)[-1]
+            if file_type not in  ['jpg', 'png', 'jpeg']:
+                return "Only png and jpg", 1
+            new_name = hashlib.sha224( bytes( str(random()) + params['book_id'],
+                                      'utf-8')).hexdigest()
+            new_name = "front/" + new_name + '.' + file_type
+            with open('html/' + new_name, 'wb') as f:
+                    f.write(params['front'].file.read())
+            params['front'] = new_name
+            data = self.mongo.get_by_id(params['book_id'])
+            try:
+                os.remove('html/' + data['front'])
+            except:
+                pass
+        else:
+            del params['front']
+        book_id = params['book_id']
         self.mongo.update(params)
+        return book_id
 
     @cherrypy.expose
     def new_isbn(self, isbn):

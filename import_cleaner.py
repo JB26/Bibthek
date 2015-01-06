@@ -1,5 +1,6 @@
 from datetime import date
 from variables import articles
+from datetime import date
 
 def is_int(s):
     try:
@@ -16,6 +17,7 @@ def clean_import(row):
         if _date in row :
             if row[_date] != '':
                 row[_date] = date_clean(row[_date])
+    if row['add_date'] == '' : row['add_date'] = str(datetime.date())
     return row
 
 def title_clean(title):

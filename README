@@ -1,22 +1,21 @@
 The goal of this Project is to make a replacemant for GCstar
 
 TODO:
-import/export
-date added -> in form for New Book
-Set max_request_body_size = 104857600
-Set cover
+relaod new book
 Sort options
 suggestions
 Don't save empty fields
 Sanity check for fields
 Batch delete
 Batch rename
-javascript logout check
+javascript reload menu
+javascript logout error
 Combining Shelfs
 Settings: current cover folder
 Rudimental User Managment
 Sort by field for authors
 Better Layout
+Set max_request_body_size = 104857600
 
 To test the site use:
 python bibthek_app.py
