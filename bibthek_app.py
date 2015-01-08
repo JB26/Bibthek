@@ -69,8 +69,11 @@ class bibthek(object):
             mytemplate = mylookup.get_template("book.html")
             series = self.mongo.series(shelf)
             shelfs = self.mongo.shelfs()
+            sort_by = ['Series', 'Authors']
+            sort = 'Series'
             return mytemplate.render(series=series, book=book, new=new,
-                                     shelfs=shelfs, selected=shelf)
+                                     shelfs=shelfs, selected_shelf=shelf,
+                                     sort_by=sort_by, selected_sort=sort)
 
     @cherrypy.expose
     def menu(self, shelf='All'):
@@ -152,16 +155,19 @@ class bibthek(object):
             with open('html/' + new_name, 'wb') as f:
                     f.write(params['front'].file.read())
             params['front'] = new_name
+        else:
+            del params['front']
+        if params['book_id'] == 'new_book':
+            new = True
+        else:
+            new = False
             data = self.mongo.get_by_id(params['book_id'])
             try:
                 os.remove('html/' + data['front'])
             except:
                 pass
-        else:
-            del params['front']
-        book_id = params['book_id']
-        self.mongo.update(params)
-        return book_id
+        book_id = self.mongo.update(params)
+        return json.dumps({'book_id' : book_id, 'new' : new})
 
     @cherrypy.expose
     def new_isbn(self, isbn):
@@ -204,7 +210,11 @@ class bibthek(object):
         if shelf=='All':
             raise cherrypy.HTTPRedirect("/book")
         else:
-           raise cherrypy.HTTPRedirect("/book/" + shelf) 
+           raise cherrypy.HTTPRedirect("/book/" + shelf)
+
+    @cherrypy.expose
+    def sort(self, sort):
+        cherrypy.session['sort'] = sort
 
     @cherrypy.expose
     def login(self, username = '', password = ''):

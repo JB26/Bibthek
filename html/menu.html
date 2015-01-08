@@ -1,27 +1,77 @@
-<div id="left" style="clear:right;">
-<p class="menutitle">Books</p>
-
-<ul>
-% for name in series:
-  <li>
-  % if 'series_hash' in name:
-  <div id='${name['series_hash']}' class="drop_down">${name['_id']}</div>
-  <div class="tree" id="show_${name['series_hash']}">
-  <ul>
-  % for title in name['books']:
-    <li><a href="/book?book_id=${title['_id']}" class="book_title" id="${title['_id']}" >
-    % if 'order' in title and title['order'] != '':
-      ${title['order']} - 
-    % endif
-    ${title['title']}</a></li>
-  % endfor
-  </ul>
+<div id="wrapper">
+  <div id="sidebar-wrapper">
+  <h1>Books</h1>
+    <ul class="nav nav-pills nav-stacked">
+    % for name in series:
+      <li class="dropdown">
+      % if 'series_hash' in name:
+        <a id='${name['series_hash']}' class="dropdown-toggle" data-toggle="dropdown" >${name['_id']} <span class="caret"></span></a>
+        <ul  class="dropdown-menu">
+        % for title in name['books']:
+          <li><a href="/book?book_id=${title['_id']}" class="book_title" id="${title['_id']}" >
+          % if 'order' in title and title['order'] != '':
+          ${title['order']} - 
+          % endif
+          ${title['title']}</a>
+          </li>
+        % endfor
+        </ul>
+      % else:
+        <a href="/book?book_id=${name['books']['_id']}" class="book_title" id="${name['books']['_id']}" >${name['_id']}</a>
+      % endif
+      </li>
+    % endfor
+    </ul>
   </div>
-  % else:
-  <a href="/book?book_id=${name['books']['_id']}" class="book_title" id="${name['books']['_id']}" >${name['_id']}</a>
-  % endif
-  </li>
-% endfor
-</ul>
-
-</div>
+  <nav class="navbar navbar-default navbar-static-top">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#">BibThek</a>
+      </div>
+      <div>
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="#">Home</a></li>
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">New<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="?book_type=book" id="link_new_book">Book</a></li>
+              <li><a href="?book_type=comic" id="link_new_comic">Comic</a></li>
+            </ul>
+          </li>
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Shelf<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="/book/All/">All</a></li>
+              % for shelf in shelfs:
+              <li><a href="/book/${shelf['_id']}">${shelf['_id']}</a></li>
+              % endfor
+            </ul>
+          </li>
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Sort by<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="#">Series Variant 1</a></li>
+              <li><a href="#">Series Variant 2</a></li>
+              <li><a href="#">Title</a></li>
+              <li><a href="#">Author</a></li>
+              <li><a href="#">Published</a></li>
+              <li><a href="#">Publisher</a></li>
+            </ul>
+          </li>
+          <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" href="#">Second order sort by<span class="caret"></span></a>
+            <ul class="dropdown-menu">
+              <li><a href="#">Series Variant 1</a></li>
+              <li><a href="#">Series Variant 2</a></li>
+              <li><a href="#">Title</a></li>
+              <li><a href="#">Author</a></li>
+              <li><a href="#">Published</a></li>
+              <li><a href="#">Publisher</a></li>
+            </ul>
+          </li>
+          <li><a href="/import_books">Import/Export</a></li>
+          <li><a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>

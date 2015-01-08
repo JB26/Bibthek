@@ -1,13 +1,19 @@
 The goal of this Project is to make a replacemant for GCstar
 
+Bugs:
+Authors to array not working right?
+Importing order
+
+
 TODO:
-relaod new book
 Sort options
 suggestions
 Don't save empty fields
 Sanity check for fields
 Batch delete
 Batch rename
+Table view
+Cover from google books api
 javascript reload menu
 javascript logout error
 Combining Shelfs
@@ -15,6 +21,7 @@ Settings: current cover folder
 Rudimental User Managment
 Sort by field for authors
 Better Layout
+Statistics
 Set max_request_body_size = 104857600
 
 To test the site use:

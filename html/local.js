@@ -59,11 +59,6 @@ function goodreads_id(book_i, type){
   };
 };
 
-$( '.drop_down' ).click(function () {
-  var series_hash = $(this).attr('id');
-  $('#show_' + series_hash).toggle();
-});
-
 $( '#book_form' ).submit(function( event ) {
   event.preventDefault();
   var $form = $( this ),
@@ -76,8 +71,11 @@ $( '#book_form' ).submit(function( event ) {
     contentType: false,
     processData: false,
     type: 'POST',
-    success: function(data){
-        load_book(data);
+    success: function(json_data){
+        var data = $.parseJSON(json_data);
+        if (data['new'] == true) {window.location.assign(window.location.pathname + "?book_id=" + data['book_id'])
+        } else {
+        load_book(data['book_id'])};
     }
   });
 });
@@ -118,3 +116,8 @@ $('#isbn_search').click(function(event) {
   event.preventDefault();
   isbn_book($('#isbn').val());  
 });
+
+$("#menu-toggle").click(function(e) {
+  e.preventDefault();
+  $("#wrapper").toggleClass("toggled");
+})

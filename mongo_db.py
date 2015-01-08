@@ -32,16 +32,18 @@ class mongo_db:
 
     def insert(self, data):
         data = str_to_array(data)
-        self.collection.insert(data)
+        book_id = str(self.collection.insert(data))
+        return book_id
 
     def update(self, data):
         book_id = data['book_id']
         del data['book_id']
         data = str_to_array(data)
         if book_id == 'new_book':
-            self.collection.insert(data)
+            book_id = str(self.collection.insert(data))
         else:
             self.collection.update({'_id': ObjectId(book_id)}, {"$set" : data})
+        return book_id
 
     def get_by_id(self, book_id):
         data = self.collection.find_one({'_id' : ObjectId(book_id)})
@@ -61,6 +63,22 @@ class mongo_db:
     def series(self, shelf):
         if shelf == 'All':
             data = self.collection.aggregate([{"$match" : {"series" : {"$ne": ''}} }, { "$group" : { "_id" : '$series', "series_hash" : {"$last" : "$series"}, "books" :{ "$push": {"title": "$title", "_id": "$_id", "order": "$order"}}}}])
+        else:
+            data = self.collection.aggregate([{"$match" : {"series" : {"$ne": ''}, 'shelf' : shelf} }, { "$group" : { "_id" : '$series', "series_hash" : {"$last" : "$series"}, "books" :{ "$push": {"title": "$title", "_id": "$_id", "order": "$order"}}}}])
+        for row in data['result']:
+            row['series_hash'] = md5(row['series_hash'].encode('utf-8')).hexdigest()
+        data = data['result']
+        if shelf == 'All':
+            data_temp = self.collection.find({"series":''}, {"title" : 1} )
+        else:
+            data_temp = self.collection.find({"series":'', "shelf": shelf}, {"title" : 1} )
+        for row in data_temp:
+            data.append({'_id' : row['title'], 'books' : {'_id' : row['_id']}}) #Append titles without a series
+        return sorted_series(data)
+
+    def author(self, shelf):
+        if shelf == 'All':
+            data = self.collection.aggregate([{"$match" : {"author" : {"$ne": ''}} }, { "$group" : { "_id" : '$author', "author_hash" : {"$last" : "$author"}, "books" :{ "$push": {"title": "$title", "_id": "$_id", "order": "$order"}}}}])
         else:
             data = self.collection.aggregate([{"$match" : {"series" : {"$ne": ''}, 'shelf' : shelf} }, { "$group" : { "_id" : '$series', "series_hash" : {"$last" : "$series"}, "books" :{ "$push": {"title": "$title", "_id": "$_id", "order": "$order"}}}}])
         for row in data['result']:

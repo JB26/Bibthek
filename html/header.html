@@ -1,45 +1,14 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/Strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
+<!DOCTYPE html>
+<html lang="en">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-<title>
-    First Try
-</title>
-<link rel="stylesheet" href="/static/style.css" type="text/css" />
-<link rel="stylesheet" href="/static/book.css" type="text/css" />
-<script src="/static/jquery-2.1.3.js"></script>
-<noscript><style>
-.tree {
-display: block;
-}
-</style></noscript>
+  <title>BibThek</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <script src="/static/jquery-2.1.3.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+  
+  <link href="/static/simple-sidebar.css" rel="stylesheet">
+  <link rel="stylesheet" href="/static/style.css" type="text/css" />
 </head>
 <body id="${book['_id']}">
-<div id="title_l">
-<h1>New </h1><a href="?book_type=book" id="link_new_book" ><h1>Book</h1></a><h1>/</h1><a href="?book_type=comic" id="link_new_comic" ><h1>Comic</h1></a>
-</div>
-<div id="title_r">
-<div style="float:left;">
-<form action="/shelf"> 
-Shelf:
-    <select name="shelf" size="1">
-      % if 'All' == selected:
-      <option selected>All</option>
-      % else:
-      <option>All</option>
-      % endif
-      % for shelf in shelfs:
-        % if shelf['_id'] == selected:
-        <option selected>${shelf['_id']}</option>
-        % else:
-        <option>${shelf['_id']}</option>
-        % endif
-      % endfor
-    </select>
-    <button type="submit">Choose</button>
-</form>
-</div>
-<div style="float:right; margin-right:10px;">
-<a href="/import_books">Import/Export</a>
-</div>
-</div>
