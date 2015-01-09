@@ -1,6 +1,6 @@
-<div id="wrapper">
-  <div id="sidebar-wrapper">
-  <h1>Books</h1>
+
+  <div class="navmenu navmenu-default navmenu-fixed-left offcanvas-sm">
+  <a class="navmenu-brand visible-md visible-lg" href="#">Books</a>
     <ul class="nav nav-pills nav-stacked">
     % for name in series:
       <li class="dropdown">
@@ -23,7 +23,16 @@
     % endfor
     </ul>
   </div>
-  <nav class="navbar navbar-default navbar-static-top">
+  <div class="navbar navbar-default navbar-fixed-top hidden-md hidden-lg">
+    <button type="button" class="navbar-toggle" data-toggle="offcanvas" data-target=".navmenu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    <a class="navbar-brand" href="#">BibThek</a>
+  </div>
+
+  <nav class="navbar">
     <div class="container-fluid">
       <div class="navbar-header">
         <a class="navbar-brand" href="#">BibThek</a>
@@ -70,7 +79,11 @@
             </ul>
           </li>
           <li><a href="/import_books">Import/Export</a></li>
-          <li><a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Toggle Menu</a></li>
+          <li>    <button type="button" class="navbar-toggle" data-toggle="offcanvas" data-target=".navmenu">
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button></li>
         </ul>
       </div>
     </div>

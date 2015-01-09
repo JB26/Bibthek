@@ -163,9 +163,3 @@ $('#delete_reading').click(function(event) {
   event.preventDefault();
   $('#reading_stats > tbody tr:last').remove();
 });
-
-
-$("#menu-toggle").click(function(e) {
-  e.preventDefault();
-  $("#wrapper").toggleClass("toggled");
-});
