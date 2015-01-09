@@ -1,6 +1,7 @@
 <%include file="header.html" args="book='book', shelfs='shelfs', selected='selected_shelf'"/>
 <%include file="menu.html" args="series='series', sort_by='sort_by', selected='selected_sort'"/>
   <div id="page-content-wrapper">
+  
     <div class="container-fluid">
       <form method="post" action="/save${'?book_id=' + book['_id']}" enctype="multipart/form-data" id="book_form" class="form-horizontal">
         <input type="text" id="type" name="type" value="${book['type']}" style="display:none">
@@ -33,118 +34,116 @@
                 <input class="form-control" type="text" id="authors" name="authors" value="${book['authors']}">
               </div>
             </div>
+            % if book['type'] == 'comic':
+            <div class='comic' style="display:block">
+            % else:
+            <div class='comic' style="display:none">
+            % endif
+              <div class="row">
+                <div class="col-md-7">
+                  <div class="form-group">
+                    <label for="artist" class="col-sm-4 control-label">Artist</label>
+                    <div class="col-sm-8">
+                      <input class="form-control" type="text" id="artist" name="artist" value="${book['artist']}">
+                    </div>
+                  </div>
+                </div>
+                <div class="col-md-5">
+                  <div class="form-group">
+                    <label for="colorist" class="col-sm-4 control-label">Colorist</label>
+                    <div class="col-sm-8">
+                      <input class="form-control" type="text" id="colorist" name="colorist" value="${book['colorist']}">
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
             <div class="row">
-              <div class=col-md-7>
-                % if book['type'] == 'comic':
-                <div class='comic' style="display:block">
-                  <div class="form-group">
-                    <label for="artist" class="col-sm-4 control-label">Artist</label>
-                    <div class="col-sm-8">
-                      <input class="form-control" type="text" id="artist" name="artist" value="${book['artist']}">
-                    </div>
-                  </div>
-                </div>
-                % else:
-                <div class='comic' style="display:none">
-                  <div class="form-group">
-                    <label for="artist" class="col-sm-4 control-label">Artist</label>
-                    <div class="col-sm-8">
-                      <input class="form-control" type="text" id="artist" name="artist" value="${book['artist']}">
-                    </div>
-                  </div>
-                </div>
-                % endif
-               <div class="form-group">
+              <div class="col-md-7">
+                <div class="form-group">
                   <label for="publisher" class="col-sm-4 control-label">Publisher</label>
                   <div class="col-sm-8">
                     <input class="form-control" type="text" id="publisher" name="publisher" value="${book['publisher']}">
                   </div>
                 </div>
-                <div class="form-group">
-                  <label for="series" class="col-sm-4 control-label">Series</label>
-                  <div class="col-sm-8">
-                    <input class="form-control" type="text" id="series" name="series" value="${book['series']}">
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label for="language" class="col-sm-4 control-label">Language</label>
-                  <div class="col-sm-8">
-                    <input class="form-control" type="text" id="language" name="language" value="${book['language']}">
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label for="genre" class="col-sm-4 control-label">Genre</label>
-                  <div class="col-sm-8">
-                    <input class="form-control" type="text" id="genre" name="genre" value="${book['genre']}">
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label for="add_date" class="col-sm-4 control-label">Date added</label>
-                  <div class="col-sm-8">
-                    <input class="form-control" type="text" id="add_date" name="add_date" value="${book['add_date']}">
-                  </div>
-                </div>
-                <div class="form-group">
-                  <label for="start_date" class="col-sm-4 control-label">Started</label>
-                  <div class="col-sm-8">
-                    <input class="form-control" type="text" id="start_date" name="start_date" value="${book['start_date']}">
-                  </div>
-                </div>
               </div>
               <div class="col-md-5">
-                % if book['type'] == 'comic':
-                <div class='comic' style="display:block">
-                  <div class="form-group">
-                    <label for="colorist" class="col-sm-4 control-label">Colorist</label>
-                    <div class="col-sm-8">
-                      <input class="form-control" type="text" id="colorist" name="colorist" value="${book['colorist']}">
-                    </div>
-                  </div>
-                </div>
-                % else:
-                <div class='comic' style="display:none">
-                  <div class="form-group">
-                    <label for="colorist" class="col-sm-4 control-label">Colorist</label>
-                    <div class="col-sm-8">
-                      <input class="form-control" type="text" id="colorist" name="colorist" value="${book['colorist']}">
-                    </div>
-                  </div>
-                </div>
-                % endif
                 <div class="form-group">
                   <label for="release_date" class="col-sm-4 control-label">Published</label>
                   <div class="col-sm-8">
                     <input class="form-control" type="text" id="release_date" name="release_date" value="${book['release_date']}">
                   </div>
                 </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-7">
+                <div class="form-group">
+                  <label for="series" class="col-sm-4 control-label">Series</label>
+                  <div class="col-sm-8">
+                    <input class="form-control" type="text" id="series" name="series" value="${book['series']}">
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-5">
                 <div class="form-group">
                   <label for="order" class="col-sm-4 control-label">Order</label>
                   <div class="col-sm-8">
                     <input class="form-control" type="text" id="order" name="order" value="${book['order']}">
                   </div>
                 </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-7">
+                <div class="form-group">
+                  <label for="language" class="col-sm-4 control-label">Language</label>
+                  <div class="col-sm-8">
+                    <input class="form-control" type="text" id="language" name="language" value="${book['language']}">
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-5">
                 <div class="form-group">
                   <label for="pages" class="col-sm-4 control-label">Pages</label>
                   <div class="col-sm-8">
                     <input class="form-control" type="text" id="pages" name="pages" value="${book['pages']}">
                   </div>
                 </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-7">
+                <div class="form-group">
+                  <label for="genre" class="col-sm-4 control-label">Genre</label>
+                  <div class="col-sm-8">
+                    <input class="form-control" type="text" id="genre" name="genre" value="${book['genre']}">
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-5">
                 <div class="form-group">
                   <label for="binding" class="col-sm-4 control-label">Binding</label>
                   <div class="col-sm-8">
                     <input class="form-control" type="text" id="binding" name="binding" value="${book['binding']}">
                   </div>
                 </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-7">
                 <div class="form-group">
                   <label for="shelf" class="col-sm-4 control-label">Shelf</label>
                   <div class="col-sm-8">
                     <input class="form-control" type="text" id="shelf" name="shelf" value="${book['shelf']}">
                   </div>
                 </div>
+              </div>
+              <div class="col-md-5">
                 <div class="form-group">
-                  <label for="finish_date" class="col-sm-4 control-label">Finished</label>
+                  <label for="add_date" class="col-sm-4 control-label">Date added</label>
                   <div class="col-sm-8">
-                    <input class="form-control" type="text" id="finish_date" name="finish_date" value="${book['finish_date']}">
+                    <input class="form-control" type="text" id="add_date" name="add_date" value="${book['add_date']}">
                   </div>
                 </div>
               </div>
@@ -155,15 +154,15 @@
         <div class="row">
           <div class="col-md-12">
             <div class="form-group">
-              <label for="front" class="col-sm-1 control-label">Cover</label>
-              <div class="col-sm-11">
-                <input type="file" name="front">
-              </div>
+              <label for="front">Cover</label>
+              <input type="file" name="front">
             </div>
-            <h2>Description</h2>
-            <textarea class="form-control" id="description" name="description" rows="10">
-              ${book['description']}
-            </textarea>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-7">
+            <h3>Description</h3>
+            <textarea class="form-control" id="description" name="description" rows="10">${book['description']}</textarea>
             <button type="submit" name="save">Save!</button>
             % if new == True:
             <button type="submit" name="isbn_search" id="isbn_search" style="display:inline;">ISBN search</button>
@@ -176,6 +175,57 @@
             <a href="https://www.google.de/search?q=${book['isbn']}&tbm=isch" id='isbn_image' target="_blank">Cover search</a>
             <a href="/" id='goodreads' target="_blank">GoodReads</a>
             <a href="https://www.amazon.de/gp/search?keywords=${book['isbn']}" id='amazon' target="_blank">Amazon search</a>
+          </div>
+          <div class="col-md-5">
+            <h3>Reading Stats</h3>
+            <a href="start_reading" id="start_reading">Start reading</a>
+            <a href="delete_reading" id="delete_reading">Delete last</a>
+            <table class="table table-striped" id="reading_stats">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Date</th>
+                  <th>Abdoned</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%
+                i = -1
+                %>
+                % if book['reading_stats'] != None :
+                % for i in range(len(book['reading_stats'])):
+                <tr> 
+                  <th scope="row">${i+1}</th>
+                  <td>
+                    <div class="form-group">
+                      <label for="start_${i+1}" class="col-sm-4 control-label">Started</label>
+                      <div class="col-sm-8">
+                        <input class="form-control" type="text" name="start_date" id="start_${i+1}" value="${book['reading_stats'][i]['start_date']}">
+                      </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="finish_${i+1}" class="col-sm-4 control-label">Finished</label>
+                      <div class="col-sm-8">
+                        <input class="form-control" type="text" name="finish_date" id="finish_${i+1}" value="${book['reading_stats'][i]['finish_date']}">
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="checkbox">
+                      <label>
+                      % if book['reading_stats'][i]['abdoned']:
+                      <input type="checkbox" name="abdoned" value="${i}" checked> Abdoned
+                      % else:
+                      <input type="checkbox" name="abdoned" value="${i}"> Abdoned
+                      % endif
+                      </label>
+                    </div>          
+                  </td>
+                </tr>
+                % endfor
+                % endif
+              </tbody>
+            </table>
           </div>
         </div>
       </form>

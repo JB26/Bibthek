@@ -39,14 +39,38 @@ class mongo_db:
         book_id = data['book_id']
         del data['book_id']
         data = str_to_array(data)
+        if not isinstance(data['start_date'], list):
+            data['start_date'] = [data['start_date']]
+        if not isinstance(data['finish_date'], list):
+            data['finish_date'] = [data['finish_date']]
+        temp = [False] * len(data['start_date'])
+        data['read_count'] = len(data['start_date'])
+        if 'abdoned' in data:
+            if not isinstance(data['abdoned'], list):
+                data['abdoned'] = [data['abdoned']]
+            for i in data['abdoned']:
+                temp[int(i)] = True
+        data['abdoned'] = temp
+            
+        data['reading_stats'] = []
+        for start, finish, abdoned in zip(data['start_date'],
+                                          data['finish_date'],
+                                          data['abdoned']):
+            data['reading_stats'].append({'start_date' : start,
+                                          'finish_date' : finish,
+                                          'abdoned' : abdoned})
         if book_id == 'new_book':
             book_id = str(self.collection.insert(data))
         else:
             self.collection.update({'_id': ObjectId(book_id)}, {"$set" : data})
         return book_id
 
-    def get_by_id(self, book_id):
-        data = self.collection.find_one({'_id' : ObjectId(book_id)})
+    def get_by_id(self, book_id, field = None):
+        if field == None:
+            data = self.collection.find_one({'_id' : ObjectId(book_id)})
+        else:
+            data = self.collection.find_one({'_id' : ObjectId(book_id)},
+                                            {field : 1, '_id' : 0})
         data = array_to_str(data)
         return data
 

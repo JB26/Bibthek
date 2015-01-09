@@ -12,10 +12,45 @@ function load_book(book_id){
     $('#delete').attr('href', '/delete/?book_id=' + data._id);
     $('#delete').show();
     $('#isbn_search').hide();
+    $('#reading_stats > tbody tr').remove();
+    for (i = 0; i < data.reading_stats.length; i++) {
+      build_reading_stats({start: data.reading_stats[i]['start_date'], finish: data.reading_stats[i]['finish_date'], abdoned : data.reading_stats[i]['abdoned']}, i+1);
+    }
     if (data.type == 'comic') {$('.comic').show()} else {$('.comic').hide()};
   });
   goodreads_id(book_id, '_id');
 };
+
+function build_reading_stats(data, i) {
+  var status = '';
+  if (data.abdoned == true) { status = 'checked' };
+  $('#reading_stats > tbody:last').append(
+    '<tr>\
+     <th scope="row">' + i + '</th>\
+     <td>\
+       <div class="form-group">\
+         <label for="start_' + i + '" class="col-sm-4 control-label">Started</label>\
+         <div class="col-sm-8">\
+           <input class="form-control" type="text" name="start_date" id="start_' + i + '" value="' + data.start + '">\
+         </div>\
+       </div>\
+       <div class="form-group">\
+         <label for="finish_' + i + '" class="col-sm-4 control-label">Finished</label>\
+         <div class="col-sm-8">\
+           <input class="form-control" type="text" name="finish_date" id="finish_' + i + '" value="' + data.finish + '">\
+         </div>\
+       </div>\
+     </td>\
+     <td>\
+       <div class="checkbox">\
+         <label>\
+         <input type="checkbox" name="abdoned" value="' + (i-1) + '" ' + status + '> Abdoned\
+         </label>\
+       </div>\
+     </td>\
+   </tr>'
+  );
+}
 
 function empty_book(){
   $('#goodreads').hide();
@@ -27,6 +62,7 @@ function empty_book(){
     $('#cover').attr('src', '/static/icons/circle-x.svg');
     $('#book_form').attr('action', '/save/?book_id=new_book');
     $('#isbn_search').show();
+    $('#reading_stats > tbody tr').remove();
   });
 };
 
@@ -117,7 +153,19 @@ $('#isbn_search').click(function(event) {
   isbn_book($('#isbn').val());  
 });
 
+$('#start_reading').click(function(event) {
+  event.preventDefault();
+  var rowCount = $('#reading_stats > tbody tr').length;
+  build_reading_stats({start: '', finish: '', abdoned: false}, rowCount+1);
+});
+
+$('#delete_reading').click(function(event) {
+  event.preventDefault();
+  $('#reading_stats > tbody tr:last').remove();
+});
+
+
 $("#menu-toggle").click(function(e) {
   e.preventDefault();
   $("#wrapper").toggleClass("toggled");
-})
+});

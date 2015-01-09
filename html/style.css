@@ -14,3 +14,11 @@
 .dropdown-menu > li:nth-child(even) > a {
     background:#FFFFFF;
 }
+
+.table tbody>tr>td {
+    vertical-align: middle;
+}
+
+.table tbody>tr>th {
+    vertical-align: middle;
+}

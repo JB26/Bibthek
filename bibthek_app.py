@@ -32,6 +32,7 @@ class bibthek(object):
         book_empty['front'] =  'icons/circle-x.svg'
         book_empty['_id'] = 'new_book'
         book_empty['type'] = 'book'
+        book_empty['reading_stats'] = None
         return book_empty
 
     @cherrypy.expose
@@ -71,6 +72,7 @@ class bibthek(object):
             shelfs = self.mongo.shelfs()
             sort_by = ['Series', 'Authors']
             sort = 'Series'
+            print(book)
             return mytemplate.render(series=series, book=book, new=new,
                                      shelfs=shelfs, selected_shelf=shelf,
                                      sort_by=sort_by, selected_sort=sort)
@@ -145,6 +147,10 @@ class bibthek(object):
             raise cherrypy.HTTPRedirect("/login")
         if params['title'] == '':
             return 'Please enter a title!'
+        if params['book_id'] == 'new_book':
+            new = True
+        else:
+            new = False
         if params['front'].file != None:
             file_type =  params['front'].filename.rsplit('.',1)[-1]
             if file_type not in  ['jpg', 'png', 'jpeg']:
@@ -155,17 +161,14 @@ class bibthek(object):
             with open('html/' + new_name, 'wb') as f:
                     f.write(params['front'].file.read())
             params['front'] = new_name
+            if new == False:
+                data = self.mongo.get_by_id(params['book_id'])
+                try:
+                    os.remove('html/' + data['front'])
+                except:
+                    pass 
         else:
             del params['front']
-        if params['book_id'] == 'new_book':
-            new = True
-        else:
-            new = False
-            data = self.mongo.get_by_id(params['book_id'])
-            try:
-                os.remove('html/' + data['front'])
-            except:
-                pass
         book_id = self.mongo.update(params)
         return json.dumps({'book_id' : book_id, 'new' : new})
 
