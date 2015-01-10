@@ -14,26 +14,19 @@ absDir = os.path.join(os.getcwd(), localDir)
 
 from mongo_db import mongo_db
 from mongo_db import mongo_add_user, mongo_user, mongo_login
-from variables import fieldnames
+from variables import book_empty_default
 from get_data import google_books_data
 from import_sqlite3 import import_sqlite3
 from export_csv import export_csv
 from import_csv import import_csv
 from export_cover import export_cover
 import import_front
+from sanity_check import sanity_check
 
 mylookup = TemplateLookup(directories=['html'], output_encoding='utf-8',
                           encoding_errors='replace')
 
 class bibthek(object):
-
-    def book_empty_default(self):
-        book_empty = {name : '' for name in fieldnames}
-        book_empty['front'] =  'icons/circle-x.svg'
-        book_empty['_id'] = 'new_book'
-        book_empty['type'] = 'book'
-        book_empty['reading_stats'] = None
-        return book_empty
 
     @cherrypy.expose
     def index(self):
@@ -44,7 +37,7 @@ class bibthek(object):
              json_data = False):
         if mongo_user(cherrypy.session.id) == None:
             raise cherrypy.HTTPRedirect("/login")
-        book_empty = self.book_empty_default()
+        book_empty = book_empty_default()
         if book_id=='new_book':
             book = book_empty
             book['add_date'] = str(date.today())
@@ -72,7 +65,6 @@ class bibthek(object):
             shelfs = self.mongo.shelfs()
             sort_by = ['Series', 'Authors']
             sort = 'Series'
-            print(book)
             return mytemplate.render(series=series, book=book, new=new,
                                      shelfs=shelfs, selected_shelf=shelf,
                                      sort_by=sort_by, selected_sort=sort)
@@ -143,6 +135,7 @@ class bibthek(object):
         
     @cherrypy.expose
     def save(self, **params):
+        params = sanity_check(params)
         if mongo_user(cherrypy.session.id) == None:
             raise cherrypy.HTTPRedirect("/login")
         if params['title'] == '':
@@ -169,6 +162,7 @@ class bibthek(object):
                     pass 
         else:
             del params['front']
+        print(params)
         book_id = self.mongo.update(params)
         return json.dumps({'book_id' : book_id, 'new' : new})
 

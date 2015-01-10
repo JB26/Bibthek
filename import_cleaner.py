@@ -39,31 +39,34 @@ def date_clean(date):
     if "." in date:
         date_temp = date.split('.')
         if len(date_temp) == 2:
-            date_temp.insert(0,"00")
-        date_temp[0], date_temp[2] = date_temp[2], date_temp[0]
+            date_temp[0], date_temp[1] = date_temp[1], date_temp[0]
+        elif len(date_temp) == 3:
+            date_temp[0], date_temp[2] = date_temp[2], date_temp[0]
+        else:
+            return False
     elif "-" in date:
         date_temp = date.split('-')
-        if len(date_temp) == 2:
-            date_temp.append("00")
+        if len(date_temp) > 3:
+            return False
     elif "/" in date:
         date_temp = date.split('/')
         if len(date_temp) == 2:
-            date_temp.insert(1,"00")
-        date_temp[0], date_temp[1],  date_temp[2] = date_temp[2], date_temp[0], date_temp[1]
+            date_temp[0], date_temp[1] = date_temp[1], date_temp[0]
+        elif len(date_temp) == 3:
+            date_temp[0], date_temp[1],  date_temp[2] = date_temp[2], date_temp[0], date_temp[1]
     else:
-        if date != '':
-            date_temp = [date , "00", "00"]
-    for i in range(3):
-        if is_int(date_temp[i]) == False:
-            if i == 0:
-                date_temp[i] = "0000"
-            else:
-                date_temp[i] = "00"
+        date_temp = [date]
+    for value in date_temp:
+        if is_int(value) == False:
+            return False
+            
     if len(date_temp[0]) == 2:
         now = date.today()
         if int(date_temp[0]) <= now.year + 3:
             date_temp[0] = "20" + date_temp[0]
         else:
             date_temp[0] = "19" + date_temp[0]
+    if len(date_temp[0]) > 4 or len(date_temp[1]) > 2 or len(date_temp[2]) > 2:
+        return False
     date = date_temp[0] + '-' +  date_temp[1] + '-' +  date_temp[2]
     return date
