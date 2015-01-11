@@ -23,8 +23,8 @@ def sorted_authors(data):
     data = order_by_index(data, index)
     return data
     
-def sorted_titles(data):
-    return library_sorted(data, '_id', False)
+def sorted_titles(data, field='_id'):
+    return library_sorted(data, field, False)
 
 def sorted_series(data):
     data = library_sorted(data, '_id', False)  #Sort series titles

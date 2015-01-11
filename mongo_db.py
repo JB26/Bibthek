@@ -27,6 +27,25 @@ def str_to_array(data):
         data['genre'] = data['genre'].split(', ')
     return data
 
+def hash_remove_empty(data, warning):
+    data_temp = None
+    for row in data['result']:
+        if row['_id'] == '':
+            data_temp = row
+            row['_id'] = warning
+        row['item_hash'] = md5(row['item_hash'].encode('utf-8')).hexdigest()
+
+    data = [x for x in data['result'] if x['_id'] != warning]
+    return data, data_temp
+
+def sort_insert_empty(data_temp, data):
+    if data_temp != None:
+            for book in data_temp['books']:
+                del book['order']
+            data_temp['books'] = sorted_titles(data_temp['books'], 'title')
+            data.insert(0, data_temp)
+    return data
+
 class mongo_db:
     def __init__(self, username):
         self.collection = client.bibthek[username]
@@ -100,22 +119,15 @@ class mongo_db:
     def series(self, shelf, variant):
         data = self.aggregate_items('series', {"title": "$title", "_id": "$_id",
                                                "order": "$order"}, shelf)
-        data_temp = None
-        for row in data['result']:
-            if row['_id'] == '':
-                data_temp = row
-                row['_id'] = 'Not in a series'
-            row['item_hash'] = md5(row['item_hash'].encode('utf-8')).hexdigest()
-        data = [x for x in data['result'] if x['_id'] != 'Not in a series']
-        if variant == 1:
+        data, data_temp = hash_remove_empty(data, 'Not in a series')
+        if variant == 1 and data_temp != None:
             for row in data_temp['books']:
                 data.append({'_id' : row['title'],
                              'books' : {'_id' : row['_id']}})
             data = sorted_series(data)
         else:
             data = sorted_series(data)
-            if data_temp != None:
-                data.insert(0, data_temp)
+            data = sort_insert_empty(data_temp, data)
         return data
 
     def authors(self, shelf):
@@ -123,19 +135,9 @@ class mongo_db:
                                                 "_id": "$_id",
                                                 "order": "$release_date"},
                                     shelf, True)
-        data_temp = None
-        for row in data['result']:
-            if row['_id'] == '':
-                data_temp = row
-                row['_id'] = 'No author'
-            row['item_hash'] = md5(row['item_hash'].encode('utf-8')).hexdigest()
-            
-        data = [x for x in data['result'] if x['_id'] != 'No author']
+        data, data_temp = hash_remove_empty(data, 'No author')
         data = sorted_authors(data)
-        if data_temp != None:
-            for book in data_temp['books']:
-                del book['order']
-            data.insert(0, data_temp)
+        data = sort_insert_empty(data_temp, data)
         return data
 
     def titles(self, shelf):
@@ -149,7 +151,6 @@ class mongo_db:
             data.append({'_id' : row['title'],
                          'books' : {'_id' : row['_id']}})
             
-        print(data)
         return sorted_titles(data)
 
     def ids(self):
