@@ -5,6 +5,7 @@ from hashlib import md5
 from passlib.hash import pbkdf2_sha512
 
 from sort_data import sorted_series, sorted_titles, sorted_shelfs
+from sort_data import sorted_authors
 from variables import name_fields
 
 client = MongoClient('localhost', 9090)
@@ -85,37 +86,57 @@ class mongo_db:
             data.append(row)
         return data
 
-    def series(self, shelf):
-        if shelf == 'All':
-            data = self.collection.aggregate([{"$match" : {"series" : {"$ne": ''}} }, { "$group" : { "_id" : '$series', "series_hash" : {"$last" : "$series"}, "books" :{ "$push": {"title": "$title", "_id": "$_id", "order": "$order"}}}}])
-        else:
-            data = self.collection.aggregate([{"$match" : {"series" : {"$ne": ''}, 'shelf' : shelf} }, { "$group" : { "_id" : '$series', "series_hash" : {"$last" : "$series"}, "books" :{ "$push": {"title": "$title", "_id": "$_id", "order": "$order"}}}}])
-        for row in data['result']:
-            row['series_hash'] = md5(row['series_hash'].encode('utf-8')).hexdigest()
-        data = data['result']
-        if shelf == 'All':
-            data_temp = self.collection.find({"series":''}, {"title" : 1} )
-        else:
-            data_temp = self.collection.find({"series":'', "shelf": shelf}, {"title" : 1} )
-        for row in data_temp:
-            data.append({'_id' : row['title'], 'books' : {'_id' : row['_id']}}) #Append titles without a series
-        return sorted_series(data)
+    def aggregate_items(self, group_by, get_fields, shelf, array=False):
+        search = [{ "$group" : { "_id" : '$' + group_by,
+                                "item_hash" : {"$last" : "$" + group_by},
+                                "books" :{ "$push": get_fields}}}]
+        if array:
+            search.insert(0,{"$unwind" : "$" + group_by})
+        if shelf != 'All':
+            search.insert(0,{"$match" : {'shelf' : shelf}})
+        data = self.collection.aggregate(search)
+        return data
 
-    def author(self, shelf):
-        if shelf == 'All':
-            data = self.collection.aggregate([{"$match" : {"author" : {"$ne": ''}} }, { "$group" : { "_id" : '$author', "author_hash" : {"$last" : "$author"}, "books" :{ "$push": {"title": "$title", "_id": "$_id", "order": "$order"}}}}])
-        else:
-            data = self.collection.aggregate([{"$match" : {"series" : {"$ne": ''}, 'shelf' : shelf} }, { "$group" : { "_id" : '$series', "series_hash" : {"$last" : "$series"}, "books" :{ "$push": {"title": "$title", "_id": "$_id", "order": "$order"}}}}])
+    def series(self, shelf, variant):
+        data = self.aggregate_items('series', {"title": "$title", "_id": "$_id",
+                                               "order": "$order"}, shelf)
+        data_temp = None
         for row in data['result']:
-            row['series_hash'] = md5(row['series_hash'].encode('utf-8')).hexdigest()
-        data = data['result']
-        if shelf == 'All':
-            data_temp = self.collection.find({"series":''}, {"title" : 1} )
+            if row['_id'] == '':
+                data_temp = row
+                row['_id'] = 'Not in a series'
+            row['item_hash'] = md5(row['item_hash'].encode('utf-8')).hexdigest()
+        data = [x for x in data['result'] if x['_id'] != 'Not in a series']
+        if variant == 1:
+            for row in data_temp['books']:
+                data.append({'_id' : row['title'],
+                             'books' : {'_id' : row['_id']}})
+            data = sorted_series(data)
         else:
-            data_temp = self.collection.find({"series":'', "shelf": shelf}, {"title" : 1} )
-        for row in data_temp:
-            data.append({'_id' : row['title'], 'books' : {'_id' : row['_id']}}) #Append titles without a series
-        return sorted_series(data)
+            data = sorted_series(data)
+            if data_temp != None:
+                data.insert(0, data_temp)
+        return data
+
+    def authors(self, shelf):
+        data = self.aggregate_items('authors', {"title": "$title",
+                                                "_id": "$_id",
+                                                "order": "$release_date"},
+                                    shelf, True)
+        data_temp = None
+        for row in data['result']:
+            if row['_id'] == '':
+                data_temp = row
+                row['_id'] = 'No author'
+            row['item_hash'] = md5(row['item_hash'].encode('utf-8')).hexdigest()
+            
+        data = [x for x in data['result'] if x['_id'] != 'No author']
+        data = sorted_authors(data)
+        if data_temp != None:
+            for book in data_temp['books']:
+                del book['order']
+            data.insert(0, data_temp)
+        return data
 
     def titles(self, shelf):
         if shelf == 'All':

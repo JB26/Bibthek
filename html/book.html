@@ -1,5 +1,5 @@
 <%include file="header.html" />
-<%include file="menu.html" args="book='book', items='items', active_sort='active_by', active_shelf='active_shelf', shelfs='shelfs'"/>
+<%include file="menu.html" args="book='book', items='items', sort1='sort1', active_shelf='active_shelf', shelfs='shelfs', sort2='sort2', active_sort='active_sort'"/>
  
     <div class="container">
       <form method="post" action="/save${'?book_id=' + book['_id']}" enctype="multipart/form-data" id="book_form" class="form-horizontal">

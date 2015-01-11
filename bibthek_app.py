@@ -30,11 +30,11 @@ class bibthek(object):
 
     @cherrypy.expose
     def index(self):
-        raise cherrypy.HTTPRedirect("/book")
+        raise cherrypy.HTTPRedirect("/books/All/series/variant1")
 
     @cherrypy.expose
-    def book(self, shelf='All', sort_first=None, sort_second=None,
-             book_id='new_book', book_type='book', json_data = False):
+    def books(self, shelf='All', sort_first=None, sort_second=None,
+              book_id='new_book', book_type='book', json_data = False):
         if mongo_user(cherrypy.session.id) == None:
             raise cherrypy.HTTPRedirect("/login")
         book_empty = book_empty_default()
@@ -60,20 +60,39 @@ class bibthek(object):
         if json_data:
             return json.dumps(book)
         else:
+            sort1 = [['Title', '/title', False],
+                     ['Series', '/series/variant1', False],
+                     ['Author', '/author/year', False]]
             if sort_first == 'title':
                 items = self.mongo.titles(shelf)
-                active_sort = 'title'
+                sort1[0][2] = True
+                sort2 = [['Title', '/title', True]]
+                active_sort = '/title'
             elif sort_first == 'series':
+                sort1[1][2] = True
+                sort2 = [['Variant 1', '/series/variant1', False],
+                         ['Variant 2', '/series/variant2', False]]
                 if sort_second == 'variant1':
-                    items = self.mongo.series(shelf)
-                    active_sort = 'series_1'
-            else:
-                items = self.mongo.series(shelf)
-                active_sort = 'series_1'
+                    items = self.mongo.series(shelf, 1)
+                    sort2[0][2] = True
+                    active_sort = '/series/variant1'
+                if sort_second == 'variant2':
+                    items = self.mongo.series(shelf, 2)
+                    sort2[1][2] = True
+                    active_sort = '/series/variant2'
+            elif sort_first == 'author':
+                sort1[2][2] = True
+                sort2 = [['Year', '/series/year', False],
+                         ['Title', '/series/title', False]]
+                if sort_second == 'year':
+                    items = self.mongo.authors(shelf)
+                    sort2[0][2] = True
+                    active_sort = '/series/year'
             mytemplate = mylookup.get_template("book.html")
             shelfs = self.mongo.shelfs()
             return mytemplate.render(items=items, book=book, new=new,
                                      shelfs=shelfs, active_shelf=shelf,
+                                     sort1=sort1, sort2=sort2,
                                      active_sort=active_sort)
 
     @cherrypy.expose

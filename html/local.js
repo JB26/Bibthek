@@ -1,5 +1,5 @@
 function load_book(book_id){
-  $.getJSON( "/book", {book_id:book_id, json_data:"True"},function(data) {
+  $.getJSON( "/books", {book_id:book_id, json_data:"True"},function(data) {
     $.each(data, function(input_id, input_value){
       if ($.isArray(input_value)) {
         $('#' + input_id).val(input_value.join(" & "));
@@ -55,7 +55,7 @@ function build_reading_stats(data, i) {
 function empty_book(){
   $('#goodreads').hide();
   $('#delete').hide();
-  $.getJSON( "/book", {json_data:"True"},function(data) {
+  $.getJSON( "/books", {json_data:"True"},function(data) {
     $.each(data,function(input_id, input_value){
       $('#' + input_id).val(input_value)
     });
@@ -119,7 +119,7 @@ $( '#book_form' ).submit(function( event ) {
 $( '.book_title' ).click(function( event ) {
   event.preventDefault();
   var book_id = $(this).attr('id');
-  history.pushState(book_id, '', '/book?book_id=' + book_id);
+  history.pushState(book_id, '', '/books?book_id=' + book_id);
   load_book(book_id, '_id');
 });
 
@@ -144,7 +144,7 @@ window.onload = function (){
   if (book_id == 'new_book') {
     history.replaceState(book_id, '', window.location);
   } else {
-    history.replaceState(book_id, '', '/book?book_id=' + book_id)};
+    history.replaceState(book_id, '', '/books?book_id=' + book_id)};
   goodreads_id(book_id, '_id');
 };
 

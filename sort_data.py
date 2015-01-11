@@ -7,24 +7,30 @@ from variables import articles
 def sorted_shelfs(data):
     return library_sorted(data, '_id', False)
 
-def sorted_author(data):
+def sorted_authors(data):
     temp = []
     for row in data:
+        for book in row['books']:
+            if book['order'] != '':
+                book['order'] = book['order'][0:4]
+        row['books'] = library_sorted(row['books'], 'title', True)
         find_surname = row['_id'].rsplit(maxsplit=1)
         if len(find_surname) == 2:
             temp.append(find_surname[1] + ' ' + find_surname[0])
         elif len(find_surname) == 1:
             temp.append(row['_id'])
     index = index_humansorted(temp)
-    return order_by_index(data, index)
-
+    data = order_by_index(data, index)
+    return data
+    
 def sorted_titles(data):
     return library_sorted(data, '_id', False)
 
 def sorted_series(data):
     data = library_sorted(data, '_id', False)  #Sort series titles
-    for i in range(len(data)):  #Sort book titles in series
-        if 'series_hash' in data[i] : data[i]['books'] = library_sorted(data[i]['books'], 'title', True)
+    for series in data:  #Sort book titles in series
+        if 'series_hash' in series:
+            series['books'] = library_sorted(series['books'], 'title', True)
     return data
     
 
@@ -32,7 +38,7 @@ def library_sorted(data, field, sort_by_order):
     temp = []
 
     for row in data:
-        if sort_by_order and 'order' in row:
+        if sort_by_order:
             temp.append( str(row['order']) )
         else:
             temp.append('')

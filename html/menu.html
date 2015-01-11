@@ -1,22 +1,14 @@
-<%def name="activeSort(name)">
-  % if name == active_sort:
-    <li class="active">
-  % else:
-    <li>
-  % endif
-</%def>
-
 <body id="${book['_id']}">
   <div class="navmenu navmenu-default navmenu-fixed-left offcanvas-sm">
   <a class="navmenu-brand visible-md visible-lg" href="#">Books</a>
     <ul class="nav nav-pills nav-stacked">
     % for name in items:
       <li class="dropdown">
-      % if 'series_hash' in name:
-        <a id='${name['series_hash']}' class="dropdown-toggle" data-toggle="dropdown" >${name['_id']} <span class="caret"></span></a>
+      % if 'item_hash' in name:
+        <a id='${name['item_hash']}' class="dropdown-toggle" data-toggle="dropdown" >${name['_id']} <span class="caret"></span></a>
         <ul class="dropdown-menu sidebar">
         % for title in name['books']:
-          <li><a href="/book?book_id=${title['_id']}" class="book_title" id="${title['_id']}" >
+          <li><a href="/books?book_id=${title['_id']}" class="book_title" id="${title['_id']}" >
           % if 'order' in title and title['order'] != '':
           ${title['order']} - 
           % endif
@@ -25,7 +17,7 @@
         % endfor
         </ul>
       % else:
-        <a href="/book?book_id=${name['books']['_id']}" class="book_title" id="${name['books']['_id']}" >${name['_id']}</a>
+        <a href="/books?book_id=${name['books']['_id']}" class="book_title" id="${name['books']['_id']}" >${name['_id']}</a>
       % endif
       </li>
     % endfor
@@ -60,9 +52,9 @@
             <ul class="dropdown-menu">
             % for shelf in shelfs:
               % if shelf['_id'] == active_shelf:
-              <li class="active"><a href="/book/${shelf['_id']}">${shelf['_id']}</a></li>
+              <li class="active"><a href="/books/${shelf['_id']}${active_sort}">${shelf['_id']}</a></li>
               % else:
-              <li><a href="/book/${shelf['_id']}">${shelf['_id']}</a></li>
+              <li><a href="/books/${shelf['_id']}${active_sort}">${shelf['_id']}</a></li>
               % endif
             % endfor
             </ul>
@@ -70,26 +62,25 @@
           <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Sort by<span class="caret"></span></a>
             <ul class="dropdown-menu">
-              <li class="dropdown-header">Series</li>
-              ${activeSort("series_1")}<a href="/book/${active_shelf}/series/variant1">Variant 1</a></li>
-              <li><a href="#">Variant 2</a></li>
-              <li class="divider"></li>
-              ${activeSort("title")}<a href="/book/${active_shelf}/title">Title</a></li>
-              <li class="divider"></li>
-              <li><a href="#">Author</a></li>
-              <li><a href="#">Published</a></li>
-              <li><a href="#">Publisher</a></li>
+            % for v in sort1:
+              % if v[2]:
+              <li class="active"><a href="/books/${active_shelf}${v[1]}">${v[0]}</a></li>
+              % else:
+              <li><a href="/books/${active_shelf}${v[1]}">${v[0]}</a></li>
+              % endif
+            % endfor
             </ul>
           </li>
           <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Second order sort by<span class="caret"></span></a>
             <ul class="dropdown-menu">
-              <li><a href="#">Series Variant 1</a></li>
-              <li><a href="#">Series Variant 2</a></li>
-              <li><a href="#">Title</a></li>
-              <li><a href="#">Author</a></li>
-              <li><a href="#">Published</a></li>
-              <li><a href="#">Publisher</a></li>
+            % for v in sort2:
+              % if v[2]:
+              <li class="active"><a href="/books/${active_shelf}${v[1]}">${v[0]}</a></li>
+              % else:
+              <li><a href="/books/${active_shelf}${v[1]}">${v[0]}</a></li>
+              % endif
+            % endfor
             </ul>
           </li>
           <li><a href="/import_books">Import/Export</a></li>
