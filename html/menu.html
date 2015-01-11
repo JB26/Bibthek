@@ -1,12 +1,20 @@
+<%def name="activeSort(name)">
+  % if name == active_sort:
+    <li class="active">
+  % else:
+    <li>
+  % endif
+</%def>
 
+<body id="${book['_id']}">
   <div class="navmenu navmenu-default navmenu-fixed-left offcanvas-sm">
   <a class="navmenu-brand visible-md visible-lg" href="#">Books</a>
     <ul class="nav nav-pills nav-stacked">
-    % for name in series:
+    % for name in items:
       <li class="dropdown">
       % if 'series_hash' in name:
         <a id='${name['series_hash']}' class="dropdown-toggle" data-toggle="dropdown" >${name['_id']} <span class="caret"></span></a>
-        <ul  class="dropdown-menu">
+        <ul class="dropdown-menu sidebar">
         % for title in name['books']:
           <li><a href="/book?book_id=${title['_id']}" class="book_title" id="${title['_id']}" >
           % if 'order' in title and title['order'] != '':
@@ -32,7 +40,7 @@
     <a class="navbar-brand" href="#">BibThek</a>
   </div>
 
-  <nav class="navbar">
+  <nav class="navbar navbar-default">
     <div class="container-fluid">
       <div class="navbar-header">
         <a class="navbar-brand" href="#">BibThek</a>
@@ -50,18 +58,24 @@
           <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Shelf<span class="caret"></span></a>
             <ul class="dropdown-menu">
-              <li><a href="/book/All/">All</a></li>
-              % for shelf in shelfs:
+            % for shelf in shelfs:
+              % if shelf['_id'] == active_shelf:
+              <li class="active"><a href="/book/${shelf['_id']}">${shelf['_id']}</a></li>
+              % else:
               <li><a href="/book/${shelf['_id']}">${shelf['_id']}</a></li>
-              % endfor
+              % endif
+            % endfor
             </ul>
           </li>
           <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Sort by<span class="caret"></span></a>
             <ul class="dropdown-menu">
-              <li><a href="#">Series Variant 1</a></li>
-              <li><a href="#">Series Variant 2</a></li>
-              <li><a href="#">Title</a></li>
+              <li class="dropdown-header">Series</li>
+              ${activeSort("series_1")}<a href="/book/${active_shelf}/series/variant1">Variant 1</a></li>
+              <li><a href="#">Variant 2</a></li>
+              <li class="divider"></li>
+              ${activeSort("title")}<a href="/book/${active_shelf}/title">Title</a></li>
+              <li class="divider"></li>
               <li><a href="#">Author</a></li>
               <li><a href="#">Published</a></li>
               <li><a href="#">Publisher</a></li>
@@ -79,11 +93,6 @@
             </ul>
           </li>
           <li><a href="/import_books">Import/Export</a></li>
-          <li>    <button type="button" class="navbar-toggle" data-toggle="offcanvas" data-target=".navmenu">
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-      <span class="icon-bar"></span>
-    </button></li>
         </ul>
       </div>
     </div>

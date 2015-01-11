@@ -33,8 +33,8 @@ class bibthek(object):
         raise cherrypy.HTTPRedirect("/book")
 
     @cherrypy.expose
-    def book(self, shelf='All', book_id='new_book', book_type='book',
-             json_data = False):
+    def book(self, shelf='All', sort_first=None, sort_second=None,
+             book_id='new_book', book_type='book', json_data = False):
         if mongo_user(cherrypy.session.id) == None:
             raise cherrypy.HTTPRedirect("/login")
         book_empty = book_empty_default()
@@ -60,14 +60,21 @@ class bibthek(object):
         if json_data:
             return json.dumps(book)
         else:
+            if sort_first == 'title':
+                items = self.mongo.titles(shelf)
+                active_sort = 'title'
+            elif sort_first == 'series':
+                if sort_second == 'variant1':
+                    items = self.mongo.series(shelf)
+                    active_sort = 'series_1'
+            else:
+                items = self.mongo.series(shelf)
+                active_sort = 'series_1'
             mytemplate = mylookup.get_template("book.html")
-            series = self.mongo.series(shelf)
             shelfs = self.mongo.shelfs()
-            sort_by = ['Series', 'Authors']
-            sort = 'Series'
-            return mytemplate.render(series=series, book=book, new=new,
-                                     shelfs=shelfs, selected_shelf=shelf,
-                                     sort_by=sort_by, selected_sort=sort)
+            return mytemplate.render(items=items, book=book, new=new,
+                                     shelfs=shelfs, active_shelf=shelf,
+                                     active_sort=active_sort)
 
     @cherrypy.expose
     def menu(self, shelf='All'):

@@ -4,7 +4,7 @@ from bson.objectid import ObjectId
 from hashlib import md5
 from passlib.hash import pbkdf2_sha512
 
-from sort_data import sorted_series
+from sort_data import sorted_series, sorted_titles, sorted_shelfs
 from variables import name_fields
 
 client = MongoClient('localhost', 9090)
@@ -117,6 +117,20 @@ class mongo_db:
             data.append({'_id' : row['title'], 'books' : {'_id' : row['_id']}}) #Append titles without a series
         return sorted_series(data)
 
+    def titles(self, shelf):
+        if shelf == 'All':
+            data_temp = self.collection.find({}, {"title" : 1} )
+        else:
+            data_temp = self.collection.find({"shelf" : shelf}, {"title" : 1} )
+        data = []
+        for row in data_temp:
+            print(row)
+            data.append({'_id' : row['title'],
+                         'books' : {'_id' : row['_id']}})
+            
+        print(data)
+        return sorted_titles(data)
+
     def ids(self):
         data = self.collection.find({},{'_id': 1})
         ids = []
@@ -128,8 +142,10 @@ class mongo_db:
         self.collection.remove({'_id' : ObjectId(book_id)})
 
     def shelfs(self):
-        shelfs = self.collection.aggregate([{"$match" : {"shelf" : {"$ne": '', "$ne": None} } } , { "$group" : { "_id" : "$shelf"}}])
-        return shelfs['result']
+        shelfs = self.collection.aggregate([{"$match" : {"shelf" : {"$ne": ''} } } , { "$group" : { "_id" : "$shelf"}}])
+        shelfs = sorted_shelfs(shelfs['result'])
+        shelfs.insert(0,{'_id' : 'All'})
+        return shelfs
 
 def mongo_add_user(username, password, user_id):
     user_info.insert({'username' : username, 'password' : pbkdf2_sha512.encrypt(password), 'user_id' : user_id})

@@ -43,19 +43,19 @@ body {
 
 }
 
-.dropdown-menu{
+.dropdown-menu.sidebar {
     width: 100%;
 }
 
-.dropdown-menu li a {
+.dropdown-menu.sidebar li a {
     word-wrap: break-word;
     white-space: normal;
 }
 
-.dropdown-menu > li:nth-child(odd) > a {
+.dropdown-menu.sidebar > li:nth-child(odd) > a {
     background:#EDEDED;
 }
 
-.dropdown-menu > li:nth-child(even) > a {
+.dropdown-menu.sidebar > li:nth-child(even) > a {
     background:#FFFFFF;
 }

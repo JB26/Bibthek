@@ -4,6 +4,9 @@ from natsort import index_humansorted, order_by_index
 
 from variables import articles
 
+def sorted_shelfs(data):
+    return library_sorted(data, '_id', False)
+
 def sorted_author(data):
     temp = []
     for row in data:
@@ -14,7 +17,9 @@ def sorted_author(data):
             temp.append(row['_id'])
     index = index_humansorted(temp)
     return order_by_index(data, index)
-        
+
+def sorted_titles(data):
+    return library_sorted(data, '_id', False)
 
 def sorted_series(data):
     data = library_sorted(data, '_id', False)  #Sort series titles
