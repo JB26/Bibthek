@@ -119,7 +119,7 @@ $( '#book_form' ).submit(function( event ) {
 $( '.book_title' ).click(function( event ) {
   event.preventDefault();
   var book_id = $(this).attr('id');
-  history.pushState(book_id, '', '/books?book_id=' + book_id);
+  history.pushState(book_id, '', window.location.pathname + '?book_id=' + book_id);
   load_book(book_id, '_id');
 });
 
@@ -142,9 +142,9 @@ window.addEventListener('popstate', function(event){
 window.onload = function (){
   var book_id = $(' body ').attr('id');
   if (book_id == 'new_book') {
-    history.replaceState(book_id, '', window.location);
+    history.replaceState(book_id, '', window.location.pathname);
   } else {
-    history.replaceState(book_id, '', '/books?book_id=' + book_id)};
+    history.replaceState(book_id, '', window.location.pathname + '?book_id=' + book_id)};
   goodreads_id(book_id, '_id');
 };
 
@@ -162,4 +162,20 @@ $('#start_reading').click(function(event) {
 $('#delete_reading').click(function(event) {
   event.preventDefault();
   $('#reading_stats > tbody tr:last').remove();
+});
+
+$('.series_star').click(function(event) {
+  id = $( this ).attr('id');
+  status = id.split('_')[1]
+  link_number = id.split('_')[0]
+  $.get( "/star_series?series=" + $('#' + link_number + '_a').text() + "&status=" + status, function( data ) {
+    if (data == '0') {
+      $('#' + id).toggleClass('glyphicon-star-empty glyphicon-star');
+      if (status == 'star') {
+        $('#' + id).attr('id', link_number + '_star-empty');
+      } else {
+        $('#' + id).attr('id', link_number + '_star');
+      };
+    };
+  });
 });

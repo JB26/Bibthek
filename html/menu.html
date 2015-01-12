@@ -1,24 +1,34 @@
 <body id="${book['_id']}">
   <div class="navmenu navmenu-default navmenu-fixed-left offcanvas-sm">
-  <a class="navmenu-brand visible-md visible-lg" href="#">Books</a>
-    <ul class="nav nav-pills nav-stacked">
-    % for name in items:
+    <a class="navmenu-brand visible-md visible-lg" href="#">Books</a>
+    <ul class="nav nav-pills nav-stacked sidebar-star">
+    
+    % for idx, name in enumerate(items):
       <li class="dropdown">
-      % if 'item_hash' in name:
-        <a id='${name['item_hash']}' class="dropdown-toggle" data-toggle="dropdown" >${name['_id']} <span class="caret"></span></a>
-        <ul class="dropdown-menu sidebar">
-        % for title in name['books']:
-          <li><a href="/books?book_id=${title['_id']}" class="book_title" id="${title['_id']}" >
-          % if 'order' in title and title['order'] != '':
-          ${title['order']} - 
+        % if 'item_hash' in name:
+          % if active_sort.split('/')[1] == 'series':
+            % if 'series_complete' in name['books'][0] and name['_id'] != 'Not in a series' and name['books'][0]['series_complete']:
+              <i class="glyphicon glyphicon-star series_star" id="${idx}_star"></i>
+            % else:
+              <i class="glyphicon glyphicon-star-empty series_star" id="${idx}_star-empty"></i>
+            % endif
           % endif
-          ${title['title']}</a>
-          </li>
-        % endfor
-        </ul>
-      % else:
-        <a href="/books?book_id=${name['books']['_id']}" class="book_title" id="${name['books']['_id']}" >${name['_id']}</a>
-      % endif
+          <a class="dropdown-toggle" id="${idx}_a" data-toggle="dropdown" >${name['_id']}<span class="caret"></span></a>
+          <ul class="dropdown-menu sidebar">
+          % for title in name['books']:
+            <li>
+              <a href="/books?book_id=${title['_id']}" class="book_title" id="${title['_id']}" >
+                % if 'order' in title and title['order'] != '':
+                  ${title['order']} - 
+                % endif
+                ${title['title']}
+              </a>
+            </li>
+          % endfor
+          </ul>
+        % else:
+          <a href="?book_id=${name['books']['_id']}" class="book_title" id="${name['books']['_id']}" >${name['_id']}</a>
+        % endif
       </li>
     % endfor
     </ul>
@@ -84,6 +94,9 @@
             </ul>
           </li>
           <li><a href="/import_books">Import/Export</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="/logout">Logout</a></li>
         </ul>
       </div>
     </div>

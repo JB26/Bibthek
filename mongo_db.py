@@ -86,6 +86,13 @@ class mongo_db:
             self.collection.update({'_id': ObjectId(book_id)}, {"$set" : data})
         return book_id
 
+    def star_series(self, series, status):
+        if status == 'star':
+            data = {'series_complete' : False}
+        else:
+            data = {'series_complete' : True}
+        self.collection.update({'series': series}, {"$set" : data})
+
     def get_by_id(self, book_id, field = None):
         if field == None:
             data = self.collection.find_one({'_id' : ObjectId(book_id)})
@@ -117,8 +124,11 @@ class mongo_db:
         return data
 
     def series(self, shelf, variant):
-        data = self.aggregate_items('series', {"title": "$title", "_id": "$_id",
-                                               "order": "$order"}, shelf)
+        data = self.aggregate_items('series',
+                                    {"title": "$title", "_id": "$_id",
+                                     "order": "$order",
+                                     "series_complete": "$series_complete"},
+                                    shelf)
         data, data_temp = hash_remove_empty(data, 'Not in a series')
         if variant == 1 and data_temp != None:
             for row in data_temp['books']:
@@ -164,21 +174,26 @@ class mongo_db:
         self.collection.remove({'_id' : ObjectId(book_id)})
 
     def shelfs(self):
-        shelfs = self.collection.aggregate([{"$match" : {"shelf" : {"$ne": ''} } } , { "$group" : { "_id" : "$shelf"}}])
+        shelfs = self.collection.aggregate([{"$match" : {"shelf" :
+                                                         {"$ne": ''} } },
+                                            { "$group" : { "_id" : "$shelf"}}])
         shelfs = sorted_shelfs(shelfs['result'])
         shelfs.insert(0,{'_id' : 'All'})
         return shelfs
 
 def mongo_add_user(username, password, user_id):
-    user_info.insert({'username' : username, 'password' : pbkdf2_sha512.encrypt(password), 'user_id' : user_id})
+    user_info.insert({'username' : username,
+                      'password' : pbkdf2_sha512.encrypt(password),
+                      'user_id' : user_id})
 
-def mongo_login(username, password, user_id):
+def mongo_login(username, password, session_id):
     user = user_info.find_one({'username' : username})
     if user != None and pbkdf2_sha512.verify(password, user['password']):
-        user_info.update({'username' : username}, {"$set" : {"user_id" : user_id} })
+        user_info.update({'username' : username},
+                         {"$set" : {"session_id" : session_id} })
         return True
     return False
 
-def mongo_user(user_id):
-    user = user_info.find_one({'user_id' : user_id})
+def mongo_user(session_id):
+    user = user_info.find_one({'session_id' : session_id})
     return user

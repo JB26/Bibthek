@@ -28,6 +28,9 @@ mylookup = TemplateLookup(directories=['html'], output_encoding='utf-8',
 
 class bibthek(object):
 
+    def db(self):
+        return mongo_db(cherrypy.session['username'])
+
     @cherrypy.expose
     def index(self):
         raise cherrypy.HTTPRedirect("/books/All/series/variant1")
@@ -49,7 +52,7 @@ class bibthek(object):
                 book['shelf'] = shelf
             new = True
         else:
-            book = self.mongo.get_by_id(book_id)
+            book = self.db().get_by_id(book_id)
             for k, v in book_empty.items():
                 try:
                     book[k]
@@ -64,7 +67,7 @@ class bibthek(object):
                      ['Series', '/series/variant1', False],
                      ['Author', '/author/year', False]]
             if sort_first == 'title':
-                items = self.mongo.titles(shelf)
+                items = self.db().titles(shelf)
                 sort1[0][2] = True
                 sort2 = [['Title', '/title', True]]
                 active_sort = '/title'
@@ -73,23 +76,23 @@ class bibthek(object):
                 sort2 = [['Variant 1', '/series/variant1', False],
                          ['Variant 2', '/series/variant2', False]]
                 if sort_second == 'variant1':
-                    items = self.mongo.series(shelf, 1)
+                    items = self.db().series(shelf, 1)
                     sort2[0][2] = True
                     active_sort = '/series/variant1'
                 if sort_second == 'variant2':
-                    items = self.mongo.series(shelf, 2)
+                    items = self.db().series(shelf, 2)
                     sort2[1][2] = True
                     active_sort = '/series/variant2'
             elif sort_first == 'author':
                 sort1[2][2] = True
-                sort2 = [['Year', '/series/year', False],
-                         ['Title', '/series/title', False]]
+                sort2 = [['Year', '/author/year', False],
+                         ['Title', '/author/title', False]]
                 if sort_second == 'year':
-                    items = self.mongo.authors(shelf)
+                    items = self.db().authors(shelf)
                     sort2[0][2] = True
-                    active_sort = '/series/year'
+                    active_sort = '/author/year'
             mytemplate = mylookup.get_template("book.html")
-            shelfs = self.mongo.shelfs()
+            shelfs = self.db().shelfs()
             return mytemplate.render(items=items, book=book, new=new,
                                      shelfs=shelfs, active_shelf=shelf,
                                      sort1=sort1, sort2=sort2,
@@ -98,8 +101,8 @@ class bibthek(object):
     @cherrypy.expose
     def menu(self, shelf='All'):
         mytemplate = mylookup.get_template("menu.html")
-        series = self.mongo.series(shelf)
-        shelfs = self.mongo.shelfs()
+        series = self.db().series(shelf)
+        shelfs = self.db().shelfs()
         return mytemplate.render(series=series, shelfs=shelfs)
 
     @cherrypy.expose
@@ -123,7 +126,7 @@ class bibthek(object):
             else:
                 return "Only csv or sqlite"
             for row in data:
-                self.mongo.insert(row)
+                self.db().insert(row)
             if cover_front.file != None:
                 data = cover_front.file.read()
                 new_name = username + '_front.tar'
@@ -132,20 +135,20 @@ class bibthek(object):
                 cover_list, error = import_front.untar(username)
                 if error == 1: return 'Can not untar'
                 for cover in cover_list:
-                    book_id = self.mongo.get_by_cover(cover)
+                    book_id = self.db().get_by_cover(cover)
                     if book_id == None:
                         import_front.del_pic(cover, username)
                     else:
                         book_id = str(book_id['_id'])
                         new_name = import_front.move(cover, username, book_id)
-                        self.mongo.update({'book_id' : book_id,
+                        self.db().update({'book_id' : book_id,
                                            'front' : new_name})
                 import_front.del_dir(username)
             return 'Upload complete'
 
     @cherrypy.expose
     def export(self):
-        data = self.mongo.get_all()
+        data = self.db().get_all()
         file_name = export_csv(data, cherrypy.session['username'])
         path = os.path.join(absDir, file_name)
         return static.serve_file(path, "application/x-download",
@@ -153,7 +156,7 @@ class bibthek(object):
 
     @cherrypy.expose
     def export_covers(self):
-        data = self.mongo.get_all()
+        data = self.db().get_all()
         file_name = export_cover(data, cherrypy.session['username'])
         path = os.path.join(absDir, file_name)
         return static.serve_file(path, "application/x-download",
@@ -181,7 +184,7 @@ class bibthek(object):
                     f.write(params['front'].file.read())
             params['front'] = new_name
             if new == False:
-                data = self.mongo.get_by_id(params['book_id'])
+                data = self.db().get_by_id(params['book_id'])
                 try:
                     os.remove('html/' + data['front'])
                 except:
@@ -189,8 +192,13 @@ class bibthek(object):
         else:
             del params['front']
         print(params)
-        book_id = self.mongo.update(params)
+        book_id = self.db().update(params)
         return json.dumps({'book_id' : book_id, 'new' : new})
+
+    @cherrypy.expose
+    def star_series(self, series, status):
+        self.db().star_series(series, status)
+        return '0'
 
     @cherrypy.expose
     def new_isbn(self, isbn):
@@ -204,7 +212,7 @@ class bibthek(object):
         if mongo_user(cherrypy.session.id) == None:
             raise cherrypy.HTTPRedirect("/login")
         if book_id != '':
-            book = self.mongo.get_by_id(book_id)
+            book = self.db().get_by_id(book_id)
             gr_id = get('https://www.goodreads.com/book/isbn_to_id/' +
                         book['isbn']  + '?key=Fyl3BYyRgNUZAoD1M9rQ').text
         elif isbn != '':
@@ -217,7 +225,7 @@ class bibthek(object):
     def delete(self, book_id):
         if mongo_user(cherrypy.session.id) == None:
             raise cherrypy.HTTPRedirect("/login")
-        self.mongo.delete_by_id(book_id)
+        self.db().delete_by_id(book_id)
         raise cherrypy.HTTPRedirect("/")
 
     @cherrypy.expose
@@ -229,17 +237,6 @@ class bibthek(object):
             return mytemplate.render()
 
     @cherrypy.expose
-    def shelf(self, shelf):
-        if shelf=='All':
-            raise cherrypy.HTTPRedirect("/book")
-        else:
-           raise cherrypy.HTTPRedirect("/book/" + shelf)
-
-    @cherrypy.expose
-    def sort(self, sort):
-        cherrypy.session['sort'] = sort
-
-    @cherrypy.expose
     def login(self, username = '', password = ''):
         if username == '' and password == '':
             mytemplate = mylookup.get_template("login.html")
@@ -247,10 +244,14 @@ class bibthek(object):
         elif mongo_login(username, password, cherrypy.session.id):
             #Make sure the session ID stops changing
             cherrypy.session['username'] = username
-            self.mongo = mongo_db(username)
             raise cherrypy.HTTPRedirect("/")
         else:
             return "Login problem"
+
+    @cherrypy.expose
+    def logout(self):
+        cherrypy.lib.sessions.expire()
+        raise cherrypy.HTTPRedirect("/")
 
 if __name__ == '__main__':
     cherrypy.quickstart(bibthek(), '/', 'app.conf')

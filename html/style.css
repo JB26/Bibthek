@@ -44,18 +44,45 @@ body {
 }
 
 .dropdown-menu.sidebar {
-    width: 100%;
+  width: 100%;
 }
 
 .dropdown-menu.sidebar li a {
-    word-wrap: break-word;
-    white-space: normal;
+  margin-left: 0px;
+  word-wrap: break-word;
+  white-space: normal;
 }
 
 .dropdown-menu.sidebar > li:nth-child(odd) > a {
-    background:#EDEDED;
+  margin-left: 0px;
+  background:#EDEDED;
 }
 
 .dropdown-menu.sidebar > li:nth-child(even) > a {
-    background:#FFFFFF;
+  margin-left: 0px;
+  background:#FFFFFF;
+}
+
+.sidebar-star a {
+  white-space:normal;
+  margin-left: 20px;
+  padding: 5px 5px !important;
+}
+
+.sidebar-star a:hover {
+  cursor: pointer;
+}
+
+.sidebar-star > li {
+  position:relative;
+}
+
+.sidebar-star > li > i {
+  position:absolute;
+  left:3px;
+  top:12px;
+}
+
+.sidebar-star > li > i:hover {
+  cursor: pointer;
 }
