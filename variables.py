@@ -1,7 +1,13 @@
-fieldnames=['authors', 'description', 'release_date', 'genre', 'isbn',
-            'series', 'order', 'pages', 'language', 'title', 'front',
-            'publisher', 'binding', 'finish_date', 'start_date', 'add_date',
-            'abdoned', 'shelf', 'type', 'colorist', 'artist', 'book_id']
+names = ['authors', 'description', 'release_date', 'genre', 'isbn',
+         'series', 'order', 'pages', 'language', 'title', 'front',
+         'publisher', 'binding', 'add_date', 'shelf', 'type', 'colorist',
+         'artist', 'book_id']
+
+reading_stats_names = ['finish_date', 'start_date', 'abdoned']
+
+fieldnames = names + reading_stats_names
+
+dbnames = names + ['reading_stats', 'read_count', 'series_complete']
 
 articles = ["le","la","les","l","un","une","des","a","the","der","die",
             "das","ein","eine","el","los","una"]

@@ -11,3 +11,5 @@ mongodb
 export
 import
 front
+sessions
+static/covers

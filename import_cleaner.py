@@ -17,7 +17,12 @@ def clean_import(row):
         if _date in row :
             if row[_date] != '':
                 row[_date] = date_clean(row[_date])
-    if row['add_date'] == '' : row['add_date'] = str(datetime.date())
+    if row['add_date'] == '' :
+        row['add_date'] = str(datetime.date())
+    if row['series_complete'] == 'True':
+        row['series_complete'] = True
+    elif row['series_complete'] == 'False':
+        row['series_complete'] = False
     return row
 
 def title_clean(title):

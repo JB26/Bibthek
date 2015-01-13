@@ -1,6 +1,7 @@
 <body id="${book['_id']}">
   <div class="navmenu navmenu-default navmenu-fixed-left offcanvas-sm">
-    <a class="navmenu-brand visible-md visible-lg" href="#">Books</a>
+    <a class="navmenu-brand visible-md visible-lg" href="/">BibThek</a>
+    <a class="navmenu-brand">${active_shelf}</a>
     <ul class="nav nav-pills nav-stacked sidebar-star">
     
     % for idx, name in enumerate(items):
@@ -44,9 +45,6 @@
 
   <nav class="navbar navbar-default">
     <div class="container-fluid">
-      <div class="navbar-header">
-        <a class="navbar-brand" href="#">BibThek</a>
-      </div>
       <div>
         <ul class="nav navbar-nav">
           <li class="active"><a href="#">Home</a></li>
@@ -93,7 +91,7 @@
             % endfor
             </ul>
           </li>
-          <li><a href="/import_books">Import/Export</a></li>
+          <li><a href="/settings">Settings</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
           <li><a href="/logout">Logout</a></li>

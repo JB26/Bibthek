@@ -1,6 +1,6 @@
 <%include file="header.html" />
-<%include file="menu.html" args="book='book', items='items', sort1='sort1', active_shelf='active_shelf', shelfs='shelfs', sort2='sort2', active_sort='active_sort'"/>
- 
+<%include file="menu.html" />
+    <link rel="stylesheet" href="/static/css/sidebar.css" type="text/css" />
     <div class="container">
       <form method="post" action="/save${'?book_id=' + book['_id']}" enctype="multipart/form-data" id="book_form" class="form-horizontal">
         <input type="text" id="type" name="type" value="${book['type']}" style="display:none">
@@ -24,7 +24,7 @@
         </div>
         <div class="row">
           <div class="col-md-3">
-            <img src="/static/${book['front']}" alt="Cover" width="100%" id="cover">
+            <img src="/${book['front']}" alt="Cover" width="100%" id="cover">
           </div>
           <div class="col-md-9">
             <div class="form-group">
@@ -228,6 +228,6 @@
       </form>
     </div>  
 
-<script src="/static/local.js"></script>
+<script src="/static/js/local.js"></script>
 </body>
 </html>

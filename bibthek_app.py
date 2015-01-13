@@ -19,7 +19,7 @@ from get_data import google_books_data
 from import_sqlite3 import import_sqlite3
 from export_csv import export_csv
 from import_csv import import_csv
-from export_cover import export_cover
+from export_cover import export_cover, append_csv
 import import_front
 from sanity_check import sanity_check
 
@@ -106,48 +106,58 @@ class bibthek(object):
         return mytemplate.render(series=series, shelfs=shelfs)
 
     @cherrypy.expose
-    def import_books(self, data_file=None, separator=None, cover_front=None):
-        if data_file == None:
-            mytemplate = mylookup.get_template("import.html")
-            return mytemplate.render()
-        elif data_file.file == None:
+    def settings(self):
+        mytemplate = mylookup.get_template("user.html")
+        return mytemplate.render()
+
+    @cherrypy.expose
+    def import_books(self, data_file=None, seperator=None):
+        if data_file == None or data_file.file == None:
             mytemplate = mylookup.get_template("import.html")
             return mytemplate.render()
         else:
             data = data_file.file.read()
             username = cherrypy.session['username']
             new_name = username + '_' + data_file.filename
-            with open('import/' + new_name , 'wb') as f:
+            new_name = 'import/' + new_name
+            cover_import = False
+            
+            with open(new_name , 'wb') as f:
                 f.write(data)
             if data_file.filename.rsplit('.',1)[-1] == 'sqlite':
-                data = import_sqlite3('import/' + new_name, separator)
+                data = import_sqlite3(new_name, seperator)
             elif data_file.filename.rsplit('.',1)[-1] == 'csv':
-                data = import_csv('import/' + new_name, separator)
+                data = import_csv(new_name, seperator)
+            elif data_file.filename.rsplit('.',1)[-1] == 'zip':
+                data_file, cover_list, error = import_front.unzip(new_name,
+                                                                  username)
+                if error == 1: return 'Can not unzip'
+                if data_file.rsplit('.',1)[-1] == 'sqlite':
+                    data = import_sqlite3(data_file, seperator)
+                elif data_file.rsplit('.',1)[-1] == 'csv':
+                    data = import_csv(data_file, seperator)
+                cover_import = True
             else:
-                return "Only csv or sqlite"
+                return "Only csv, sqlite or zip"
             for row in data:
                 self.db().insert(row)
-            if cover_front.file != None:
-                data = cover_front.file.read()
-                new_name = username + '_front.tar'
-                with open('import/' + new_name , 'wb') as f:
-                    f.write(data)
-                cover_list, error = import_front.untar(username)
-                if error == 1: return 'Can not untar'
+            if cover_import:
                 for cover in cover_list:
-                    book_id = self.db().get_by_cover(cover)
-                    if book_id == None:
-                        import_front.del_pic(cover, username)
-                    else:
-                        book_id = str(book_id['_id'])
-                        new_name = import_front.move(cover, username, book_id)
-                        self.db().update({'book_id' : book_id,
-                                           'front' : new_name})
-                import_front.del_dir(username)
+                    if cover.rsplit('.',1)[-1] in ['jpg', 'jpeg', 'png']:
+                        book_id = self.db().get_by_cover('covers/' + cover)
+                        if book_id == None:
+                            import_front.del_pic(cover, username)
+                        else:
+                            book_id = str(book_id['_id'])
+                            new_name = import_front.move(cover, username,
+                                                         book_id)
+                            self.db().update({'book_id' : book_id,
+                                              'front' : new_name})
+                import_front.del_dir(data_file, username)
             return 'Upload complete'
 
     @cherrypy.expose
-    def export(self):
+    def export_csv(self):
         data = self.db().get_all()
         file_name = export_csv(data, cherrypy.session['username'])
         path = os.path.join(absDir, file_name)
@@ -157,7 +167,9 @@ class bibthek(object):
     @cherrypy.expose
     def export_covers(self):
         data = self.db().get_all()
-        file_name = export_cover(data, cherrypy.session['username'])
+        export_cover(data, cherrypy.session['username'])
+        file_csv = export_csv(data, cherrypy.session['username'])
+        file_name = append_csv(file_csv, cherrypy.session['username'])
         path = os.path.join(absDir, file_name)
         return static.serve_file(path, "application/x-download",
                                  "attachment", os.path.basename(path))
@@ -227,6 +239,12 @@ class bibthek(object):
             raise cherrypy.HTTPRedirect("/login")
         self.db().delete_by_id(book_id)
         raise cherrypy.HTTPRedirect("/")
+
+    @cherrypy.expose
+    def delete_all(self):
+        if mongo_user(cherrypy.session.id) == None:
+            raise cherrypy.HTTPRedirect("/login")
+        self.db().drop()
 
     @cherrypy.expose
     def register(self, secret = '', username = '', password = '', mail = ''):

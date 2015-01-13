@@ -7,7 +7,7 @@ function load_book(book_id){
         $('#' + input_id).val(input_value);
       };
     });
-    $('#cover').attr('src', '/static/' + data.front);
+    $('#cover').attr('src', '/' + data.front);
     $('#book_form').attr('action', '/save/?book_id=' + data._id);
     $('#delete').attr('href', '/delete/?book_id=' + data._id);
     $('#delete').show();

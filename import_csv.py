@@ -2,7 +2,7 @@ import csv
 from datetime import date
 
 from import_cleaner import clean_import
-from variables import fieldnames, name_fields
+from variables import dbnames, name_fields
 
 def import_csv(csv_file, separator):
     data = []
@@ -11,7 +11,7 @@ def import_csv(csv_file, separator):
         csvimport = csv.DictReader(csvfile, delimiter=';', quotechar='|')
         for row in csvimport:
             row_dict = {}
-            for fieldname in fieldnames:
+            for fieldname in dbnames:
                 if fieldname in row:
                     row_dict[fieldname] = row[fieldname]
                     if fieldname in name_fields and separator != '&':

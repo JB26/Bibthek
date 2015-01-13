@@ -1,31 +1,40 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/Strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
-<title>
-    First Try
-</title>
-</head>
-<body>
-<h1>Import</h1>
-<form method="post" enctype="multipart/form-data">
-<br>Import a sqlite3<br>
-<input type="file" name="data_file"/>
-<br />
-Import covers (tar file):
-<input type="file" name="cover_front"/>
-<br />
-Author separator:
-<br />
-<input type="radio" name="separator" value="&" checked>&
-<input type="radio" name="separator" value=",">,
-<input type="radio" name="separator" value=";">;
-<br />
-<input type="submit" value="Proceed" action="submit"/>
-</form>
-<h1>Export</h1>
-<a href="export">Download csv</a>
-<a href="export_covers">Download covers</a>
+  <%include file="header.html" />
+  <%include file="settings_menu.html" args="current_section='import'" />
+  <form method="post" enctype="multipart/form-data">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+          <h1>Import</h1>
+          <label for="data_file">Import a sqlite3/csv/zip file</label>
+          <input type="file" name="data_file" id="data_file"/>
+          <div class="radio">
+          <h5>Seperator:</h5>
+          <label class="checkbox-inline">
+          <input type="checkbox" id="inlineCheckbox1" name="seperator" value="&"> &
+          </label>
+          <label class="checkbox-inline">
+          <input type="checkbox" id="inlineCheckbox2" name="seperator" value=","> ,
+          </label>
+          <label class="checkbox-inline">
+          <input type="checkbox" id="inlineCheckbox3" name="seperator" value=";"> ;
+          </label>
+          </div>
+          <input type="submit" value="Proceed" action="submit"/>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          <h1>Export</h1>
+          <p><a href="/export">Download csv</a></p>
+          <p><a href="/export_covers">Download covers</a></p>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+       <h1>Delete Data</h1>
+       <p><a href="/delete_all">Delete all books</a></p>
+     </div>
+   </div>
 </body>
 </html>
 

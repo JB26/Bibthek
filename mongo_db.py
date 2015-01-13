@@ -181,6 +181,9 @@ class mongo_db:
         shelfs.insert(0,{'_id' : 'All'})
         return shelfs
 
+    def drop(self):
+        self.collection.drop()
+
 def mongo_add_user(username, password, user_id):
     user_info.insert({'username' : username,
                       'password' : pbkdf2_sha512.encrypt(password),
@@ -197,3 +200,4 @@ def mongo_login(username, password, session_id):
 def mongo_user(session_id):
     user = user_info.find_one({'session_id' : session_id})
     return user
+    
