@@ -129,6 +129,7 @@ class bibthek(object):
             elif data_file.filename.rsplit('.',1)[-1] == 'csv':
                 data = import_csv(new_name, seperator)
             elif data_file.filename.rsplit('.',1)[-1] == 'zip':
+                print(new_name)
                 data_file, cover_list, error = import_front.unzip(new_name,
                                                                   username)
                 if error == 1: return 'Can not unzip'
@@ -140,7 +141,7 @@ class bibthek(object):
             else:
                 return "Only csv, sqlite or zip"
             for row in data:
-                self.db().insert(row)
+                book_id = self.db().insert(row)
             if cover_import:
                 for cover in cover_list:
                     if cover.rsplit('.',1)[-1] in ['jpg', 'jpeg', 'png']:
@@ -191,8 +192,13 @@ class bibthek(object):
                 return "Only png and jpg", 1
             new_name = hashlib.sha224( bytes( str(random()) + params['book_id'],
                                       'utf-8')).hexdigest()
-            new_name = "front/" + new_name + '.' + file_type
-            with open('html/' + new_name, 'wb') as f:
+            path =  "static/covers/" + cherrypy.session['username'] + '_front/'
+            try:
+                os.mkdir(path)
+            except:
+                pass
+            new_name = path  + new_name + '.' + file_type
+            with open(new_name, 'wb') as f:
                     f.write(params['front'].file.read())
             params['front'] = new_name
             if new == False:
@@ -203,7 +209,6 @@ class bibthek(object):
                     pass 
         else:
             del params['front']
-        print(params)
         book_id = self.db().update(params)
         return json.dumps({'book_id' : book_id, 'new' : new})
 

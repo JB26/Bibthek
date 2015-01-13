@@ -59,8 +59,8 @@ class mongo_db:
         book_id = data['book_id']
         del data['book_id']
         data = str_to_array(data)
-        data['reading_stats'] = []
         if 'start_date' in data:
+            data['reading_stats'] = []
             if not isinstance(data['start_date'], list):
                 data['start_date'] = [data['start_date']]
             if not isinstance(data['finish_date'], list):
@@ -72,7 +72,7 @@ class mongo_db:
                     data['abdoned'] = [data['abdoned']]
                 for i in data['abdoned']:
                     temp[int(i)] = True
-                data['abdoned'] = temp
+            data['abdoned'] = temp
             
             for start, finish, abdoned in zip(data['start_date'],
                                               data['finish_date'],
@@ -80,6 +80,9 @@ class mongo_db:
                 data['reading_stats'].append({'start_date' : start,
                                               'finish_date' : finish,
                                               'abdoned' : abdoned})
+            del data['start_date']
+            del data['finish_date']
+            del data['abdoned']
         if book_id == 'new_book':
             book_id = str(self.collection.insert(data))
         else:

@@ -1,7 +1,7 @@
 names = ['authors', 'description', 'release_date', 'genre', 'isbn',
          'series', 'order', 'pages', 'language', 'title', 'front',
          'publisher', 'binding', 'add_date', 'shelf', 'type', 'colorist',
-         'artist', 'book_id']
+         'artist', 'cover_artist', 'book_id']
 
 reading_stats_names = ['finish_date', 'start_date', 'abdoned']
 
@@ -12,7 +12,7 @@ dbnames = names + ['reading_stats', 'read_count', 'series_complete']
 articles = ["le","la","les","l","un","une","des","a","the","der","die",
             "das","ein","eine","el","los","una"]
 
-name_fields=['authors', 'colorist', 'artist']
+name_fields=['authors', 'colorist', 'artist', 'cover_artist']
 
 date_fields=['release_date', 'finish_date', 'start_date', 'add_date']
 

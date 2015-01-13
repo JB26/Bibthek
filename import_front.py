@@ -7,19 +7,22 @@ def unzip(new_name, username):
     zf = zipfile.ZipFile(new_name, 'r')
     data_found = False
     for file_name in zf.namelist():
-        fns = file_name.split('/', maxsplit=1)
-        if len(fns) == 2 and fns[0] != 'covers':
-            return None, 'No other folders than "covers/", please!', 1
-        file_type = file_name.rsplit('.',1)
-        if len(file_type) != 2:
-            return None, "No fileextension?"
-        if file_type[-1] not in  ['jpg', 'png', 'jpeg', 'csv', 'sqlite']:
-            return None, "Only png and jpg", 1
-        if file_type[-1] in ['csv', 'sqlite']:
-            if data_found:
-                return None, "Only one data file allowed", 1
-            data_file = file_name
-            data_found = True
+        if file_name != 'covers/':
+            if file_name[0:7] == 'covers/':
+                 file_name = file_name[7:]
+            fns = file_name.split('/', maxsplit=1)
+            if len(fns) == 2:
+                return None, 'No other folders than "covers/", please!', 1
+            file_type = file_name.rsplit('.',1)
+            if len(file_type) != 2:
+                return None, "No fileextension?", 1
+            if file_type[-1] not in  ['jpg', 'png', 'jpeg', 'csv', 'sqlite']:
+                return None, "Only png and jpg", 1
+            if file_type[-1] in ['csv', 'sqlite']:
+                if data_found:
+                    return None, "Only one data file allowed", 1
+                data_file = file_name
+                data_found = True
             
     try:
         os.mkdir('import/' + username)
@@ -39,7 +42,6 @@ def move(front, username, book_id):
     new_name = 'static/covers/' + username + '_front/' + new_name
     new_name = new_name +  '.' + front.rsplit('.',1)[-1]
     os.rename('import/' + username + '/covers/' + front, new_name)
-    print(new_name)
     return new_name
 
 def del_pic(front, username):

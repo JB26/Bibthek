@@ -29,7 +29,7 @@ def sorted_titles(data, field='_id'):
 def sorted_series(data):
     data = library_sorted(data, '_id', False)  #Sort series titles
     for series in data:  #Sort book titles in series
-        if 'series_hash' in series:
+        if 'item_hash' in series:
             series['books'] = library_sorted(series['books'], 'title', True)
     return data
     

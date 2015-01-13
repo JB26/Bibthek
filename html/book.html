@@ -27,10 +27,14 @@
             <img src="/${book['front']}" alt="Cover" width="100%" id="cover">
           </div>
           <div class="col-md-9">
-            <div class="form-group">
-              <label for="authors" class="col-sm-2 control-label">Author</label>
-              <div class="col-sm-10">
-                <input class="form-control" type="text" id="authors" name="authors" value="${book['authors']}">
+            <div class="row">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="authors" class="col-sm-2 control-label">Author</label>
+                  <div class="col-sm-10">
+                    <input class="form-control" type="text" id="authors" name="authors" value="${book['authors']}">
+                  </div>
+                </div>
               </div>
             </div>
             % if book['type'] == 'comic':
@@ -39,19 +43,29 @@
             <div class='comic' style="display:none">
             % endif
               <div class="row">
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <label for="artist" class="col-sm-2 control-label">Artist</label>
+                    <div class="col-sm-10">
+                      <input class="form-control" type="text" id="artist" name="artist" value="${book['artist']}">
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
                 <div class="col-md-7">
                   <div class="form-group">
-                    <label for="artist" class="col-sm-4 control-label">Artist</label>
+                    <label for="colorist" class="col-sm-4 control-label">Colorist</label>
                     <div class="col-sm-8">
-                      <input class="form-control" type="text" id="artist" name="artist" value="${book['artist']}">
+                      <input class="form-control" type="text" id="colorist" name="colorist" value="${book['colorist']}">
                     </div>
                   </div>
                 </div>
                 <div class="col-md-5">
                   <div class="form-group">
-                    <label for="colorist" class="col-sm-4 control-label">Colorist</label>
+                    <label for="cover_artist" class="col-sm-4 control-label">Cover Artist</label>
                     <div class="col-sm-8">
-                      <input class="form-control" type="text" id="colorist" name="colorist" value="${book['colorist']}">
+                      <input class="form-control" type="text" id="cover_artist" name="cover_artist" value="${book['cover_artist']}">
                     </div>
                   </div>
                 </div>
