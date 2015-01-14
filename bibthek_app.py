@@ -7,13 +7,14 @@ from requests import get
 from datetime import date
 import hashlib
 from random import random
+import argparse
 
 import os
 localDir = os.path.dirname(__file__)
 absDir = os.path.join(os.getcwd(), localDir)
 
 from mongo_db import mongo_db
-from mongo_db import mongo_add_user, mongo_user, mongo_login
+from mongo_db import mongo_add_user, mongo_user, mongo_login, mongo_admin
 from variables import book_empty_default
 from get_data import google_books_data
 from import_sqlite3 import import_sqlite3
@@ -22,6 +23,7 @@ from import_csv import import_csv
 from export_cover import export_cover, append_csv
 import import_front
 from sanity_check import sanity_check
+import auth
 
 mylookup = TemplateLookup(directories=['html'], output_encoding='utf-8',
                           encoding_errors='replace')
@@ -38,8 +40,6 @@ class bibthek(object):
     @cherrypy.expose
     def books(self, shelf='All', sort_first=None, sort_second=None,
               book_id='new_book', book_type='book', json_data = False):
-        if mongo_user(cherrypy.session.id) == None:
-            raise cherrypy.HTTPRedirect("/login")
         book_empty = book_empty_default()
         if book_id=='new_book':
             book = book_empty
@@ -178,8 +178,6 @@ class bibthek(object):
     @cherrypy.expose
     def save(self, **params):
         params = sanity_check(params)
-        if mongo_user(cherrypy.session.id) == None:
-            raise cherrypy.HTTPRedirect("/login")
         if params['title'] == '':
             return 'Please enter a title!'
         if params['book_id'] == 'new_book':
@@ -219,15 +217,11 @@ class bibthek(object):
 
     @cherrypy.expose
     def new_isbn(self, isbn):
-        if mongo_user(cherrypy.session.id) == None:
-            raise cherrypy.HTTPRedirect("/login")
         book = google_books_data(isbn)
         return json.dumps(book)
 
     @cherrypy.expose
     def gr_id(self, book_id='', isbn=''):
-        if mongo_user(cherrypy.session.id) == None:
-            raise cherrypy.HTTPRedirect("/login")
         if book_id != '':
             book = self.db().get_by_id(book_id)
             gr_id = get('https://www.goodreads.com/book/isbn_to_id/' +
@@ -240,18 +234,20 @@ class bibthek(object):
 
     @cherrypy.expose
     def delete(self, book_id):
-        if mongo_user(cherrypy.session.id) == None:
-            raise cherrypy.HTTPRedirect("/login")
         self.db().delete_by_id(book_id)
         raise cherrypy.HTTPRedirect("/")
 
     @cherrypy.expose
     def delete_all(self):
-        if mongo_user(cherrypy.session.id) == None:
-            raise cherrypy.HTTPRedirect("/login")
         self.db().drop()
 
     @cherrypy.expose
+    def logout(self):
+        cherrypy.lib.sessions.expire()
+        raise cherrypy.HTTPRedirect("/")
+
+    @cherrypy.expose
+    @cherrypy.tools.auth(required = False)
     def register(self, secret = '', username = '', password = '', mail = ''):
         if password and username is not '':
             mongo_add_user(username, password, cherrypy.session.id)
@@ -260,6 +256,7 @@ class bibthek(object):
             return mytemplate.render()
 
     @cherrypy.expose
+    @cherrypy.tools.auth(required = False)
     def login(self, username = '', password = ''):
         if username == '' and password == '':
             mytemplate = mylookup.get_template("login.html")
@@ -271,10 +268,12 @@ class bibthek(object):
         else:
             return "Login problem"
 
-    @cherrypy.expose
-    def logout(self):
-        cherrypy.lib.sessions.expire()
-        raise cherrypy.HTTPRedirect("/")
-
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='BibThek')
+    parser.add_argument('--admin', type = str,
+                        help = 'The user you want to make an admin',
+                        metavar = "Username")
+    args = parser.parse_args()
+    if args.admin != None:
+        print(mongo_admin(args.admin, True))
     cherrypy.quickstart(bibthek(), '/', 'app.conf')

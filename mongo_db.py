@@ -203,4 +203,12 @@ def mongo_login(username, password, session_id):
 def mongo_user(session_id):
     user = user_info.find_one({'session_id' : session_id})
     return user
-    
+
+def mongo_admin(username, action):
+    if action:
+        status = user_info.update({"username" : username},
+                                  {"$set" : {"role" : 'admin'} })
+    else:
+        status = user_info.update({'username' : username},
+                         {"$set" : {"role" : None} })
+    return status
