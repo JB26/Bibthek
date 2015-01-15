@@ -1,5 +1,5 @@
 import cherrypy
-from mongo_db import mongo_user
+from app.db.mongo import mongo_user
 
 def check_auth(required = True, user_role = None):
     if required:

@@ -1,8 +1,8 @@
 import sqlite3
 from datetime import date
 
-from import_cleaner import clean_import
-from variables import dbnames, name_fields
+from app.db.data_cleaner import clean_import
+from app.variables import dbnames, name_fields
 
 def import_sqlite3(sql_file, separator):
     conn = sqlite3.connect(sql_file)

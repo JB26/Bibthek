@@ -1,8 +1,8 @@
 import csv
 from datetime import date
 
-from import_cleaner import clean_import
-from variables import dbnames, name_fields
+from app.db.data_cleaner import clean_import
+from app.variables import dbnames, name_fields
 
 def import_csv(csv_file, separator):
     data = []

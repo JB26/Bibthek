@@ -1,5 +1,5 @@
 from requests import get
-from import_cleaner import date_clean
+from app.db.data_cleaner import date_clean
 
 def google_books_data(isbn):
     r = get('https://www.googleapis.com/books/v1/volumes?q=isbn:' + isbn)

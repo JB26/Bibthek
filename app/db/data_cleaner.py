@@ -1,6 +1,5 @@
 from datetime import date
-from variables import articles
-from datetime import date
+from app.variables import articles
 
 def is_int(s):
     try:

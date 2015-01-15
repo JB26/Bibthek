@@ -2,7 +2,7 @@ import locale
 locale.setlocale(locale.LC_ALL, 'de_DE.UTF-8')
 from natsort import index_humansorted, order_by_index
 
-from variables import articles
+from app.variables import articles
 
 def sorted_shelfs(data):
     return library_sorted(data, '_id', False)
