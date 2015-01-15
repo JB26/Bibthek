@@ -10,13 +10,24 @@
           % else:
           <li>
           % endif
-            <a href="/settings">User</a></li>
+            <a href="/settings">User</a>
+          </li>
           % if current_section == 'import':
           <li class="active">
           % else:
           <li>
           % endif
-            <a href="/import_books">Import/Export</a></li>
+            <a href="/import_books">Import/Export</a>
+          </li>
+          % if user_role == 'admin':
+            % if current_section == 'admin':
+            <li class="active">
+            % else:
+            <li>
+            % endif
+              <a href="/admin">Administration</a>
+            </li>
+          % endif
         </ul>
         <ul class="nav navbar-nav navbar-right">
           <li><a href="/logout">Logout</a></li>

@@ -13,8 +13,8 @@ import os
 localDir = os.path.dirname(__file__)
 absDir = os.path.join(os.getcwd(), localDir)
 
-from mongo_db import mongo_db
-from mongo_db import mongo_add_user, mongo_user, mongo_login, mongo_admin
+from mongo_db import mongo_db, mongo_user_list
+from mongo_db import mongo_add_user, mongo_user, mongo_login, mongo_role
 from variables import book_empty_default
 from get_data import google_books_data
 from import_sqlite3 import import_sqlite3
@@ -107,14 +107,26 @@ class bibthek(object):
 
     @cherrypy.expose
     def settings(self):
+        user = mongo_user(cherrypy.session.id)
+        user_role = user['role']
         mytemplate = mylookup.get_template("user.html")
-        return mytemplate.render()
+        return mytemplate.render(user_role=user_role)
+
+
+    @cherrypy.expose
+    @cherrypy.tools.auth(user_role='admin')
+    def admin(self):
+        user_list = mongo_user_list()
+        mytemplate = mylookup.get_template("admin.html")
+        return mytemplate.render(user_role='admin', user_list=user_list)
 
     @cherrypy.expose
     def import_books(self, data_file=None, seperator=None):
         if data_file == None or data_file.file == None:
+            user = mongo_user(cherrypy.session.id)
+            user_role = user['role']
             mytemplate = mylookup.get_template("import.html")
-            return mytemplate.render()
+            return mytemplate.render(user_role=user_role)
         else:
             data = data_file.file.read()
             username = cherrypy.session['username']
@@ -275,5 +287,5 @@ if __name__ == '__main__':
                         metavar = "Username")
     args = parser.parse_args()
     if args.admin != None:
-        print(mongo_admin(args.admin, True))
+        print(mongo_admin(args.admin, 'admin'))
     cherrypy.quickstart(bibthek(), '/', 'app.conf')

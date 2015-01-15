@@ -3,6 +3,7 @@ from pymongo import MongoClient
 from bson.objectid import ObjectId
 from hashlib import md5
 from passlib.hash import pbkdf2_sha512
+from datetime import date
 
 from sort_data import sorted_series, sorted_titles, sorted_shelfs
 from sort_data import sorted_authors
@@ -187,10 +188,12 @@ class mongo_db:
     def drop(self):
         self.collection.drop()
 
-def mongo_add_user(username, password, user_id):
+def mongo_add_user(username, password, session_id):
     user_info.insert({'username' : username,
                       'password' : pbkdf2_sha512.encrypt(password),
-                      'user_id' : user_id})
+                      'session_id' : session_id,
+                      'reg_date' : str(date.today()),
+                      'role' : None})
 
 def mongo_login(username, password, session_id):
     user = user_info.find_one({'username' : username})
@@ -202,13 +205,15 @@ def mongo_login(username, password, session_id):
 
 def mongo_user(session_id):
     user = user_info.find_one({'session_id' : session_id})
+    if user != None and 'role' not in user:
+        user['role'] = None
     return user
 
-def mongo_admin(username, action):
-    if action:
-        status = user_info.update({"username" : username},
-                                  {"$set" : {"role" : 'admin'} })
-    else:
-        status = user_info.update({'username' : username},
-                         {"$set" : {"role" : None} })
+def mongo_role(username, role):
+    status = user_info.update({"username" : username},
+                              {"$set" : {"role" : role} })
     return status
+
+def mongo_user_list():
+    data = user_info.find({},{"_id" : 0}).sort([("username", 1)])
+    return data
