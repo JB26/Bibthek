@@ -13,7 +13,7 @@ import os
 localDir = os.path.dirname(__file__)
 absDir = os.path.join(os.getcwd(), localDir)
 
-from mongo_db import mongo_db, mongo_user_list
+from mongo_db import mongo_db, mongo_user_list, mongo_user_del
 from mongo_db import mongo_add_user, mongo_user, mongo_login, mongo_role
 from variables import book_empty_default
 from get_data import google_books_data
@@ -23,6 +23,7 @@ from import_csv import import_csv
 from export_cover import export_cover, append_csv
 import import_front
 from sanity_check import sanity_check
+from del_books import del_all_books, del_book
 import auth
 
 mylookup = TemplateLookup(directories=['html'], output_encoding='utf-8',
@@ -121,6 +122,17 @@ class bibthek(object):
         return mytemplate.render(user_role='admin', user_list=user_list)
 
     @cherrypy.expose
+    def delete_acc(self, password):
+        if mongo_login(cherrypy.session['username'], password, None):
+            del_all_books(self.db(), cherrypy.session['username'])
+            mongo_user_del(cherrypy.session['username'])
+            cherrypy.lib.sessions.expire()
+            raise cherrypy.HTTPRedirect("/")
+        else:
+            print('Nope!')
+        
+
+    @cherrypy.expose
     def import_books(self, data_file=None, seperator=None):
         if data_file == None or data_file.file == None:
             user = mongo_user(cherrypy.session.id)
@@ -214,7 +226,7 @@ class bibthek(object):
             if new == False:
                 data = self.db().get_by_id(params['book_id'])
                 try:
-                    os.remove('html/' + data['front'])
+                    os.remove(data['front'])
                 except:
                     pass 
         else:
@@ -246,12 +258,12 @@ class bibthek(object):
 
     @cherrypy.expose
     def delete(self, book_id):
-        self.db().delete_by_id(book_id)
+        del_book(self.db(), book_id)
         raise cherrypy.HTTPRedirect("/")
 
     @cherrypy.expose
     def delete_all(self):
-        self.db().drop()
+        del_all_books(self.db(), cherrypy.session['username'])
 
     @cherrypy.expose
     def logout(self):

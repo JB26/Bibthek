@@ -198,8 +198,9 @@ def mongo_add_user(username, password, session_id):
 def mongo_login(username, password, session_id):
     user = user_info.find_one({'username' : username})
     if user != None and pbkdf2_sha512.verify(password, user['password']):
-        user_info.update({'username' : username},
-                         {"$set" : {"session_id" : session_id} })
+        if session_id != None:
+            user_info.update({'username' : username},
+                             {"$set" : {"session_id" : session_id} })
         return True
     return False
 
@@ -208,6 +209,10 @@ def mongo_user(session_id):
     if user != None and 'role' not in user:
         user['role'] = None
     return user
+
+def mongo_user_del(username):
+    status = user_info.remove({"username" : username})
+    return status
 
 def mongo_role(username, role):
     status = user_info.update({"username" : username},
