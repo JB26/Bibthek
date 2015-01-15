@@ -224,7 +224,7 @@
                   <td>
                     <div class="checkbox">
                       <label>
-                      % if book['reading_stats'][i]['abdoned']:
+                      % if 'abdoned' in book['reading_stats'][i] and book['reading_stats'][i]['abdoned']:
                       <input type="checkbox" name="abdoned" value="${i}" checked> Abdoned
                       % else:
                       <input type="checkbox" name="abdoned" value="${i}"> Abdoned

@@ -17,11 +17,8 @@ from app.db.mongo import mongo_db, mongo_user_list, mongo_user_del
 from app.db.mongo import mongo_add_user, mongo_user, mongo_login, mongo_role
 from app.variables import book_empty_default
 from app.db.get_data import google_books_data
-from app._import.import_sqlite3 import import_sqlite3
-from app._export.export_csv import export_csv
-from app._import.import_csv import import_csv
-from app._export.export_cover import export_cover, append_csv
-import app._import.import_cover as import_cover
+from app._import.import_data import import_file
+from app._export.export_data import export_csv, export_cover_csv
 from app.db.sanity_check import sanity_check
 from app.db.del_books import del_all_books, del_book
 import app.auth as auth
@@ -133,69 +130,31 @@ class bibthek(object):
         
 
     @cherrypy.expose
-    def import_books(self, data_file=None, seperator=None):
-        if data_file == None or data_file.file == None:
+    def import_books(self, data_upload=None, separator=None):
+        if data_upload == None or data_upload.file == None:
             user = mongo_user(cherrypy.session.id)
             user_role = user['role']
             mytemplate = mylookup.get_template("import.html")
             return mytemplate.render(user_role=user_role)
         else:
-            data = data_file.file.read()
+            data = data_upload
             username = cherrypy.session['username']
-            new_name = username + '_' + data_file.filename
-            new_name = 'import/' + new_name
-            cover_import = False
-            
-            with open(new_name , 'wb') as f:
-                f.write(data)
-            if data_file.filename.rsplit('.',1)[-1] == 'sqlite':
-                data = import_sqlite3(new_name, seperator)
-            elif data_file.filename.rsplit('.',1)[-1] == 'csv':
-                data = import_csv(new_name, seperator)
-            elif data_file.filename.rsplit('.',1)[-1] == 'zip':
-                print(new_name)
-                data_file, cover_list, error = import_front.unzip(new_name,
-                                                                  username)
-                if error == 1: return 'Can not unzip'
-                if data_file.rsplit('.',1)[-1] == 'sqlite':
-                    data = import_sqlite3(data_file, seperator)
-                elif data_file.rsplit('.',1)[-1] == 'csv':
-                    data = import_csv(data_file, seperator)
-                cover_import = True
+            data, error = import_file(data, username, separator)
+            if error != '0':
+                return error
             else:
-                return "Only csv, sqlite or zip"
-            for row in data:
-                book_id = self.db().insert(row)
-            if cover_import:
-                for cover in cover_list:
-                    if cover.rsplit('.',1)[-1] in ['jpg', 'jpeg', 'png']:
-                        book_id = self.db().get_by_cover('covers/' + cover)
-                        if book_id == None:
-                            import_cover.del_pic(cover, username)
-                        else:
-                            book_id = str(book_id['_id'])
-                            new_name = import_cover.move(cover, username,
-                                                         book_id)
-                            self.db().update({'book_id' : book_id,
-                                              'front' : new_name})
-                import_cover.del_dir(data_file, username)
-            return 'Upload complete'
+                for row in data:
+                    self.db().insert(row)           
+                return 'Upload complete'
 
     @cherrypy.expose
-    def export_csv(self):
+    def export(self, _type):
         data = self.db().get_all()
-        file_name = export_csv(data, cherrypy.session['username'])
-        path = os.path.join(absDir, file_name)
-        return static.serve_file(path, "application/x-download",
-                                 "attachment", os.path.basename(path))
-
-    @cherrypy.expose
-    def export_covers(self):
-        data = self.db().get_all()
-        export_cover(data, cherrypy.session['username'])
-        file_csv = export_csv(data, cherrypy.session['username'])
-        file_name = append_csv(file_csv, cherrypy.session['username'])
-        path = os.path.join(absDir, file_name)
+        if _type == 'csv':
+            file_name = export_csv(data, cherrypy.session['username'])
+        elif _type == 'cover_csv':
+            file_name = export_cover_csv(data, cherrypy.session['username'])
+        path = os.path.join(absDir, '../' + file_name)
         return static.serve_file(path, "application/x-download",
                                  "attachment", os.path.basename(path))
         

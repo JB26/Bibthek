@@ -11,7 +11,8 @@ def is_int(s):
 def clean_import(row):
     if 'isbn' in row : row['isbn'] = row['isbn'].replace("-","")
     row['title'] = title_clean(row['title'])
-    row['order'], row['title'] = number_clean(row['title'])
+    if 'order' not in row or row['order'] == '':
+        row['order'], row['title'] = number_clean(row['title'])
     for _date in ['release_date', 'add_date', 'start_date', 'finish_date']:
         if _date in row :
             if row[_date] != '':
@@ -42,15 +43,20 @@ def clean_import(row):
 
 def title_clean(title):
     title_temp = title.rsplit(maxsplit=1)
-    if len(title_temp) == 2 and title_temp[1][1:-1].lower() in articles and title_temp[1][0] == "(" and title_temp[1][-1] == ")":
+    if (len(title_temp) == 2 and title_temp[1][1:-1].lower() in articles and
+        title_temp[1][0] == "(" and title_temp[1][-1] == ")"):
         return title_temp[1][1:-1] + ' ' + title_temp[0]
     else:
         return title
 
 def number_clean(title):
-    title_temp = title.split(maxsplit=2)
-    if len(title_temp) == 3 and is_int(title_temp[0]) and title_temp[1] ==  '-':
-        return title_temp[0], title_temp[2]
+    print(title)
+    title_temp = title.split(' - ', maxsplit=1)
+    if ( len(title_temp) == 2 and is_int(title_temp[0]) and
+        len(title_temp[0]) < 3 ):
+        print('hello')
+        print(title)
+        return title_temp[0], title_temp[1]
     else:
         return '', title
     
