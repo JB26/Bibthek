@@ -7,8 +7,8 @@ import zipfile
 from random import random
 import hashlib
 
-from app.db.data_cleaner import clean_import
-from app.variables import dbnames, name_fields
+from lib.data_cleaner import clean_import
+from lib.variables import dbnames, name_fields
 
 def import_file(data_uploaded, username, separator):
     data_file = username + '_' + data_uploaded.filename

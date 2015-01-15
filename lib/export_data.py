@@ -1,6 +1,6 @@
 import zipfile
 import csv
-from app.variables import dbnames
+from lib.variables import dbnames
 
 def export_csv(data, username):
     with open('export/books_' + username + '.csv', 'w', newline='') as csvfile:

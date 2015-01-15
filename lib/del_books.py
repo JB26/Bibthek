@@ -1,4 +1,4 @@
-from app.db.mongo import mongo_db
+from lib.mongo import mongo_db
 from shutil import rmtree
 from os import remove
 

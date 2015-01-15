@@ -5,9 +5,9 @@ from hashlib import md5
 from passlib.hash import pbkdf2_sha512
 from datetime import date
 
-from app.db.sort_data import sorted_series, sorted_titles, sorted_shelfs
-from app.db.sort_data import sorted_authors
-from app.variables import name_fields
+from lib.sort_data import sorted_series, sorted_titles, sorted_shelfs
+from lib.sort_data import sorted_authors
+from lib.variables import name_fields
 
 client = MongoClient('localhost', 9090)
 user_info = client.bibthek_users.info

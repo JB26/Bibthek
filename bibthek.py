@@ -13,15 +13,15 @@ import os
 localDir = os.path.dirname(__file__)
 absDir = os.path.join(os.getcwd(), localDir)
 
-from app.db.mongo import mongo_db, mongo_user_list, mongo_user_del
-from app.db.mongo import mongo_add_user, mongo_user, mongo_login, mongo_role
-from app.variables import book_empty_default
-from app.db.get_data import google_books_data
-from app._import.import_data import import_file
-from app._export.export_data import export_csv, export_cover_csv
-from app.db.sanity_check import sanity_check
-from app.db.del_books import del_all_books, del_book
-import app.auth as auth
+from lib.mongo import mongo_db, mongo_user_list, mongo_user_del
+from lib.mongo import mongo_add_user, mongo_user, mongo_login, mongo_role
+from lib.variables import book_empty_default
+from lib.get_data import google_books_data
+from lib.import_data import import_file
+from lib.export_data import export_csv, export_cover_csv
+from lib.sanity_check import sanity_check
+from lib.del_books import del_all_books, del_book
+import lib.auth as auth
 
 mylookup = TemplateLookup(directories=['html'], output_encoding='utf-8',
                           encoding_errors='replace')
@@ -154,7 +154,7 @@ class bibthek(object):
             file_name = export_csv(data, cherrypy.session['username'])
         elif _type == 'cover_csv':
             file_name = export_cover_csv(data, cherrypy.session['username'])
-        path = os.path.join(absDir, '../' + file_name)
+        path = os.path.join(absDir, file_name)
         return static.serve_file(path, "application/x-download",
                                  "attachment", os.path.basename(path))
         

@@ -1,5 +1,5 @@
-from app.variables import fieldnames, date_fields
-from app.db.data_cleaner import date_clean
+from lib.variables import fieldnames, date_fields
+from lib.data_cleaner import date_clean
 
 def sanity_check(params):
     data = {}
