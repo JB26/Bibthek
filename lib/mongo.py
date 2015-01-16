@@ -1,15 +1,20 @@
-import pymongo
 from pymongo import MongoClient
 from bson.objectid import ObjectId
 from hashlib import md5
 from passlib.hash import pbkdf2_sha512
 from datetime import date
+import configparser
 
 from lib.sort_data import sorted_series, sorted_titles, sorted_shelfs
 from lib.sort_data import sorted_authors
 from lib.variables import name_fields
 
-client = MongoClient('localhost', 9090)
+config = configparser.ConfigParser()
+config.read('db.conf')
+
+client = MongoClient( config['Database']['host'],
+                      int(config['Database']['port']))
+
 user_info = client.bibthek_users.info
 
 def array_to_str(data):
