@@ -23,6 +23,8 @@ function load_book(book_id){
 
 function build_reading_stats(data, i) {
   var status = '';
+  data.start = data.start.replace(/"/g, '&quot;');
+  data.finish = data.finish.replace(/"/g, '&quot;');
   if (data.abdoned == true) { status = 'checked' };
   $('#reading_stats > tbody:last').append(
     '<tr>\
@@ -148,6 +150,29 @@ window.onload = function (){
   goodreads_id(book_id, '_id');
 };
 
+$('.series_pencil').click(function(event) {
+  if (window.location.pathname.split('/')[3] == 'series') {
+    var edit = 'series'; 
+  } else if (window.location.pathname.split('/')[3] == 'author') {
+    var edit = 'authors';
+  } else {
+    var edit = null
+  };
+  var id = $( this ).attr('id'),
+  link_number = id.split('_')[0],
+  link_text = $('#' + link_number + '_a').text().replace(/"/g, '&quot;');
+  $('#' + link_number + '_star-empty').hide()
+  $('#' + link_number + '_star').hide()
+  $('#' + link_number + '_pencil').hide()
+  $('#' + link_number + '_a').replaceWith(
+    '<form class="form-inline" action="/batch_edit/' + edit + '" method="get">\
+      <input type="hidden" name="old_name" value="' + link_text + '" />\
+      <textarea style="margin-left: 20px;" class="form-control" rows="1" name="new_name">' + link_text + '</textarea>\
+      <button type="submit" class="btn btn-sm btn-default">OK</button>\
+    </form>'
+  );
+});
+
 $('#isbn_search').click(function(event) {
   event.preventDefault();
   isbn_book($('#isbn').val());  
@@ -165,9 +190,9 @@ $('#delete_reading').click(function(event) {
 });
 
 $('.series_star').click(function(event) {
-  id = $( this ).attr('id');
-  status = id.split('_')[1]
-  link_number = id.split('_')[0]
+  var id = $( this ).attr('id'),
+  status = id.split('_')[1],
+  link_number = id.split('_')[0];
   $.get( "/star_series?series=" + $('#' + link_number + '_a').text() + "&status=" + status, function( data ) {
     if (data == '0') {
       $('#' + id).toggleClass('glyphicon-star-empty glyphicon-star');

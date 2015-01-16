@@ -90,6 +90,17 @@ class mongo_db:
             self.collection.update({'_id': ObjectId(book_id)}, {"$set" : data})
         return book_id
 
+    def change_field(self, edit, old_name, new_name):
+        if edit == 'series':
+            self.collection.update({edit : old_name},
+                                   {"$set" : {edit : new_name}}, multi=True)
+        elif edit == 'authors':
+            print(old_name)
+            print(new_name)
+            self.collection.update({edit : old_name},
+                                   {"$set" : {edit + ".$" : new_name}},
+                                   multi=True)
+
     def star_series(self, series, status):
         if status == 'star':
             data = {'series_complete' : False}

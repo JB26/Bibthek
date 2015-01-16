@@ -58,6 +58,7 @@ class bibthek(object):
                     book[k] = v
             book['_id'] = str(book['_id'])
             new = False
+                        
         if json_data:
             return json.dumps(book)
         else:
@@ -192,6 +193,13 @@ class bibthek(object):
             del params['front']
         book_id = self.db().update(params)
         return json.dumps({'book_id' : book_id, 'new' : new})
+
+    @cherrypy.expose
+    def batch_edit(self, edit, old_name, new_name):
+        if edit in  ['series', 'authors']:
+            self.db().change_field(edit, old_name, new_name)
+            raise cherrypy.HTTPRedirect( str(cherrypy.request.headers
+                                            .elements('Referer')[0]) )
 
     @cherrypy.expose
     def star_series(self, series, status):

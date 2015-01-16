@@ -63,26 +63,33 @@ body {
   background:#FFFFFF;
 }
 
-.sidebar-star a {
+.sidebar a {
   white-space:normal;
   margin-left: 20px;
+  margin-right: 20px;
   padding: 5px 5px !important;
 }
 
-.sidebar-star a:hover {
+.sidebar a:hover {
   cursor: pointer;
 }
 
-.sidebar-star > li {
+.sidebar > li {
   position:relative;
 }
 
-.sidebar-star > li > i {
+.sidebar > li > .series_star {
   position:absolute;
   left:3px;
   top:12px;
 }
 
-.sidebar-star > li > i:hover {
+.sidebar > li > i:hover {
   cursor: pointer;
+}
+
+.sidebar > li > .series_pencil {
+  position:absolute;
+  right:3px;
+  top:12px;
 }
