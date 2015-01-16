@@ -38,6 +38,7 @@ class bibthek(object):
     @cherrypy.expose
     def books(self, shelf='All', sort_first=None, sort_second=None,
               book_id='new_book', book_type='book', json_data = False):
+        shelf = shelf.encode("latin-1").decode("utf-8")
         book_empty = book_empty_default()
         if book_id=='new_book':
             book = book_empty
