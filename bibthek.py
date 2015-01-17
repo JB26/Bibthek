@@ -93,8 +93,11 @@ class bibthek(object):
                     active_sort = '/author/year'
             mytemplate = mylookup.get_template("book.html")
             shelfs = self.db().shelfs()
+            active_shelf = {}
+            active_shelf['shelf'] = shelf
+            active_shelf['#items'] = self.db().count_items(shelf)
             return mytemplate.render(items=items, book=book, new=new,
-                                     shelfs=shelfs, active_shelf=shelf,
+                                     shelfs=shelfs, active_shelf=active_shelf,
                                      sort1=sort1, sort2=sort2,
                                      active_sort=active_sort)
 

@@ -1,7 +1,7 @@
 <body id="${book['_id']}">
   <div class="navmenu navmenu-default navmenu-fixed-left offcanvas-sm">
     <a class="navmenu-brand visible-md visible-lg" href="/">BibThek</a>
-    <a class="navmenu-brand">${active_shelf}</a>
+    <a class="navmenu-brand">${active_shelf['shelf']} (${active_shelf['#items']})</a>
     <ul class="nav nav-pills nav-stacked sidebar">
     
     % for idx, name in enumerate(items):
@@ -64,10 +64,10 @@
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Shelf<span class="caret"></span></a>
             <ul class="dropdown-menu">
             % for shelf in shelfs:
-              % if shelf['_id'] == active_shelf:
-              <li class="active"><a href="/books/${shelf['_id']}${active_sort}">${shelf['_id']}</a></li>
+              % if shelf['_id'] == active_shelf['shelf']:
+              <li class="active"><a href="/books/${shelf['_id']}${active_sort}">${shelf['_id']} (${shelf['#items']})</a></li>
               % else:
-              <li><a href="/books/${shelf['_id']}${active_sort}">${shelf['_id']}</a></li>
+              <li><a href="/books/${shelf['_id']}${active_sort}">${shelf['_id']} (${shelf['#items']})</a></li>
               % endif
             % endfor
             </ul>
@@ -77,9 +77,9 @@
             <ul class="dropdown-menu">
             % for v in sort1:
               % if v[2]:
-              <li class="active"><a href="/books/${active_shelf}${v[1]}">${v[0]}</a></li>
+              <li class="active"><a href="/books/${active_shelf['shelf']}${v[1]}">${v[0]}</a></li>
               % else:
-              <li><a href="/books/${active_shelf}${v[1]}">${v[0]}</a></li>
+              <li><a href="/books/${active_shelf['shelf']}${v[1]}">${v[0]}</a></li>
               % endif
             % endfor
             </ul>
@@ -89,9 +89,9 @@
             <ul class="dropdown-menu">
             % for v in sort2:
               % if v[2]:
-              <li class="active"><a href="/books/${active_shelf}${v[1]}">${v[0]}</a></li>
+              <li class="active"><a href="/books/${active_shelf['shelf']}${v[1]}">${v[0]}</a></li>
               % else:
-              <li><a href="/books/${active_shelf}${v[1]}">${v[0]}</a></li>
+              <li><a href="/books/${active_shelf['shelf']}${v[1]}">${v[0]}</a></li>
               % endif
             % endfor
             </ul>

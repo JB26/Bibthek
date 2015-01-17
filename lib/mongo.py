@@ -199,7 +199,17 @@ class mongo_db:
                                             { "$group" : { "_id" : "$shelf"}}])
         shelfs = sorted_shelfs(shelfs['result'])
         shelfs.insert(0,{'_id' : 'All'})
+        for shelf in shelfs:
+            shelf['#items'] = self.count_items(shelf['_id'])
         return shelfs
+
+    def count_items(self, shelf):
+        if shelf == 'All':
+            items = self.collection.count()
+        else:
+            print(shelf)
+            items = self.collection.find({'shelf' : shelf}).count()
+        return str(items)
 
     def drop(self):
         self.collection.drop()
