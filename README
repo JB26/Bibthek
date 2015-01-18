@@ -6,28 +6,20 @@ Importing order
 
 
 TODO:
-Test for existing cover
-usernames (double; allowed characters)
-delete account
+Test for existing cover (overwrite protection)
 reset password
 Warnings
+Nicer buttons
 date for start reading
 Sort options
-better cleaning after import
-better cleaning after deleting
-Filter: Unread…
 suggestions
 Batch delete
-Batch rename
 Table view
 Cover from google books api
 javascript reload menu
 javascript logout error
 Combining Shelfs
-Settings: current cover folder
 Rudimental User Managment
-Sort by field for authors
-Better Layout
 Statistics
 Set max_request_body_size = 104857600
 

@@ -4,6 +4,7 @@ from hashlib import md5
 from passlib.hash import pbkdf2_sha512
 from datetime import date
 import configparser
+import re
 
 from lib.sort_data import sorted_series, sorted_titles, sorted_shelfs
 from lib.sort_data import sorted_authors
@@ -225,12 +226,24 @@ class mongo_db:
     def drop(self):
         self.collection.drop()
 
-def mongo_add_user(username, password, session_id):
-    user_info.insert({'username' : username,
-                      'password' : pbkdf2_sha512.encrypt(password),
-                      'session_id' : session_id,
-                      'reg_date' : str(date.today()),
-                      'role' : None})
+def mongo_add_user(username, password, mail, session_id):
+    p = re.compile('[A-Z-+_0-9]+', re.IGNORECASE)
+    m = p.match(username)
+    if m == None:
+        return '"' + username[0] + '" not allowed in the username'
+    elif m.group() != username:
+        return '"' + username[m.span()[1]] + '" not allowed in the username'
+    if user_info.find_one({'username' : username}) != None:
+        return "Username already exists"
+    query = {'username' : username,
+             'password' : pbkdf2_sha512.encrypt(password),
+             'session_id' : session_id,
+             'reg_date' : str(date.today()),
+             'role' : None}
+    if mail != '' :
+        query['mail'] = mail
+    user_info.insert(query)
+    return '0'
 
 def mongo_login(username, password, session_id):
     user = user_info.find_one({'username' : username})

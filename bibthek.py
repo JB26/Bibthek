@@ -236,10 +236,15 @@ class bibthek(object):
     @cherrypy.tools.auth(required = False)
     def register(self, secret = '', username = '', password = '', mail = ''):
         if password and username is not '':
-            mongo_add_user(username, password, cherrypy.session.id)
+            error = mongo_add_user(username, password, mail,
+                                   cherrypy.session.id)
         else:
             mytemplate = mylookup.get_template("register.html")
             return mytemplate.render()
+        if error == '0':
+            raise cherrypy.HTTPRedirect("/")
+        else:
+            return error
 
     @cherrypy.expose
     @cherrypy.tools.auth(required = False)
