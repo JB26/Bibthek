@@ -4,7 +4,6 @@ import cherrypy
 from cherrypy.lib import static
 import json
 from requests import get
-from datetime import date
 import hashlib
 from random import random
 import argparse
@@ -15,7 +14,7 @@ absDir = os.path.join(os.getcwd(), localDir)
 
 from lib.mongo import mongo_db, mongo_user_list, mongo_user_del
 from lib.mongo import mongo_add_user, mongo_user, mongo_login, mongo_role
-from lib.variables import book_empty_default
+from lib.book_data import book_data
 from lib.get_data import google_books_data
 from lib.import_data import import_file
 from lib.export_data import export_csv, export_cover_csv
@@ -36,70 +35,62 @@ class bibthek(object):
         raise cherrypy.HTTPRedirect("/books/All/series/variant1")
 
     @cherrypy.expose
-    def books(self, shelf='All', sort_first=None, sort_second=None,
-              book_id='new_book', book_type='book', json_data = False):
+    def books(self, shelf='All', sort_first='series', sort_second='variant1',
+              _filter = 'None', book_id='new_book', book_type='book'):
         shelf = shelf.encode("latin-1").decode("utf-8")
-        book_empty = book_empty_default()
-        if book_id=='new_book':
-            book = book_empty
-            book['add_date'] = str(date.today())
-            if book_type == 'comic':
-                book['type'] = 'comic'
-            else:
-                book['type'] = 'book'
-            if shelf != 'All':
-                book['shelf'] = shelf
-            new = True
-        else:
-            book = self.db().get_by_id(book_id)
-            for k, v in book_empty.items():
-                try:
-                    book[k]
-                except:
-                    book[k] = v
-            book['_id'] = str(book['_id'])
-            new = False
-                        
-        if json_data:
-            return json.dumps(book)
-        else:
-            sort1 = [['Title', '/title', False],
-                     ['Series', '/series/variant1', False],
-                     ['Author', '/author/year', False]]
-            if sort_first == 'title':
-                items = self.db().titles(shelf)
-                sort1[0][2] = True
-                sort2 = [['Title', '/title', True]]
-                active_sort = '/title'
-            elif sort_first == 'series':
-                sort1[1][2] = True
-                sort2 = [['Variant 1', '/series/variant1', False],
-                         ['Variant 2', '/series/variant2', False]]
-                if sort_second == 'variant1':
-                    items = self.db().series(shelf, 1)
-                    sort2[0][2] = True
-                    active_sort = '/series/variant1'
-                if sort_second == 'variant2':
-                    items = self.db().series(shelf, 2)
-                    sort2[1][2] = True
-                    active_sort = '/series/variant2'
-            elif sort_first == 'author':
-                sort1[2][2] = True
-                sort2 = [['Year', '/author/year', False],
-                         ['Title', '/author/title', False]]
-                if sort_second == 'year':
-                    items = self.db().authors(shelf)
-                    sort2[0][2] = True
-                    active_sort = '/author/year'
-            mytemplate = mylookup.get_template("book.html")
-            shelfs = self.db().shelfs()
-            active_shelf = {}
-            active_shelf['shelf'] = shelf
-            active_shelf['#items'] = self.db().count_items(shelf)
-            return mytemplate.render(items=items, book=book, new=new,
-                                     shelfs=shelfs, active_shelf=active_shelf,
-                                     sort1=sort1, sort2=sort2,
-                                     active_sort=active_sort)
+        book = book_data(self.db(), book_id, book_type, shelf)
+        
+        sort1 = [{'name' : 'Title', 'url' : '/title/title/',
+                  'active' : False},
+                 {'name' : 'Series', 'url' : '/series/variant1/',
+                  'active' : False},
+                 {'name' : 'Author', 'url' : '/author/year/',
+                  'active' : False}]
+        if sort_first == 'title':
+            items = self.db().titles(shelf, _filter)
+            sort1[0]['active'] = True
+            sort2 = [{'name' : 'Title', 'url' : '/title/title/',
+                      'active' : True}]
+            active_sort = sort2[0]['url']
+        elif sort_first == 'series':
+            sort1[1]['active'] = True
+            sort2 = [{'name' : 'Variant 1',
+                      'url' : '/series/variant1/', 'active' : False},
+                     {'name' : 'Variant 2',
+                      'url' : '/series/variant2/', 'active' : False}]
+            if sort_second == 'variant1':
+                items = self.db().series(shelf, 1, _filter)
+                sort2[0]['active'] = True
+                active_sort = sort2[0]['url']
+            if sort_second == 'variant2':
+                items = self.db().series(shelf, 2, _filter)
+                sort2[1]['active'] = True
+                active_sort = sort2[1]['url']
+        elif sort_first == 'author':
+            sort1[2]['active'] = True
+            sort2 = [{'name' : 'Year', 'url' : '/author/year/',
+                      'active' : False},
+                     {'name' : 'Title', 'url' : '/author/title/',
+                      'active' : False}]
+            if sort_second == 'year':
+                items = self.db().authors(shelf, year, _filter)
+                sort2[0]['active'] = True
+                active_sort = sort2[0]['url']
+        filters = ['None', 'Unread', 'Read']
+        mytemplate = mylookup.get_template("book.html")
+        shelfs = self.db().shelfs(_filter)
+        active_shelf = {}
+        active_shelf['shelf'] = shelf
+        active_shelf['#items'] = self.db().count_items(shelf, _filter)
+        return mytemplate.render(items=items, book=book, shelfs=shelfs,
+                                 active_shelf=active_shelf,
+                                 sort1=sort1, sort2=sort2,
+                                 active_sort=active_sort,
+                                 active_filter=_filter, filters = filters)
+    @cherrypy.expose
+    def json_book(self, book_id, book_type='book', shelf='All'):
+        book = book_data(self.db(), book_id, book_type, shelf)
+        return json.dumps(book)
 
     @cherrypy.expose
     def menu(self, shelf='All'):

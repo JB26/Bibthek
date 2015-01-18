@@ -175,7 +175,7 @@
             <h3>Description</h3>
             <textarea class="form-control" id="description" name="description" rows="10">${book['description']}</textarea>
             <button type="submit" name="save">Save!</button>
-            % if new == True:
+            % if book['_id'] == 'new_book':
             <button type="submit" name="isbn_search" id="isbn_search" style="display:inline;">ISBN search</button>
             <a href="/delete${'?book_id=' + book['_id']}" id="delete" style="display:none;">Delete!</a>
             % else:

@@ -1,5 +1,5 @@
 function load_book(book_id){
-  $.getJSON( "/books", {book_id:book_id, json_data:"True"},function(data) {
+  $.getJSON( "/json_book", {book_id:book_id},function(data) {
     $.each(data, function(input_id, input_value){
       if ($.isArray(input_value)) {
         $('#' + input_id).val(input_value.join(" & "));
@@ -57,7 +57,7 @@ function build_reading_stats(data, i) {
 function empty_book(){
   $('#goodreads').hide();
   $('#delete').hide();
-  $.getJSON( "/books", {json_data:"True"},function(data) {
+  $.getJSON( "/json_book", {book_id:'new_book'},function(data) {
     $.each(data,function(input_id, input_value){
       $('#' + input_id).val(input_value)
     });
@@ -165,7 +165,7 @@ $('.series_pencil').click(function(event) {
   $('#' + link_number + '_star').hide()
   $('#' + link_number + '_pencil').hide()
   $('#' + link_number + '_a').replaceWith(
-    '<form class="form-inline" action="/batch_edit/' + edit + '" method="get">\
+    '<form class="form-inline" action="/batch_edit/' + edit + '" method="post">\
       <input type="hidden" name="old_name" value="' + link_text + '" />\
       <textarea style="margin-left: 20px;" class="form-control" rows="1" name="new_name">' + link_text + '</textarea>\
       <button type="submit" class="btn btn-sm btn-default">OK</button>\

@@ -52,6 +52,15 @@ def sort_insert_empty(data_temp, data):
             data.insert(0, data_temp)
     return data
 
+def query_filter(_filter):
+    if _filter == 'Read':
+        query = {'reading_stats.0' : { "$exists" : True}}
+    elif _filter == 'Unread':
+        query = {'reading_stats.0' : { "$exists" : False}}
+    else:
+        query = {}
+    return query
+
 class mongo_db:
     def __init__(self, username):
         self.collection = client.bibthek[username]
@@ -132,23 +141,26 @@ class mongo_db:
             data.append(row)
         return data
 
-    def aggregate_items(self, group_by, get_fields, shelf, array=False):
+    def aggregate_items(self, group_by, get_fields, shelf, _filter,
+                        array=False):
         search = [{ "$group" : { "_id" : '$' + group_by,
                                 "item_hash" : {"$last" : "$" + group_by},
                                 "books" :{ "$push": get_fields}}}]
         if array:
             search.insert(0,{"$unwind" : "$" + group_by})
+        query = query_filter(_filter)
         if shelf != 'All':
-            search.insert(0,{"$match" : {'shelf' : shelf}})
+            query['shelf'] = shelf
+        search.insert(0,{"$match" : query})
         data = self.collection.aggregate(search)
         return data
 
-    def series(self, shelf, variant):
+    def series(self, shelf, variant, _filter):
         data = self.aggregate_items('series',
                                     {"title": "$title", "_id": "$_id",
                                      "order": "$order",
                                      "series_complete": "$series_complete"},
-                                    shelf)
+                                    shelf, _filter)
         data, data_temp = hash_remove_empty(data, 'Not in a series')
         if variant == 1 and data_temp != None:
             for row in data_temp['books']:
@@ -160,24 +172,24 @@ class mongo_db:
             data = sort_insert_empty(data_temp, data)
         return data
 
-    def authors(self, shelf):
+    def authors(self, shelf, variant, _filter):
         data = self.aggregate_items('authors', {"title": "$title",
                                                 "_id": "$_id",
                                                 "order": "$release_date"},
-                                    shelf, True)
+                                    shelf, _filter, True)
         data, data_temp = hash_remove_empty(data, 'No author')
         data = sorted_authors(data)
         data = sort_insert_empty(data_temp, data)
         return data
 
-    def titles(self, shelf):
-        if shelf == 'All':
-            data_temp = self.collection.find({}, {"title" : 1} )
-        else:
-            data_temp = self.collection.find({"shelf" : shelf}, {"title" : 1} )
+    def titles(self, shelf, _filter):
+        query = query_filter(_filter)
+        if shelf != 'All':
+            query['shelf'] = shelf
+        print(query)
+        data_temp = self.collection.find(query, {"title" : 1} )
         data = []
         for row in data_temp:
-            print(row)
             data.append({'_id' : row['title'],
                          'books' : {'_id' : row['_id']}})
             
@@ -193,22 +205,21 @@ class mongo_db:
     def delete_by_id(self, book_id):
         self.collection.remove({'_id' : ObjectId(book_id)})
 
-    def shelfs(self):
+    def shelfs(self, _filter):
         shelfs = self.collection.aggregate([{"$match" : {"shelf" :
                                                          {"$ne": ''} } },
                                             { "$group" : { "_id" : "$shelf"}}])
         shelfs = sorted_shelfs(shelfs['result'])
         shelfs.insert(0,{'_id' : 'All'})
         for shelf in shelfs:
-            shelf['#items'] = self.count_items(shelf['_id'])
+            shelf['#items'] = self.count_items(shelf['_id'], _filter)
         return shelfs
 
-    def count_items(self, shelf):
-        if shelf == 'All':
-            items = self.collection.count()
-        else:
-            print(shelf)
-            items = self.collection.find({'shelf' : shelf}).count()
+    def count_items(self, shelf, _filter):
+        query = query_filter(_filter)
+        if shelf != 'All':
+            query['shelf'] = shelf
+        items = self.collection.find(query).count()
         return str(items)
 
     def drop(self):
