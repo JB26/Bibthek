@@ -12,7 +12,7 @@ import os
 localDir = os.path.dirname(__file__)
 absDir = os.path.join(os.getcwd(), localDir)
 
-from lib.mongo import mongo_db, mongo_user_list, mongo_user_del
+from lib.mongo import mongo_db, mongo_user_list, mongo_user_del, mongo_change_pw
 from lib.mongo import mongo_add_user, mongo_user, mongo_login, mongo_role
 from lib.book_data import book_data
 from lib.get_data import google_books_data
@@ -113,6 +113,15 @@ class bibthek(object):
         user_list = mongo_user_list()
         mytemplate = mylookup.get_template("admin.html")
         return mytemplate.render(user_role='admin', user_list=user_list)
+
+    @cherrypy.expose
+    def change_pw(self, password_old, password_new):
+        error = mongo_change_pw(cherrypy.session['username'], password_old,
+                                password_new)
+        if error == '0':
+            raise cherrypy.HTTPRedirect("/logout")
+        else:
+            return error
 
     @cherrypy.expose
     def delete_acc(self, password):

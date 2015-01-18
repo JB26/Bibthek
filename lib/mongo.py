@@ -260,6 +260,16 @@ def mongo_user(session_id):
         user['role'] = None
     return user
 
+def mongo_change_pw(username, password_old, password_new):
+    user = user_info.find_one({'username' : username})
+    if pbkdf2_sha512.verify(password_old, user['password']):
+        user_info.update({'username' : username},
+                         {"$set" : {"password" :
+                                    pbkdf2_sha512.encrypt(password_new)} })
+        return "0"
+    else:
+        return "Wrong password"
+
 def mongo_user_del(username):
     status = user_info.remove({"username" : username})
     return status
