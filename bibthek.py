@@ -4,8 +4,6 @@ import cherrypy
 from cherrypy.lib import static
 import json
 from requests import get
-import hashlib
-from random import random
 import argparse
 
 import os
@@ -14,13 +12,13 @@ absDir = os.path.join(os.getcwd(), localDir)
 
 from lib.mongo import mongo_db, mongo_user_list, mongo_user_del, mongo_change_pw
 from lib.mongo import mongo_add_user, mongo_user, mongo_login, mongo_role
-from lib.book_data import book_data
+from lib.book_data import get_book_data, save_book_data
 from lib.get_data import google_books_data
 from lib.import_data import import_file
 from lib.export_data import export_csv, export_cover_csv
-from lib.sanity_check import sanity_check
 from lib.del_books import del_all_books, del_book
 import lib.auth as auth
+from lib.menu_data import menu_data
 
 mylookup = TemplateLookup(directories=['html'], output_encoding='utf-8',
                           encoding_errors='replace')
@@ -38,44 +36,10 @@ class bibthek(object):
     def books(self, shelf='All', sort_first='series', sort_second='variant1',
               _filter = 'None', book_id='new_book', book_type='book'):
         shelf = shelf.encode("latin-1").decode("utf-8")
-        book = book_data(self.db(), book_id, book_type, shelf)
-        
-        sort1 = [{'name' : 'Title', 'url' : '/title/title/',
-                  'active' : False},
-                 {'name' : 'Series', 'url' : '/series/variant1/',
-                  'active' : False},
-                 {'name' : 'Author', 'url' : '/author/year/',
-                  'active' : False}]
-        if sort_first == 'title':
-            items = self.db().titles(shelf, _filter)
-            sort1[0]['active'] = True
-            sort2 = [{'name' : 'Title', 'url' : '/title/title/',
-                      'active' : True}]
-            active_sort = sort2[0]['url']
-        elif sort_first == 'series':
-            sort1[1]['active'] = True
-            sort2 = [{'name' : 'Variant 1',
-                      'url' : '/series/variant1/', 'active' : False},
-                     {'name' : 'Variant 2',
-                      'url' : '/series/variant2/', 'active' : False}]
-            if sort_second == 'variant1':
-                items = self.db().series(shelf, 1, _filter)
-                sort2[0]['active'] = True
-                active_sort = sort2[0]['url']
-            if sort_second == 'variant2':
-                items = self.db().series(shelf, 2, _filter)
-                sort2[1]['active'] = True
-                active_sort = sort2[1]['url']
-        elif sort_first == 'author':
-            sort1[2]['active'] = True
-            sort2 = [{'name' : 'Year', 'url' : '/author/year/',
-                      'active' : False},
-                     {'name' : 'Title', 'url' : '/author/title/',
-                      'active' : False}]
-            if sort_second == 'year':
-                items = self.db().authors(shelf, year, _filter)
-                sort2[0]['active'] = True
-                active_sort = sort2[0]['url']
+        book = get_book_data(self.db(), book_id, book_type, shelf)
+
+        sort1, sort2, active_sort, items = menu_data(self.db(), shelf, _filter,
+                                                     sort_first, sort_second)
         filters = ['None', 'Unread', 'Read']
         mytemplate = mylookup.get_template("book.html")
         shelfs = self.db().shelfs(_filter)
@@ -89,7 +53,7 @@ class bibthek(object):
                                  active_filter=_filter, filters = filters)
     @cherrypy.expose
     def json_book(self, book_id, book_type='book', shelf='All'):
-        book = book_data(self.db(), book_id, book_type, shelf)
+        book = get_book_data(self.db(), book_id, book_type, shelf)
         return json.dumps(book)
 
     @cherrypy.expose
@@ -165,38 +129,8 @@ class bibthek(object):
         
     @cherrypy.expose
     def save(self, **params):
-        params = sanity_check(params)
-        if params['title'] == '':
-            return 'Please enter a title!'
-        if params['book_id'] == 'new_book':
-            new = True
-        else:
-            new = False
-        if params['front'].file != None:
-            file_type =  params['front'].filename.rsplit('.',1)[-1]
-            if file_type not in  ['jpg', 'png', 'jpeg']:
-                return "Only png and jpg", 1
-            new_name = hashlib.sha224( bytes( str(random()) + params['book_id'],
-                                      'utf-8')).hexdigest()
-            path =  "static/covers/" + cherrypy.session['username'] + '_front/'
-            try:
-                os.mkdir(path)
-            except:
-                pass
-            new_name = path  + new_name + '.' + file_type
-            with open(new_name, 'wb') as f:
-                    f.write(params['front'].file.read())
-            params['front'] = new_name
-            if new == False:
-                data = self.db().get_by_id(params['book_id'])
-                try:
-                    os.remove(data['front'])
-                except:
-                    pass 
-        else:
-            del params['front']
-        book_id = self.db().update(params)
-        return json.dumps({'book_id' : book_id, 'new' : new})
+        book_id, new, error = save_book_data(self.db(), params)
+        return json.dumps({'book_id' : book_id, 'new' : new, 'error' : error})
 
     @cherrypy.expose
     def batch_edit(self, edit, old_name, new_name):

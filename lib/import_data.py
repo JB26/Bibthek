@@ -9,6 +9,7 @@ import hashlib
 
 from lib.data_cleaner import clean_import
 from lib.variables import dbnames, name_fields
+from lib.book_data import cover_name
 
 def import_file(data_uploaded, username, separator):
     data_file = username + '_' + data_uploaded.filename
@@ -37,7 +38,9 @@ def read_file(data_file, username, separator):
             return None, "No csv or sqlite found"
         for book in data:
             if book['front'][7:] in cover_list:
-                new_name = move_cover(book['front'][7:], username)
+                new_name, error = move_cover(book['front'][7:], username)
+                if error != '0':
+                    return None, error
                 book['front'] = new_name
     else:
         return None, "Only csv, sqlite or zip"
@@ -115,9 +118,7 @@ def unzip(data_zip, username):
     return data_file, os.listdir('import/' + username + '/covers'), '0'
 
 def move_cover(front, username):
-    new_name = hashlib.sha224( bytes( str(random()) + username,
-                                      'utf-8')).hexdigest()
-    new_name = 'static/covers/' + username + '_front/' + new_name
-    new_name = new_name +  '.' + front.rsplit('.',1)[-1]
+    file_type = front.rsplit('.',1)[-1]
+    new_name, error = cover_name(username, file_type)
     os.rename('import/' + username + '/covers/' + front, new_name)
-    return new_name
+    return new_name, error

@@ -1,8 +1,13 @@
 from datetime import date
 from lib.mongo import mongo_db
 from lib.variables import book_empty_default
+from lib.sanity_check import sanity_check
+import os
+import hashlib
+import cherrypy
+from random import random
 
-def book_data(mongo, book_id, book_type, shelf):
+def get_book_data(mongo, book_id, book_type, shelf):
     book_empty = book_empty_default()
     if book_id=='new_book':
         book = book_empty
@@ -22,3 +27,52 @@ def book_data(mongo, book_id, book_type, shelf):
                 book[k] = v
         book['_id'] = str(book['_id'])
     return book
+
+def save_book_data(mongo, params):
+    params = sanity_check(params)
+    if params['title'] == '':
+        return None, None, 'Please enter a title!'
+    if params['book_id'] == 'new_book':
+        new = True
+    else:
+        new = False
+    if params['front'].file != None:
+        file_type =  params['front'].filename.rsplit('.',1)[-1]
+        if file_type not in  ['jpg', 'png', 'jpeg']:
+            return None, None, "Only png and jpg"
+        new_name, error = cover_name(cherrypy.session['username'], file_type)
+        if error != '0':
+            return  None, None, error
+        try:
+            os.mkdir(path)
+        except:
+            pass
+        with open(new_name, 'wb') as f:
+                f.write(params['front'].file.read())
+                print('write')
+        params['front'] = new_name
+        if new == False:
+            data = mongo.get_by_id(params['book_id'])
+            try:
+                os.remove(data['front'])
+            except:
+                pass 
+    else:
+        del params['front']
+    book_id = mongo.update(params)
+    return book_id, new, "0"
+
+def cover_name(username, file_type):
+    first_run = True
+    i = 0
+    path =  "static/covers/" + username + '_front/'
+    while first_run or (os.path.isfile(new_name) and i < 5):
+        first_run = False
+        new_name = hashlib.sha224( bytes( str(random()),
+                                          'utf-8')).hexdigest()
+        new_name = path  + new_name + '.' + file_type
+        i = i+1
+    if i == 5:
+        return None, "Wtf? Couldn't generate new cover name! Try again?"
+    else:
+        return new_name, '0'

@@ -110,10 +110,16 @@ $( '#book_form' ).submit(function( event ) {
     processData: false,
     type: 'POST',
     success: function(json_data){
-        var data = $.parseJSON(json_data);
-        if (data['new'] == true) {window.location.assign(window.location.pathname + "?book_id=" + data['book_id'])
+      var data = $.parseJSON(json_data);
+      if (data['error'] != 0) {
+        alert(data['error']);
+      }else{
+        if (data['new'] == true) {
+          window.location.assign(window.location.pathname + "?book_id=" + data['book_id']);
         } else {
-        load_book(data['book_id'])};
+          load_book(data['book_id']);
+        }
+      }
     }
   });
 });
