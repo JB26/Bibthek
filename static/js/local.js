@@ -31,13 +31,13 @@ function build_reading_stats(data, i) {
      <th scope="row">' + i + '</th>\
      <td>\
        <div class="form-group">\
-         <label for="start_' + i + '" class="col-sm-4 control-label">Started</label>\
+         <label for="start_' + i + '" class="col-sm-4 control-label date_js" id="start_' + i + '-label">Started</label>\
          <div class="col-sm-8">\
            <input class="form-control" type="text" name="start_date" id="start_' + i + '" value="' + data.start + '">\
          </div>\
        </div>\
        <div class="form-group">\
-         <label for="finish_' + i + '" class="col-sm-4 control-label">Finished</label>\
+         <label for="finish_' + i + '" class="col-sm-4 control-label date_js" id="finish_' + i + '-label">Finished</label>\
          <div class="col-sm-8">\
            <input class="form-control" type="text" name="finish_date" id="finish_' + i + '" value="' + data.finish + '">\
          </div>\
@@ -149,6 +149,13 @@ window.onload = function (){
     history.replaceState(book_id, '', window.location.pathname + '?book_id=' + book_id)};
   goodreads_id(book_id, '_id');
 };
+
+$('#reading_stats').on( "click", ".date_js", function() {
+  var d = new Date();
+  var time = d.toISOString().split('T')[0];
+  var input_id = $( this ).attr('id').split('-')[0]
+  $('#' + input_id).val(time);
+});
 
 $('.series_pencil').click(function(event) {
   if (window.location.pathname.split('/')[3] == 'series') {
