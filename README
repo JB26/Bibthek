@@ -1,6 +1,8 @@
 The goal of this Project is to make a replacemant for GCstar
 
 TODO:
+logging
+better error handling (not just except: but except EXCEPTION:)
 Better admin page
 Warnings
 Nicer buttons
