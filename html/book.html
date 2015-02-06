@@ -1,6 +1,7 @@
 <%include file="header.html" />
 <%include file="menu.html" />
     <link rel="stylesheet" href="/static/css/sidebar.css" type="text/css" />
+    <link rel="stylesheet" href="/static/css/autocomplete.css" type="text/css" />
     <div class="container">
       <form method="post" action="/save${'?book_id=' + book['_id']}" enctype="multipart/form-data" id="book_form" class="form-horizontal">
         <input type="text" id="type" name="type" value="${book['type']}" style="display:none">
@@ -32,7 +33,7 @@
                 <div class="form-group">
                   <label for="authors" class="col-sm-2 control-label">Author</label>
                   <div class="col-sm-10">
-                    <input class="form-control" type="text" id="authors" name="authors" value="${book['authors'] | h}">
+                    <input class="form-control autocomplete" type="text" id="authors" name="authors" value="${book['authors'] | h}">
                   </div>
                 </div>
               </div>
@@ -233,7 +234,7 @@
                   <td>
                     <div class="checkbox">
                       <label>
-                      % if 'abdoned' in book['reading_stats'][i] and book['reading_stats'][i]['abdoned']:
+                      % if 'abdoned' in reading_stats and reading_stats['abdoned']:
                       <input type="checkbox" name="abdoned" value="${i}" checked> Abdoned
                       % else:
                       <input type="checkbox" name="abdoned" value="${i}"> Abdoned

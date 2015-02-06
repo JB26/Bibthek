@@ -223,6 +223,15 @@ class mongo_db:
             shelf['#items'] = self.count_items(shelf['_id'], _filter)
         return shelfs
 
+    def autocomplete(self, query, field, array):
+        search = [{"$match" : {field : {"$regex": query} } },
+                 { "$group" : {"_id" : "$" + field}}]
+        if array:
+            search.insert(0,{"$unwind" : "$" + field})
+        ac_list = self.collection.aggregate(search)
+        ac_list = {'suggestions' : [ x['_id'] for x in ac_list['result'] ]}
+        return ac_list
+
     def count_items(self, shelf, _filter):
         query = query_filter(_filter)
         if shelf != 'All':

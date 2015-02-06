@@ -59,6 +59,17 @@ class bibthek(object):
         return json.dumps(book)
 
     @cherrypy.expose
+    def autocomplete(self, field, query):
+        if field in ['authors', 'artist', 'colorist', 'cover_artist', 'genre']:
+            array = True
+            ac_list = mongo_db.autocomplete(self.db(), query, field, array)
+            return json.dumps(ac_list)
+        if field in ['publisher', 'series', 'language', 'binding', 'shelf']:
+            array = False
+            ac_list = mongo_db.autocomplete(self.db(), query, field, array)
+            return json.dumps(ac_list)
+
+    @cherrypy.expose
     def menu(self, shelf='All'):
         mytemplate = mylookup.get_template("menu.html")
         series = self.db().series(shelf)
