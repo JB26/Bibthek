@@ -54,12 +54,19 @@ def sort_insert_empty(data_temp, data):
     return data
 
 def query_filter(_filter):
-    if _filter == 'Read':
+    single_filter = _filter.split('+')
+    if 'Read' in single_filter:
         query = {'reading_stats.0' : { "$exists" : True}}
-    elif _filter == 'Unread':
+    elif 'Unread' in single_filter:
         query = {'reading_stats.0' : { "$exists" : False}}
     else:
         query = {}
+    if 'Physical' in single_filter:
+        query['form'] = { '$in' : [None, 'Physical']}
+    elif 'Digital' in single_filter:
+        query['form'] = 'Digital'
+    elif 'Borrowed' in single_filter:
+        query['form'] = 'Borrowed'   
     return query
 
 class mongo_db:

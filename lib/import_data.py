@@ -6,6 +6,7 @@ import os
 import zipfile
 from random import random
 import hashlib
+from ast import literal_eval
 
 from lib.data_cleaner import clean_import
 from lib.variables import dbnames, name_fields
@@ -54,6 +55,8 @@ def import_data(_import, separator):
             if fieldname in name_fields and separator != '&':
                 data_temp[fieldname] = data_temp[fieldname].replace(separator,
                                                                 " &")
+            if fieldname == 'reading_stats':
+                data_temp[fieldname] = literal_eval(data_temp[fieldname])
     if ('isbn' in data_temp and
         data_temp['isbn'] != '') or ('author' in data_temp and
                                     data_temp['author'] != ''):

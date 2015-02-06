@@ -34,13 +34,15 @@ class bibthek(object):
 
     @cherrypy.expose
     def books(self, shelf='All', sort_first='series', sort_second='variant1',
-              _filter = 'None', book_id='new_book', book_type='book'):
+              _filter = '', book_id='new_book', book_type='book'):
         shelf = shelf.encode("latin-1").decode("utf-8")
         book = get_book_data(self.db(), book_id, book_type, shelf)
 
         sort1, sort2, active_sort, items = menu_data(self.db(), shelf, _filter,
                                                      sort_first, sort_second)
-        filters = ['None', 'Unread', 'Read']
+        filters = [{'name' : 'Status', 'filter' : ['Unread', 'Read']},
+                   {'name' : 'Form', 'filter' : ['Physical', 'Digital',
+                                                 'Borrowed']}]
         mytemplate = mylookup.get_template("book.html")
         shelfs = self.db().shelfs(_filter)
         active_shelf = {}

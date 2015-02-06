@@ -99,12 +99,24 @@
           <li class="dropdown">
             <a class="dropdown-toggle" data-toggle="dropdown" href="#">Filter<span class="caret"></span></a>
             <ul class="dropdown-menu">
-            % for row in filters:
-              % if row == active_filter:
-              <li class="active"><a href="/books/${active_shelf['shelf']}${active_sort}${row}">${row}</a></li>
-              % else:
-              <li><a href="/books/${active_shelf['shelf']}${active_sort}${row}">${row}</a></li>
-              % endif
+            % for _filter in filters:
+              <li role="presentation" class="dropdown-header">${_filter['name']}</li>
+              % for row in _filter['filter']:
+                % if row in active_filter.split('+'):
+                <%
+                  new_filter = '+'.join([ x for x in active_filter.split('+') if x != row ])
+                %>
+                <li class="active"><a href="/books/${active_shelf['shelf']}${active_sort}${new_filter}">${row}</a></li>
+                % else:
+                <%
+                  if active_filter != '':
+                    new_filter = '+'.join([ x for x in active_filter.split('+') if x not in _filter['filter'] ] + [row])
+                  else:
+                    new_filter = row
+                %>
+                <li><a href="/books/${active_shelf['shelf']}${active_sort}${new_filter}">${row}</a></li>
+                % endif
+              % endfor
             % endfor
             </ul>
           </li>

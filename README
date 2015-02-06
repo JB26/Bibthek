@@ -18,5 +18,7 @@ Rudimental User Managment
 Statistics
 Set max_request_body_size = 104857600
 
-To test the site use:
+To start the site use:
+cd WORKING_DIR
+mongod --quiet --config mongodb/mongodb.conf
 python bibthek_app.py
