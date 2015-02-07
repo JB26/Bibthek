@@ -33,7 +33,12 @@
           % endfor
           </ul>
         % else:
-          <a href="?book_id=${name['books']['_id']}" class="book_title" id="${name['books']['_id']}" >${name['_id']}</a>
+          <a href="?book_id=${name['books']['_id']}" class="book_title" id="${name['books']['_id']}" >
+            % if 'order' in name and name['order'] != '':
+              ${name['order']} - 
+            % endif
+            ${name['_id']}
+          </a>
         % endif
       </li>
     % endfor

@@ -7,7 +7,7 @@ import configparser
 import re
 
 from lib.sort_data import sorted_series, sorted_titles, sorted_shelfs
-from lib.sort_data import sorted_authors
+from lib.sort_data import sorted_apg
 from lib.variables import name_fields
 
 config = configparser.ConfigParser()
@@ -47,8 +47,6 @@ def hash_remove_empty(data, warning):
 
 def sort_insert_empty(data_temp, data):
     if data_temp != None:
-            for book in data_temp['books']:
-                del book['order']
             data_temp['books'] = sorted_titles(data_temp['books'], 'title')
             data.insert(0, data_temp)
     return data
@@ -180,6 +178,7 @@ class mongo_db:
             for row in data_temp['books']:
                 data.append({'_id' : row['title'],
                              'books' : {'_id' : row['_id']}})
+            print(data)
             data = sorted_series(data)
         else:
             data = sorted_series(data)
@@ -187,27 +186,95 @@ class mongo_db:
         return data
 
     def authors(self, shelf, variant, _filter):
-        data = self.aggregate_items('authors', {"title": "$title",
-                                                "_id": "$_id",
-                                                "order": "$release_date"},
-                                    shelf, _filter, True)
+        if variant == 'year':
+            data = self.aggregate_items(
+                'authors',
+                {
+                    "title": "$title", "_id": "$_id",
+                    "order": "$release_date"
+                },
+                shelf, _filter, True
+                )
+            sort_by_order = True
+        elif variant == 'title':
+            data = self.aggregate_items(
+                'authors', {"title": "$title", "_id": "$_id"}, shelf,
+                _filter, True
+                )
+            sort_by_order = False
         data, data_temp = hash_remove_empty(data, 'No author')
-        data = sorted_authors(data)
+        data = sorted_apg(data, sort_by_order, 'authors')
         data = sort_insert_empty(data_temp, data)
         return data
 
-    def titles(self, shelf, _filter):
+    def publisher(self, shelf, variant, _filter):
+        if variant == 'year':
+            data = self.aggregate_items(
+                'publisher',
+                {
+                    "title": "$title", "_id": "$_id",
+                    "order": "$release_date"
+                },
+                shelf, _filter, False
+                )
+            sort_by_order = True
+        elif variant == 'title':
+            data = self.aggregate_items(
+                'publisher', {"title": "$title", "_id": "$_id"}, shelf,
+                _filter, False
+                )
+            sort_by_order = False
+        data, data_temp = hash_remove_empty(data, 'No publisher')
+        data = sorted_apg(data, sort_by_order, 'publisher')
+        data = sort_insert_empty(data_temp, data)
+        return data
+
+    def genre(self, shelf, variant, _filter):
+        if variant == 'year':
+            data = self.aggregate_items(
+                'genre',
+                {
+                    "title": "$title", "_id": "$_id",
+                    "order": "$release_date"
+                },
+                shelf, _filter, True
+                )
+            sort_by_order = True
+        elif variant == 'title':
+            data = self.aggregate_items(
+                'genre', {"title": "$title", "_id": "$_id"}, shelf,
+                _filter, True
+                )
+            sort_by_order = False
+        data, data_temp = hash_remove_empty(data, 'No genre')
+        data = sorted_apg(data, sort_by_order, 'genre')
+        data = sort_insert_empty(data_temp, data)
+        return data
+
+    def titles(self, shelf, variant, _filter):
         query = query_filter(_filter)
         if shelf != 'All':
             query['shelf'] = shelf
-        print(query)
-        data_temp = self.collection.find(query, {"title" : 1} )
+        if variant == 'title':
+            data_temp = self.collection.find(query, {"title" : 1} )
+        elif variant == 'year':
+            data_temp = self.collection.find(query, {"title" : 1,
+                                                     "release_date" : 1} )
+        elif variant == 'pages':
+             data_temp = self.collection.find(query, {"title" : 1,
+                                                      "pages" : 1} )
         data = []
         for row in data_temp:
-            data.append({'_id' : row['title'],
-                         'books' : {'_id' : row['_id']}})
-            
-        return sorted_titles(data)
+            if variant == 'title':
+                data.append({'_id' : row['title'],
+                             'books' : {'_id' : row['_id']}})
+            elif variant == 'year':
+                data.append({'_id' : row['title'], 'order' : row['release_date'],
+                             'books' : {'_id' : row['_id']}})
+            elif variant == 'pages':
+                data.append({'_id' : row['title'], 'order' : row['pages'],
+                             'books' : {'_id' : row['_id']}})
+        return sorted_titles(data, '_id', variant)
 
     def ids(self):
         data = self.collection.find({},{'_id': 1})

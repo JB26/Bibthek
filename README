@@ -6,7 +6,6 @@ better error handling (not just except: but except EXCEPTION:)
 Better admin page
 Warnings
 Nicer buttons
-Sort options
 Batch delete
 Table view
 Cover from google books api
