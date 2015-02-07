@@ -23,11 +23,9 @@ def menu_data(mongo, shelf, _filter, sort_first, sort_second):
             sort2[1]['active'] = True
             active_sort = sort2[1]['url']
         elif sort_second == 'pages':
-            print('ok')
             items = mongo.titles(shelf, 'pages', _filter)
             sort2[2]['active'] = True
             active_sort = sort2[2]['url']
-        print(sort_second)
     elif sort_first == 'series':
         sort1[1]['active'] = True
         sort2 = [{'name' : 'Variant 1',

@@ -121,8 +121,6 @@ class mongo_db:
             self.collection.update({edit : old_name},
                                    {"$set" : {edit : new_name}}, multi=True)
         elif edit == 'authors':
-            print(old_name)
-            print(new_name)
             self.collection.update({edit : old_name},
                                    {"$set" : {edit + ".$" : new_name}},
                                    multi=True)
@@ -178,7 +176,6 @@ class mongo_db:
             for row in data_temp['books']:
                 data.append({'_id' : row['title'],
                              'books' : {'_id' : row['_id']}})
-            print(data)
             data = sorted_series(data)
         else:
             data = sorted_series(data)

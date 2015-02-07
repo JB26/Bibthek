@@ -27,7 +27,6 @@ def export_cover_csv(data, username):
     zip_name = "export/covers+csv_" + username + ".zip"
     zf = zipfile.ZipFile(zip_name, 'w')
     for row in data:
-        print(row)
         if 'front' in row:
             file_list.append(row['front'])
     for _file in file_list:

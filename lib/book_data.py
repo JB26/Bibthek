@@ -49,7 +49,6 @@ def save_book_data(mongo, params):
             pass
         with open(new_name, 'wb') as f:
                 f.write(params['front'].file.read())
-                print('write')
         params['front'] = new_name
         if new == False:
             data = mongo.get_by_id(params['book_id'])

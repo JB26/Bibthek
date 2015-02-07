@@ -50,12 +50,9 @@ def title_clean(title):
         return title
 
 def number_clean(title):
-    print(title)
     title_temp = title.split(' - ', maxsplit=1)
     if ( len(title_temp) == 2 and is_int(title_temp[0]) and
         len(title_temp[0]) < 3 ):
-        print('hello')
-        print(title)
         return title_temp[0], title_temp[1]
     else:
         return '', title
