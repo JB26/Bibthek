@@ -36,3 +36,23 @@ def menu_data(mongo, shelf, _filter, sort_first, sort_second):
             sort2[0]['active'] = True
             active_sort = sort2[0]['url']
     return sort1, sort2, active_sort, items
+
+def menu_filter(mongo, shelf):
+    return [
+        {
+            'name' : 'Status', 'short' : 'stat_',
+            'filter' : ['Unread', 'Read']
+        },
+        {
+            'name' : 'Form', 'short' : 'form_',
+            'filter' : ['Physical', 'Digital', 'Borrowed']
+        },
+        {
+            'name' : 'Language', 'short' : 'lang_',
+            'filter' : mongo.filter_list(shelf, 'language')
+        },
+        {
+            'name' : 'Binding', 'short' : 'bind_',
+            'filter' : mongo.filter_list(shelf, 'binding')
+        }
+        ]

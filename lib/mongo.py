@@ -53,20 +53,26 @@ def sort_insert_empty(data_temp, data):
             data.insert(0, data_temp)
     return data
 
-def query_filter(_filter):
-    single_filter = _filter.split('+')
-    if 'Read' in single_filter:
+def query_filter(filters):
+    filter_list = filters.split('+')
+    if 'stat_Read' in filter_list:
         query = {'reading_stats.0' : { "$exists" : True}}
-    elif 'Unread' in single_filter:
+    elif 'stat_Unread' in filter_list:
         query = {'reading_stats.0' : { "$exists" : False}}
     else:
         query = {}
-    if 'Physical' in single_filter:
+    if 'form_Physical' in filter_list:
         query['form'] = { '$in' : [None, 'Physical']}
-    elif 'Digital' in single_filter:
+    elif 'form_Digital' in filter_list:
         query['form'] = 'Digital'
-    elif 'Borrowed' in single_filter:
-        query['form'] = 'Borrowed'   
+    elif 'form_Borrowed' in filter_list:
+        query['form'] = 'Borrowed'
+    for _filter in filter_list:
+        if len(_filter) > 5:
+            if _filter[0:5] == 'lang_':
+                query['language'] = _filter[5:]
+            if  _filter[0:5] == 'bind_':
+                query['binding'] = _filter[5:]
     return query
 
 class mongo_db:
@@ -231,6 +237,13 @@ class mongo_db:
         ac_list = self.collection.aggregate(search)
         ac_list = {'suggestions' : [ x['_id'] for x in ac_list['result'] ]}
         return ac_list
+
+    def filter_list(self, shelf, field):
+        search = [{ "$group" : {"_id" : "$" + field}}]
+        if shelf != 'All':
+            search.insert(0,{ "$match" : {"shelf" : shelf}})
+        filter_list = self.collection.aggregate(search)
+        return [ x['_id'] for x in filter_list['result'] if x['_id'] != '']
 
     def count_items(self, shelf, _filter):
         query = query_filter(_filter)

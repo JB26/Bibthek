@@ -18,7 +18,7 @@ from lib.import_data import import_file
 from lib.export_data import export_csv, export_cover_csv
 from lib.del_books import del_all_books, del_book
 import lib.auth as auth
-from lib.menu_data import menu_data
+from lib.menu_data import menu_data, menu_filter
 
 mylookup = TemplateLookup(directories=['html'], output_encoding='utf-8',
                           encoding_errors='replace')
@@ -40,9 +40,7 @@ class bibthek(object):
 
         sort1, sort2, active_sort, items = menu_data(self.db(), shelf, _filter,
                                                      sort_first, sort_second)
-        filters = [{'name' : 'Status', 'filter' : ['Unread', 'Read']},
-                   {'name' : 'Form', 'filter' : ['Physical', 'Digital',
-                                                 'Borrowed']}]
+        filters = menu_filter(self.db(), shelf)
         mytemplate = mylookup.get_template("book.html")
         shelfs = self.db().shelfs(_filter)
         active_shelf = {}
