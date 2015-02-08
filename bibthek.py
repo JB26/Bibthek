@@ -30,7 +30,7 @@ class bibthek(object):
 
     @cherrypy.expose
     def index(self):
-        raise cherrypy.HTTPRedirect("/books/All/series/variant1")
+        raise cherrypy.HTTPRedirect("/books/All/series/variant1_order")
 
     @cherrypy.expose
     def books(self, shelf='All', sort_first='series', sort_second='variant1',

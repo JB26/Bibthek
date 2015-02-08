@@ -166,19 +166,22 @@ class mongo_db:
         return data
 
     def series(self, shelf, variant, _filter):
+        order_by = variant.split('_')[1]
+        if order_by == 'year':
+            order_by = 'release_date'
         data = self.aggregate_items('series',
                                     {"title": "$title", "_id": "$_id",
-                                     "order": "$order",
+                                     "order": "$" + order_by,
                                      "series_complete": "$series_complete"},
                                     shelf, _filter)
         data, data_temp = hash_remove_empty(data, 'Not in a series')
-        if variant == 1 and data_temp != None:
+        if variant.split('_')[0] == 'variant1' and data_temp != None:
             for row in data_temp['books']:
                 data.append({'_id' : row['title'],
                              'books' : {'_id' : row['_id']}})
-            data = sorted_series(data)
+            data = sorted_series(data, variant)
         else:
-            data = sorted_series(data)
+            data = sorted_series(data, variant)
             data = sort_insert_empty(data_temp, data)
         return data
 

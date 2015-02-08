@@ -35,10 +35,14 @@ def sorted_titles(data, field, variant='year'):
             sort_by_order = True
     return library_sorted(data, field, sort_by_order)
 
-def sorted_series(data):
+def sorted_series(data, variant):
     data = library_sorted(data, '_id', False)  #Sort series titles
     for series in data:  #Sort book titles in series
         if 'item_hash' in series:
+            if variant.split('_')[1] == 'year':
+                for row in series['books']:
+                    if 'order' in row and row['order'] != '':
+                        row['order'] = row['order'][0:4]
             series['books'] = library_sorted(series['books'], 'title', True)
     return data
     

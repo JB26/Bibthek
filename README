@@ -1,20 +1,20 @@
 The goal of this Project is to make a replacemant for GCstar
 
 TODO:
-logging
-better error handling (not just except: but except EXCEPTION:)
-Better admin page
-Warnings
-Nicer buttons
-Batch delete
+Statistics
 Table view
-Cover from google books api
+Warnings
+better error handling (not just except: but except EXCEPTION:)
+Nicer buttons
+Upload Limits (Set max_request_body_size = 104857600 ???)
+Better admin page (Rudimental User Managment)
 javascript reload menu
 javascript logout error
+Comments and code cleanup
+logging
+Batch delete
+Cover from google books api
 Combining Shelfs
-Rudimental User Managment
-Statistics
-Set max_request_body_size = 104857600
 
 To start the site use:
 cd WORKING_DIR
