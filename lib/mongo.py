@@ -182,69 +182,29 @@ class mongo_db:
             data = sort_insert_empty(data_temp, data)
         return data
 
-    def authors(self, shelf, variant, _filter):
+    def author_and_more(self, sortby, shelf, variant, _filter):
+        if sortby in name_fields or sortby == 'genre':
+            array = True
+        else:
+            array = False
         if variant == 'year':
             data = self.aggregate_items(
-                'authors',
+                sortby,
                 {
                     "title": "$title", "_id": "$_id",
                     "order": "$release_date"
                 },
-                shelf, _filter, True
+                shelf, _filter, array
                 )
             sort_by_order = True
         elif variant == 'title':
             data = self.aggregate_items(
-                'authors', {"title": "$title", "_id": "$_id"}, shelf,
-                _filter, True
+                sortby, {"title": "$title", "_id": "$_id"}, shelf,
+                _filter, array
                 )
             sort_by_order = False
-        data, data_temp = hash_remove_empty(data, 'No author')
-        data = sorted_apg(data, sort_by_order, 'authors')
-        data = sort_insert_empty(data_temp, data)
-        return data
-
-    def publisher(self, shelf, variant, _filter):
-        if variant == 'year':
-            data = self.aggregate_items(
-                'publisher',
-                {
-                    "title": "$title", "_id": "$_id",
-                    "order": "$release_date"
-                },
-                shelf, _filter, False
-                )
-            sort_by_order = True
-        elif variant == 'title':
-            data = self.aggregate_items(
-                'publisher', {"title": "$title", "_id": "$_id"}, shelf,
-                _filter, False
-                )
-            sort_by_order = False
-        data, data_temp = hash_remove_empty(data, 'No publisher')
-        data = sorted_apg(data, sort_by_order, 'publisher')
-        data = sort_insert_empty(data_temp, data)
-        return data
-
-    def genre(self, shelf, variant, _filter):
-        if variant == 'year':
-            data = self.aggregate_items(
-                'genre',
-                {
-                    "title": "$title", "_id": "$_id",
-                    "order": "$release_date"
-                },
-                shelf, _filter, True
-                )
-            sort_by_order = True
-        elif variant == 'title':
-            data = self.aggregate_items(
-                'genre', {"title": "$title", "_id": "$_id"}, shelf,
-                _filter, True
-                )
-            sort_by_order = False
-        data, data_temp = hash_remove_empty(data, 'No genre')
-        data = sorted_apg(data, sort_by_order, 'genre')
+        data, data_temp = hash_remove_empty(data, 'No ' + sortby)
+        data = sorted_apg(data, sort_by_order, sortby)
         data = sort_insert_empty(data_temp, data)
         return data
 
