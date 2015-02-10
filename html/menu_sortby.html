@@ -1,0 +1,24 @@
+<li class="dropdown">
+  <a class="dropdown-toggle" data-toggle="dropdown" href="#">Sort by<span class="caret"></span></a>
+  <ul class="dropdown-menu">
+  % for row in sort1:
+    % if row['active']:
+    <li class="active"><a href="/books/${active_shelf['shelf']}${row['url']}${active_filter}">${row['name']}</a></li>
+    % else:
+    <li><a href="/books/${active_shelf['shelf']}${row['url']}${active_filter}">${row['name']}</a></li>
+    % endif
+  % endfor
+  </ul>
+</li>
+<li class="dropdown">
+  <a class="dropdown-toggle" data-toggle="dropdown" href="#">Second order sort by<span class="caret"></span></a>
+  <ul class="dropdown-menu">
+  % for row in sort2:
+    % if row['active']:
+    <li class="active"><a href="/books/${active_shelf['shelf']}${row['url']}${active_filter}">${row['name']}</a></li>
+    % else:
+    <li><a href="/books/${active_shelf['shelf']}${row['url']}${active_filter}">${row['name']}</a></li>
+    % endif
+  % endfor
+  </ul>
+</li>

@@ -1,37 +1,38 @@
-  <%include file="header.html" />
-  <%include file="settings_menu.html" args="current_section='user'" />
-  <div class="container">
-    <div class="row">
-      <div class="col-md-12">
-        <h1>Change your Settings</h1>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-12">
-        <h2>Change your Password</h2>
-        <form action="/change_pw">
-          <div class="form-group">
-            <label for="password_old">Old password</label>
-            <input type="password" class="form-control" id="password_old" name="password_old" placeholder="Old password">
-          </div>
-          <div class="form-group">
-            <label for="password_new">New password</label>
-            <input type="password" class="form-control" id="password_new" name="password_new" placeholder="New password">
-          </div>
-          <button type="submit" class="btn btn-default">Change Password</button>
-        </form>
-      </div>
-    </div>
-    <div class="row">
-      <div class="col-md-12">
-        <h2>Delete your account</h2>
-        <form action="/delete_acc">
-          <div class="form-group">
-            <label for="password">Password</label>
-            <input type="password" class="form-control" id="password" name="password" placeholder="Password">
-          </div>
-          <button type="submit" class="btn btn-default">Delete Account</button>
-        </form>
-      </div>
+<%include file="header.html" />
+<body>
+<%include file="menu.html" args="current_section='settings'" />
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+      <h1>Change your Settings</h1>
     </div>
   </div>
+  <div class="row">
+    <div class="col-md-12">
+      <h2>Change your Password</h2>
+      <form action="/change_pw">
+        <div class="form-group">
+          <label for="password_old">Old password</label>
+          <input type="password" class="form-control" id="password_old" name="password_old" placeholder="Old password">
+        </div>
+        <div class="form-group">
+          <label for="password_new">New password</label>
+          <input type="password" class="form-control" id="password_new" name="password_new" placeholder="New password">
+        </div>
+        <button type="submit" class="btn btn-default">Change Password</button>
+      </form>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
+      <h2>Delete your account</h2>
+      <form action="/delete_acc">
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+        </div>
+        <button type="submit" class="btn btn-default">Delete Account</button>
+      </form>
+    </div>
+  </div>
+</div>

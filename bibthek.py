@@ -33,8 +33,12 @@ class bibthek(object):
         raise cherrypy.HTTPRedirect("/books/All/series/variant1_order")
 
     @cherrypy.expose
-    def books(self, shelf='All', sort_first='series', sort_second='variant1',
+    def books(self, shelf=None, sort_first=None, sort_second=None,
               _filter = '', book_id='new_book', book_type='book'):
+
+        if sort_second == None:
+            raise cherrypy.HTTPRedirect("/books/All/series/variant1_order")
+        
         shelf = shelf.encode("latin-1").decode("utf-8")
         book = get_book_data(self.db(), book_id, book_type, shelf)
 

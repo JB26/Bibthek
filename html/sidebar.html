@@ -1,0 +1,53 @@
+<div class="navmenu navmenu-default navmenu-fixed-left offcanvas-sm">
+  <a class="navmenu-brand visible-md visible-lg" href="/">BibThek</a>
+  <a class="navmenu-brand">${active_shelf['shelf']} (${active_shelf['#items']})</a>
+  <ul class="nav nav-pills nav-stacked sidebar">
+    
+  % for idx, name in enumerate(items):
+    <li class="dropdown">
+      % if 'item_hash' in name:
+        % if active_sort.split('/')[1] == 'series':
+          % if 'series_complete' in name['books'][0] and name['_id'] != 'Not in a series' and name['books'][0]['series_complete']:
+            <i class="glyphicon glyphicon-star series_star" id="${idx}_star"></i>
+          % elif name['_id'] != 'Not in a series':
+            <i class="glyphicon glyphicon-star-empty series_star" id="${idx}_star-empty"></i>
+          % endif
+        % endif
+        <a class="dropdown-toggle" id="${idx}_a" data-toggle="dropdown" >${name['_id']}<span class="caret"></span></a>
+        % if active_sort.split('/')[1] in ['series', 'author']:
+          % if name['_id'] not in ['Not in a series', 'No author']:
+            <i class="glyphicon glyphicon-pencil series_pencil" id="${idx}_pencil"></i>
+          % endif
+        % endif
+        <ul class="dropdown-menu sidebar">
+        % for title in name['books']:
+          <li>
+            <a href="/books?book_id=${title['_id']}" class="book_title" id="${title['_id']}" >
+              % if 'order' in title and title['order'] != '':
+                  ${title['order']} - 
+              % endif
+                ${title['title']}
+            </a>
+          </li>
+        % endfor
+        </ul>
+      % else:
+        <a href="?book_id=${name['books']['_id']}" class="book_title" id="${name['books']['_id']}" >
+          % if 'order' in name and name['order'] != '':
+              ${name['order']} - 
+          % endif
+            ${name['_id']}
+        </a>
+      % endif
+    </li>
+  % endfor
+  </ul>
+</div>
+<div class="navbar navbar-default navbar-fixed-top hidden-md hidden-lg">
+  <button type="button" class="navbar-toggle" data-toggle="offcanvas" data-target=".navmenu">
+    <span class="icon-bar"></span>
+    <span class="icon-bar"></span>
+    <span class="icon-bar"></span>
+  </button>
+  <a class="navbar-brand" href="#">BibThek</a>
+</div>
