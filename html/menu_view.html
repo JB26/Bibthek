@@ -1,13 +1,44 @@
+<%page args="current_section"/>
 <li class="dropdown">
   <a class="dropdown-toggle" data-toggle="dropdown" href="#">View<span class="caret"></span></a>
   <ul class="dropdown-menu">
-    <li><a href="/settings">Settings</a></li>
-    % if user_role == 'admin':
-      <li><a href="/admin">Administration</a></li>
+    % if current_section == 'settings':
+      <li class="active">
+    % else:
+      <li>
     % endif
-    <li><a href="/import_books">Import/Export</a></li>
-    <li><a href="/books">Books</a></li>
-    <li><a href="/table">Table</a></li>
-    <li><a href="/statistics">Statistics</a></li>
+    <a href="/settings">Settings</a></li>
+    % if user_role == 'admin':
+      % if current_section == 'admin':
+        <li class="active">
+      % else:
+        <li>
+      % endif
+      <a href="/admin">Administration</a></li>
+    % endif
+    % if current_section == 'import':
+      <li class="active">
+    % else:
+      <li>
+    % endif
+    <a href="/import_books">Import/Export</a></li>
+    % if current_section == 'books':
+      <li class="active">
+    % else:
+      <li>
+    % endif
+    <a href="/books">Books</a></li>
+    % if current_section == 'table':
+      <li class="active">
+    % else:
+      <li>
+    % endif
+    <a href="/table">Table</a></li>
+    % if current_section == 'statistics':
+      <li class="active">
+    % else:
+      <li>
+    % endif
+    <a href="/statistics">Statistics</a></li>
   </ul>
 </li>

@@ -40,6 +40,7 @@ class bibthek(object):
             raise cherrypy.HTTPRedirect("/books/All/series/variant1_order")
         
         shelf = shelf.encode("latin-1").decode("utf-8")
+        _filter = _filter.encode("latin-1").decode("utf-8")
         book = get_book_data(self.db(), book_id, book_type, shelf)
 
         sort1, sort2, active_sort, items = menu_data(self.db(), shelf, _filter,
@@ -85,6 +86,40 @@ class bibthek(object):
         mytemplate = mylookup.get_template("user.html")
         return mytemplate.render(user_role=user_role)
 
+    @cherrypy.expose
+    def statistics(self, shelf=None, _filter = ''):
+        if shelf == None:
+            raise cherrypy.HTTPRedirect("/statistics/All")
+        shelf = shelf.encode("latin-1").decode("utf-8")
+        _filter = _filter.encode("latin-1").decode("utf-8")
+        filters = menu_filter(self.db(), shelf)
+        shelfs = self.db().shelfs(_filter)
+        active_shelf = {}
+        active_shelf['shelf'] = shelf
+        active_shelf['#items'] = self.db().count_items(shelf, _filter)
+        mytemplate = mylookup.get_template("statistics.html")
+        return mytemplate.render(active_sort='', shelfs=shelfs,
+                                 active_shelf=active_shelf,
+                                active_filter=_filter, filters = filters)
+
+    @cherrypy.expose
+    def json_statistic(self, shelf=None, _filter = '', _type = None):
+        shelf = shelf.encode("latin-1").decode("utf-8")
+        _filter = _filter.encode("latin-1").decode("utf-8")
+        if _type.split('#')[0] in ['release_date', 'add_date']:
+            labels, data = mongo_db.statistic_date_easy(self.db(), shelf,
+                                                         _filter, _type)
+        elif _type.split('#')[0] in ['start_date', 'finish_date']:
+            labels, data = mongo_db.statistic_date_hard(self.db(), shelf,
+                                                        _filter, _type)
+        elif _type.split('#')[0] == 'pages_read':
+            labels, data = mongo_db.statistic_pages_read(self.db(), shelf,
+                                                        _filter, _type)
+        elif _type.split('#')[0] == 'pages_book':
+            labels, data = mongo_db.statistic_pages_book(self.db(), shelf,
+                                                        _filter)
+        return json.dumps({'data' : data, 'labels' : labels,
+                           'canvas_id' : _type.split('#')[0] + '_chart'})
 
     @cherrypy.expose
     @cherrypy.tools.auth(user_role='admin')

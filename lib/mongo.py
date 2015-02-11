@@ -5,6 +5,7 @@ from passlib.hash import pbkdf2_sha512
 from datetime import date
 import configparser
 import re
+from collections import Counter
 
 from lib.sort_data import sorted_series, sorted_titles, sorted_shelfs
 from lib.sort_data import sorted_apg
@@ -242,6 +243,140 @@ class mongo_db:
         for row in data:
             ids.append( str(row['_id']) )
         return ids
+
+    def statistic_date_easy(self, shelf, _filter, _type):
+        _type = _type.split('#')
+        query = query_filter(_filter)
+        if shelf != 'All':
+            query['shelf'] = shelf
+        data_temp = self.collection.find(query, {"_id" : 0, _type[0] : 1} )
+        data = []
+        if len(_type) == 1:
+            for row in data_temp:
+                if row[_type[0]]  != '':
+                    data.append(row[_type[0]][0:4])
+        elif len(_type) == 2:
+            for row in data_temp:
+                if row[_type[0]]  != '' and row[_type[0]][0:4] == _type[1]:
+                    data.append(row[_type[0]][5:7])
+        data = Counter(data)
+        labels = sorted(list(data))
+        data = [ data[x] for x in labels  ]
+        if labels[0] == "":
+            labels[0] = "Unknown"
+        return labels, data
+
+    def statistic_date_hard(self, shelf, _filter, _type):
+        _type = _type.split('#')
+        query = query_filter(_filter)
+        if shelf != 'All':
+            query['shelf'] = shelf
+        data_temp = self.collection.find(query, {"_id" : 0,
+                                                 "reading_stats" : 1} )
+        data = []
+        if len(_type) == 1:
+            for row in data_temp:
+                for row2 in row["reading_stats"]:
+                    if row2[_type[0]]  != '':
+                        data.append(row2[_type[0]][0:4])
+        elif len(_type) == 2:
+            for row in data_temp:
+                for row2 in row["reading_stats"]:
+                    if (row2[_type[0]]  != '' and
+                        row2[_type[0]][0:4] == _type[1]):
+                        data.append(row2[_type[0]][5:7])
+        data = Counter(data)
+        labels = sorted(list(data))
+        data = [ data[x] for x in labels  ]
+        if labels[0] == "":
+            labels[0] = "Unknown"
+        return labels, data
+
+    def statistic_pages_read(self, shelf, _filter, _type):
+        _type = _type.split('#')
+        query = query_filter(_filter)
+        if shelf != 'All':
+            query['shelf'] = shelf
+        data_temp = self.collection.find(query, {"_id" : 0,
+                                                 "reading_stats" : 1,
+                                                 "pages" : 1} )
+        data = []
+        for row in data_temp:
+            for row2 in row["reading_stats"]:
+                if row2["finish_date"]  != '' and row2["start_date"]  != '':
+                    data.append([row2["start_date"], row2["finish_date"],
+                                 row["pages"]])
+        data_temp = {}
+        if len(_type) == 1:
+            for row in data:
+                i = 0
+                while len(row[2]) > i and row[2][i].isdigit():
+                    i = i+1
+                if i > 0:
+                    row[0] = int(row[0][0:4])
+                    row[1] = int(row[1][0:4])
+                    row[2] = int(row[2][0:i])
+                    if row[1]-row[0]+1 > 0:
+                        for i in range(row[0], row[1]+1):
+                            if i in data_temp:
+                                data_temp[i] = (data_temp[i] +
+                                                row[2]/(row[1]-row[0]+1))
+                            else:
+                                data_temp[i] = row[2]/(row[1]-row[0]+1)
+        elif len(_type) == 2:
+            for row in data:
+                i = 0
+                while len(row[2]) > i and row[2][i].isdigit():
+                    i = i+1
+                if i > 0 and (row[0][0:4] == _type[1] or
+                              row[1][0:4] == _type[1]):
+                    row[0] = [int(row[0][0:4]), int(row[0][5:7])]
+                    row[1] = [int(row[1][0:4]), int(row[1][5:7])]
+                    row[2] = int(row[2][0:i])
+                    if row[1][0]-row[0][0]+1 > 1 or (
+                            row[1][0]-row[0][0]+1 > 0 and
+                            row[1][1]-row[0][1]+1 > 0):
+                        if row[0][0] == row[1][0]:
+                            i_start = row[0][1]
+                            i_end = row[1][1]
+                        elif row[0][0] == int(_type[1]):
+                            i_start = row[0][1]
+                            i_end = 12
+                        elif row[1][0] == int(_type[1]):
+                            i_start = 1
+                            i_end = row[1][1]
+                        for i in range(i_start, i_end+1):
+                            if i in data_temp:
+                                data_temp[i] = (data_temp[i] +
+                                                row[2]/(row[1][1]-row[0][1]+1+
+                                                        12*(row[1][0]-row[0][0])))
+                            else:
+                                data_temp[i] = row[2]/(row[1][1]-row[0][1]+1+
+                                                        12*(row[1][0]-row[0][0]))
+        data = data_temp
+        labels = sorted(list(data))
+        data = [ data[x] for x in labels  ]
+        labels = [ str(x) for x in labels ]
+        return labels, data
+
+    def statistic_pages_book(self, shelf, _filter):
+        query = query_filter(_filter)
+        if shelf != 'All':
+            query['shelf'] = shelf
+        data_temp = self.collection.find(query, {"_id" : 0,
+                                                 "pages" : 1} )
+        data = []
+        for row in data_temp:
+            i = 0
+            while len(row["pages"]) > i and row["pages"][i].isdigit():
+                i = i+1
+            if i > 0:
+                data.append(round(int(row["pages"][0:i])/100-0.5)*100)
+        data = Counter(data)
+        labels = sorted(list(data))
+        data = [ data[x] for x in labels  ]
+        labels = [ str(x) + "-" + str(x+99) for x in labels ]
+        return labels, data
 
     def delete_by_id(self, book_id):
         self.collection.remove({'_id' : ObjectId(book_id)})

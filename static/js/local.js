@@ -71,7 +71,7 @@ function empty_book(){
 };
 
 function isbn_book(isbn){
-  $.getJSON( "/new_isbn", {isbn:isbn},function(data) {
+  $.getJSON( "/new_isbn", {isbn:isbn}, function(data) {
     $.each(data,function(input_id, input_value){
       $('#' + input_id).val(input_value)
     });

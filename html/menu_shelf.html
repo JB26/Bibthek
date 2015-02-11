@@ -1,11 +1,18 @@
+<%page args="current_section"/>
 <li class="dropdown">
   <a class="dropdown-toggle" data-toggle="dropdown" href="#">Shelf<span class="caret"></span></a>
   <ul class="dropdown-menu">
   % for shelf in shelfs:
+    <%
+      if current_section == 'books':
+        url = "/books/" + shelf['_id'] + active_sort + active_filter
+      elif current_section == 'statistics':
+        url = "/statistics/" + shelf['_id'] + active_filter
+    %>
     % if shelf['_id'] == active_shelf['shelf']:
-    <li class="active"><a href="/books/${shelf['_id']}${active_sort}${active_filter}">${shelf['_id']} (${shelf['#items']})</a></li>
+    <li class="active"><a href=${url}>${shelf['_id']} (${shelf['#items']})</a></li>
     % else:
-    <li><a href="/books/${shelf['_id']}${active_sort}${active_filter}">${shelf['_id']} (${shelf['#items']})</a></li>
+    <li><a href=${url}>${shelf['_id']} (${shelf['#items']})</a></li>
     % endif
   % endfor
   </ul>
