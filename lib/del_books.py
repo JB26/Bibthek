@@ -1,10 +1,13 @@
-from lib.mongo import mongo_db
+from lib.mongo import mongo_drop
 from shutil import rmtree
 from os import remove
 
-def del_all_books(mongo, username):
-    mongo.drop()
-    rmtree('static/covers/' + username + '_front/')
+def del_all_books(username):
+    mongo_drop(username)
+    try:
+        rmtree('static/covers/' + username + '_front/')
+    except FileNotFoundError:
+        print("No cover to delete")
     return 0
 
 def del_book(mongo, book_id):

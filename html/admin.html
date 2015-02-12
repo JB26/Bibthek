@@ -15,18 +15,32 @@
             <th>Username</th>
             <th>Registration date</th>
             <th>Role</th>
+            <th>Email</th>
             <th>Reset Password</th>
             <th>Delete Account</th>
           </tr>
         </thead>
         <tbody>
-        % for user in user_list:
+        % for user_info in user_list:
           <tr>
-            <td>${user['username']}</td>
-            <td>${user['reg_date']}</td>
-            <td>${user['role']}</td>
-            <td>Button for reset</td>
-            <td>Button for delete</td>
+            <td>${user_info['username']}</td>
+            <td>${user_info['reg_date']}</td>
+            <td>${user_info['role']}</td>
+            % if 'email' in user_info:
+              <td>${user_info['email']}</td>
+            % else:
+              <td>None</td>
+            % endif
+            <td>
+              <form action="/reset_pw">
+                <button class="btn btn-sm btn-primary btn-block" type="submit" name="username" value="${user_info['username']}">Reset Password</button>
+              </form>
+            </td>
+            <td>
+              <form action="/delete_acc">
+                <button class="btn btn-sm btn-danger btn-block" type="submit" name="username" value="${user_info['username']}">Delete Account</button>
+              </form>
+            </td>
           </tr>
         % endfor
         </tbody>

@@ -5,6 +5,8 @@ from passlib.hash import pbkdf2_sha512
 from datetime import date
 import configparser
 import re
+import random
+import string
 from collections import Counter
 
 from lib.sort_data import sorted_series, sorted_titles, sorted_shelfs
@@ -425,10 +427,7 @@ class mongo_db:
         items = self.collection.find(query).count()
         return str(items)
 
-    def drop(self):
-        self.collection.drop()
-
-def mongo_add_user(username, password, mail, session_id):
+def mongo_add_user(username, password, email, session_id):
     p = re.compile('[A-Z-+_0-9]+', re.IGNORECASE)
     m = p.match(username)
     if m == None:
@@ -443,7 +442,7 @@ def mongo_add_user(username, password, mail, session_id):
              'reg_date' : str(date.today()),
              'role' : None}
     if mail != '' :
-        query['mail'] = mail
+        query['email'] = email
     user_info.insert(query)
     return '0'
 
@@ -472,6 +471,18 @@ def mongo_change_pw(username, password_old, password_new):
     else:
         return "Wrong password"
 
+def mongo_reset_pw(username):
+    password_new = ''.join(random.SystemRandom().
+                           choice(string.ascii_uppercase + string.digits)
+                           for _ in range(6))
+    user_info.update({'username' : username},
+                         {"$set" : {"password" :
+                                    pbkdf2_sha512.encrypt(password_new)} })
+    return password_new
+
+def mongo_change_email(username, email):
+     user_info.update({'username' : username}, {"$set" : {"email" : email } } )
+
 def mongo_user_del(username):
     status = user_info.remove({"username" : username})
     return status
@@ -484,3 +495,6 @@ def mongo_role(username, role):
 def mongo_user_list():
     data = user_info.find({},{"_id" : 0}).sort([("username", 1)])
     return data
+
+def mongo_drop(username):
+    client.bibthek[username].drop()
