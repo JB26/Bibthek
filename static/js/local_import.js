@@ -10,10 +10,14 @@ $( '#import_form' ).submit(function( event ) {
     contentType: false,
     processData: false,
     type: 'POST',
+    dataType: 'json',
     success: function(json_data){
       var data = $.parseJSON(json_data);
       warning(data['type'], data['error']);
     }
+  })
+  .fail(function() {
+    window.location.href = '/';
   });
 });
 

@@ -10,15 +10,19 @@ $( '.change_mail_pw' ).submit(function( event ) {
     contentType: false,
     processData: false,
     type: 'POST',
+    dataType: 'json',
     success: function(json_data){
       var data = $.parseJSON(json_data);
       if (data.hasOwnProperty('email')) {
         $('#email').html("Your current Email adress: " + data['email'])
       }
       warning(data['type'], data['error']);
+      $( this ).find("input[type=password]").val("");
     }
+  })
+  .fail(function() {
+    window.location.href = '/';
   });
-  $( this ).find("input[type=password]").val("");
 });
 
 $('#delete_acc_warn').click(function(event) {

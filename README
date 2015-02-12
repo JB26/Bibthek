@@ -5,9 +5,6 @@ Weird dates can break the statistics?
 Abbord pencil
 
 TODO:
-Warnings
-better error handling (not just except: but except EXCEPTION:)
-Nicer buttons
 Upload Limits (Set max_request_body_size = 104857600 ???)
 javascript reload menu
 javascript logout error

@@ -18,6 +18,9 @@ function new_graph(type){
       responsive : true,
       animation: false
     });
+  })
+  .fail(function() {
+    window.location.href = '/';
   });
 };
 

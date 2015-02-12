@@ -21,8 +21,11 @@ function load_book(book_id){
       }
     }
     if (data.type == 'comic') {$('.comic').show()} else {$('.comic').hide()};
+    goodreads_id(book_id, '_id');
+  })
+  .fail(function() {
+    window.location.href = '/';
   });
-  goodreads_id(book_id, '_id');
 };
 
 function build_reading_stats(data, i) {
@@ -69,6 +72,9 @@ function empty_book(){
     $('#book_form').attr('action', '/save/?book_id=new_book');
     $('#isbn_search').show();
     $('#reading_stats > tbody tr').remove();
+  })
+  .fail(function() {
+    window.location.href = '/';
   });
 };
 
@@ -78,10 +84,13 @@ function isbn_book(isbn){
       $('#' + input_id).val(input_value)
     });
     $('#isbn_search').show();
+    goodreads_id(isbn, 'isbn');
+    $('#isbn_image').attr('href', 'https://www.google.de/search?q=' + isbn + '&tbm=isch');
+    $('#amazon').attr('href', 'https://www.amazon.de/gp/search?keywords=' + isbn);
+  })
+  .fail(function() {
+    window.location.href = '/';
   });
-  goodreads_id(isbn, 'isbn');
-  $('#isbn_image').attr('href', 'https://www.google.de/search?q=' + isbn + '&tbm=isch');
-  $('#amazon').attr('href', 'https://www.amazon.de/gp/search?keywords=' + isbn);
 };
 
 function menu_reload(){
@@ -113,8 +122,8 @@ $( '#book_form' ).submit(function( event ) {
     contentType: false,
     processData: false,
     type: 'POST',
-    success: function(json_data){
-      var data = $.parseJSON(json_data);
+    dataType: 'json',
+    success: function(data){
       if (data['error'] != 0) {
         warning('danger', data['error']);
       }else{
@@ -126,6 +135,9 @@ $( '#book_form' ).submit(function( event ) {
         }
       }
     }
+  })
+  .fail(function() {
+    window.location.href = '/';
   });
 });
 
