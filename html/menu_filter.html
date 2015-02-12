@@ -4,8 +4,8 @@
   <ul class="dropdown-menu">
   % for _filter in filters:
     <%
-      if current_section == 'books':
-        url = "/books/" + active_shelf['shelf'] + active_sort
+      if current_section in ['books', 'books2', 'covers']:
+        url = "/" + current_section + "/" + active_shelf['shelf'] + active_sort
       elif current_section == 'statistics':
         url = "/statistics/" + active_shelf['shelf']
     %>
@@ -15,7 +15,7 @@
       <%
         new_filter = '+'.join([ x for x in active_filter.split('+') if x != _filter['short'] + row ])
       %>
-      <li class="active"><a href="${url}/${new_filter}">${row}</a></li>
+      <li class="active"><a href="${url}${new_filter}">${row}</a></li>
       % else:
       <%
         if active_filter != '':
@@ -23,7 +23,7 @@
         else:
           new_filter = _filter['short'] + row
       %>
-      <li><a href="${url}/${new_filter}">${row}</a></li>
+      <li><a href="${url}${new_filter}">${row}</a></li>
       % endif
     % endfor
   % endfor

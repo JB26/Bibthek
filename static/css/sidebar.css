@@ -93,3 +93,13 @@ body {
   right:3px;
   top:12px;
 }
+
+.group_name {
+  margin-top:5px;
+}
+
+.divid_groups {
+  background-color:#777777;
+  height:1px; margin-top:0px;
+  margin-bottom:0px;
+}

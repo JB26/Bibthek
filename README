@@ -2,9 +2,10 @@ The goal of this Project is to make a replacemant for GCstar
 
 Bug:
 Weird dates can break the statistics?
+Abbord pencil
 
 TODO:
-Table view
+Tool Tips for star and pencil
 Warnings
 better error handling (not just except: but except EXCEPTION:)
 Nicer buttons

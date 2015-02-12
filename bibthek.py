@@ -34,11 +34,11 @@ class bibthek(object):
 
     @cherrypy.expose
     def books(self, shelf=None, sort_first=None, sort_second=None,
-              _filter = '', book_id='new_book', book_type='book'):
+              _filter = '', book_id='new_book', book_type='book', view="books"):
 
         if sort_second == None:
-            raise cherrypy.HTTPRedirect("/books/All/series/variant1_order")
-        
+            raise cherrypy.HTTPRedirect("/" + view +
+                                        "/All/series/variant1_order")
         shelf = shelf.encode("latin-1").decode("utf-8")
         _filter = _filter.encode("latin-1").decode("utf-8")
         book = get_book_data(self.db(), book_id, book_type, shelf)
@@ -51,11 +51,32 @@ class bibthek(object):
         active_shelf = {}
         active_shelf['shelf'] = shelf
         active_shelf['#items'] = self.db().count_items(shelf, _filter)
+        if view == 'covers':
+            covers = self.db().covers(shelf, _filter)
+        else:
+            covers = None
         return mytemplate.render(items=items, book=book, shelfs=shelfs,
                                  active_shelf=active_shelf,
                                  sort1=sort1, sort2=sort2,
                                  active_sort=active_sort,
-                                 active_filter=_filter, filters = filters)
+                                 active_filter=_filter, filters = filters,
+                                 view=view, covers=covers)
+
+    @cherrypy.expose
+    def books2(self, shelf=None, sort_first=None, sort_second=None,
+               _filter = '', book_id='new_book', book_type='book'):
+        
+        return self.books(shelf, sort_first, sort_second, _filter, book_id,
+                          book_type, "books2")
+
+    @cherrypy.expose
+    def covers(self, shelf=None, sort_first=None, sort_second=None,
+               _filter = '', book_id='new_book', book_type='book'):
+        
+        return self.books(shelf, sort_first, sort_second, _filter, book_id,
+                          book_type, "covers")
+    
+    
     @cherrypy.expose
     def json_book(self, book_id, book_type='book', shelf='All'):
         book = get_book_data(self.db(), book_id, book_type, shelf)

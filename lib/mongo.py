@@ -49,7 +49,7 @@ def hash_remove_empty(data, warning):
 def sort_insert_empty(data_temp, data):
     if data_temp != None:
             data_temp['books'] = sorted_titles(data_temp['books'], 'title')
-            data.insert(0, data_temp)
+            data.append(data_temp)
     return data
 
 def query_filter(filters):
@@ -217,7 +217,7 @@ class mongo_db:
         if shelf != 'All':
             query['shelf'] = shelf
         if variant == 'title':
-            data_temp = self.collection.find(query, {"title" : 1} )
+            data_temp = self.collection.find(query, {"title" : 1})
         elif variant == 'year':
             data_temp = self.collection.find(query, {"title" : 1,
                                                      "release_date" : 1} )
@@ -230,12 +230,23 @@ class mongo_db:
                 data.append({'_id' : row['title'],
                              'books' : {'_id' : row['_id']}})
             elif variant == 'year':
-                data.append({'_id' : row['title'], 'order' : row['release_date'],
+                data.append({'_id' : row['title'],
+                             'order' : row['release_date'],
                              'books' : {'_id' : row['_id']}})
             elif variant == 'pages':
                 data.append({'_id' : row['title'], 'order' : row['pages'],
                              'books' : {'_id' : row['_id']}})
         return sorted_titles(data, '_id', variant)
+
+    def covers(self, shelf, _filter):
+        query = query_filter(_filter)
+        if shelf != 'All':
+            query['shelf'] = shelf
+        data_temp = self.collection.find(query, {"front" : 1})
+        data = {}
+        for row in data_temp:
+            data[str(row["_id"])] = row["front"]
+        return data
 
     def ids(self):
         data = self.collection.find({},{'_id': 1})

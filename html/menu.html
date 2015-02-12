@@ -4,21 +4,22 @@
     <div>
       <ul class="nav navbar-nav">
         <li class="active"><a href="/">Home</a></li>
-        % if current_section == 'books':
+        % if current_section in ['books', 'books2', 'covers']:
           <%include file="menu_new.html" />
-          <%include file="menu_shelf.html" args="current_section='books'" />
-          <%include file="menu_sortby.html" />
-          <%include file="menu_filter.html" args="current_section='books'" />
+          <%include file="menu_shelf.html" args="current_section=current_section" />
+          <%include file="menu_sortby.html" args="current_section=current_section" />
+          <%include file="menu_filter.html" args="current_section=current_section" />
         % endif
         % if current_section == 'statistics':
           <%include file="menu_shelf.html" args="current_section='statistics'" />
           <%include file="menu_filter.html" args="current_section='statistics'" />
         % endif
-        <%include file="menu_view.html" args="current_section=current_section" />
       </ul>
       <ul class="nav navbar-nav navbar-right">
+        <%include file="menu_view.html" args="current_section=current_section" />
         <li><a href="/logout">Logout</a></li>
       </ul>
+      
     </div>
   </div>
 </nav>

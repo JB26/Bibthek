@@ -28,12 +28,18 @@
       <li>
     % endif
     <a href="/books">Books</a></li>
-    % if current_section == 'table':
+    % if current_section == 'books2':
       <li class="active">
     % else:
       <li>
     % endif
-    <a href="/table">Table</a></li>
+    <a href="/books2">Books view 2</a></li>
+    % if current_section == 'covers':
+      <li class="active">
+    % else:
+      <li>
+    % endif
+    <a href="/covers">Cover Galery</a></li>
     % if current_section == 'statistics':
       <li class="active">
     % else:

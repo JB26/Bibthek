@@ -1,7 +1,8 @@
 def menu_data(mongo, shelf, _filter, sort_first, sort_second):
     sort1 = [
         {'name' : 'Title', 'url' : '/title/title/', 'active' : False},
-        {'name' : 'Series', 'url' : '/series/variant1/', 'active' : False},
+        {'name' : 'Series', 'url' : '/series/variant1_order/',
+         'active' : False},
         {'name' : 'Author', 'url' : '/authors/year/', 'active' : False},
         {'name' : 'Publisher', 'url' : '/publisher/year/', 'active' : False},
         {'name' : 'Genre', 'url' : '/genre/title/', 'active' : False},

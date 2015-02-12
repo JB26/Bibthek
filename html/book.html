@@ -1,7 +1,15 @@
 <%include file="header.html" />
 <body id="${book['_id']}">
-<%include file="sidebar.html" />
-<%include file="menu.html" args="current_section='books'" />
+% if view == "books":
+  <%include file="sidebar.html" />
+  <%include file="menu.html" args="current_section='books'" />
+% elif view == "books2":
+  <%include file="sidebar2.html" />
+  <%include file="menu.html" args="current_section='books2'" />
+% elif view == "covers":
+  <%include file="sidebar_covers.html" />
+  <%include file="menu.html" args="current_section='covers'" />
+% endif
 <link rel="stylesheet" href="/static/css/sidebar.css" type="text/css" />
 <link rel="stylesheet" href="/static/css/autocomplete.css" type="text/css" />
 <div class="container">
@@ -27,7 +35,7 @@
     </div>
     <div class="row">
       <div class="col-md-3">
-        <img src="/${book['front']}" alt="Cover" width="100%" id="cover">
+        <img src="/${book['front']}" alt="Cover" id="cover" style="width:100%">
       </div>
       <div class="col-md-9">
         <div class="row">
