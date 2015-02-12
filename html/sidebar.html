@@ -8,15 +8,15 @@
       % if 'item_hash' in name:
         % if active_sort.split('/')[1] == 'series':
           % if 'series_complete' in name['books'][0] and name['_id'] != 'Not in a series' and name['books'][0]['series_complete']:
-            <i class="glyphicon glyphicon-star series_star" id="${idx}_star"></i>
+            <span class="glyphicon glyphicon-star series_star" id="${idx}_star" aria-label="Mark series as complete" title="Mark series as complete"></span>
           % elif name['_id'] != 'Not in a series':
-            <i class="glyphicon glyphicon-star-empty series_star" id="${idx}_star-empty"></i>
+            <span class="glyphicon glyphicon-star-empty series_star" id="${idx}_star-empty" aria-label="Mark series as complete" title="Mark series as complete"></span>
           % endif
         % endif
         <a class="dropdown-toggle" id="${idx}_a" data-toggle="dropdown" >${name['_id']}<span class="caret"></span></a>
         % if active_sort.split('/')[1] in ['series', 'author']:
           % if name['_id'] not in ['Not in a series', 'No author']:
-            <i class="glyphicon glyphicon-pencil series_pencil" id="${idx}_pencil"></i>
+            <span class="glyphicon glyphicon-pencil series_pencil" id="${idx}_pencil" aria-label="Edit all" title="Edit all"></span>
           % endif
         % endif
         <ul class="dropdown-menu sidebar">

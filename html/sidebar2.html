@@ -6,18 +6,18 @@
   % for idx, name in enumerate(items):
     % if 'item_hash' in name:
       <hr class="divid_groups" />
-      <li role="presentation" class="dropdown-header">
+      <li role="presentation" class="dropdown-header" style="padding-left: 0px;">
         % if active_sort.split('/')[1] == 'series':
           % if 'series_complete' in name['books'][0] and name['_id'] != 'Not in a series' and name['books'][0]['series_complete']:
-            <i class="glyphicon glyphicon-star series_star" id="${idx}_star"></i>
+            <span class="glyphicon glyphicon-star series_star" id="${idx}_star" aria-label="Mark series as complete" title="Mark series as complete"></span>
           % elif name['_id'] != 'Not in a series':
-            <i class="glyphicon glyphicon-star-empty series_star" id="${idx}_star-empty"></i>
+            <span class="glyphicon glyphicon-star-empty series_star" id="${idx}_star-empty" aria-label="Mark series as complete" title="Mark series as complete"></span>
           % endif
         % endif
-        <div class="group_name">${name['_id']}<span class="caret"></span></div>
+        <div class="group_name" id="${idx}_a" style="padding-left: 20px;">${name['_id']}<span class="caret"></span></div>
         % if active_sort.split('/')[1] in ['series', 'author']:
           % if name['_id'] not in ['Not in a series', 'No author']:
-            <i class="glyphicon glyphicon-pencil series_pencil" id="${idx}_pencil"></i>
+            <sapn class="glyphicon glyphicon-pencil series_pencil" id="${idx}_pencil" aria-label="Edit all" title="Edit all"></span>
           % endif
         % endif
       </li>

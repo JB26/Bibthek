@@ -5,12 +5,10 @@ Weird dates can break the statistics?
 Abbord pencil
 
 TODO:
-Tool Tips for star and pencil
 Warnings
 better error handling (not just except: but except EXCEPTION:)
 Nicer buttons
 Upload Limits (Set max_request_body_size = 104857600 ???)
-Better admin page (Rudimental User Managment)
 javascript reload menu
 javascript logout error
 Comments and code cleanup

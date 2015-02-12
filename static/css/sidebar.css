@@ -84,7 +84,11 @@ body {
   top:12px;
 }
 
-.sidebar > li > i:hover {
+.series_pencil:hover {
+  cursor: pointer;
+}
+
+.series_star:hover {
   cursor: pointer;
 }
 
