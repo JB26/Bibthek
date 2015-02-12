@@ -155,7 +155,10 @@ class bibthek(object):
     def change_email(self, password, email_new):
         if mongo_login(cherrypy.session['username'], password, None):
             mongo_change_email(cherrypy.session['username'], email_new)
-            raise cherrypy.HTTPRedirect("/settings")
+            return json.dumps({'type' : 'success', 'error' : 'Email changed',
+                              'email' : email_new})
+        else:
+            return json.dumps({'type' : 'danger', 'error' : 'Wrong Password'})
             
 
     @cherrypy.expose
@@ -165,7 +168,7 @@ class bibthek(object):
         if error == '0':
             raise cherrypy.HTTPRedirect("/logout")
         else:
-            return error
+            return json.dumps({'type' : 'danger', 'error' : error})
 
     @cherrypy.expose
     def delete_acc(self, password=None, username=None):
@@ -183,14 +186,18 @@ class bibthek(object):
                 cherrypy.lib.sessions.expire()
                 raise cherrypy.HTTPRedirect("/")
             else:
-                raise cherrypy.HTTPRedirect("/admin")
+                return json.dumps({'type' : 'success',
+                                   'error' : 'Account deleted'})
         else:
-            print('Nope!')
+            return json.dumps({'type' : 'danger', 'error' : 'Wrong Password'})
 
     @cherrypy.expose
     @cherrypy.tools.auth(user_role='admin')
     def reset_pw(self, username):
-        return mongo_reset_pw(username)
+        return json.dumps({'type' : 'success',
+                           'error' : 'Please tell ' + username +
+                           ' the new password: "' +
+                           mongo_reset_pw(username) + '"'})
 
     @cherrypy.expose
     def import_books(self, data_upload=None, separator=None):
@@ -203,11 +210,12 @@ class bibthek(object):
             username = cherrypy.session['username']
             data, error = import_file(data, username, separator)
             if error != '0':
-                return error
+                return json.dumps({"type" : "danger", "error" : error})
             else:
                 for row in data:
                     self.db().insert(row)           
-                return 'Upload complete'
+                return json.dumps({"type" : "success",
+                                   "error" : 'Upload complete'})
 
     @cherrypy.expose
     def export(self, _type):
@@ -245,14 +253,9 @@ class bibthek(object):
     @cherrypy.expose
     def gr_id(self, book_id='', isbn=''):
         if book_id != '':
-            book = self.db().get_by_id(book_id)
-            gr_id = get('https://www.goodreads.com/book/isbn_to_id/' +
-                        book['isbn']  + '?key=Fyl3BYyRgNUZAoD1M9rQ').text
-        elif isbn != '':
-            gr_id = get('https://www.goodreads.com/book/isbn_to_id/' +
-                        isbn  + '?key=Fyl3BYyRgNUZAoD1M9rQ').text
-        raise cherrypy.HTTPRedirect("https://www.goodreads.com/book/show/" +
-                                    gr_id)
+            isbn = self.db().get_by_id(book_id)['isbn']
+        raise cherrypy.HTTPRedirect("https://www.goodreads.com/search?" +
+                                    "utf8=%E2%9C%93&query=" + isbn)
 
     @cherrypy.expose
     def delete(self, book_id):
@@ -261,8 +264,9 @@ class bibthek(object):
 
     @cherrypy.expose
     def delete_all(self):
-        del_all_books(self.db(), cherrypy.session['username'])
-
+        del_all_books(cherrypy.session['username'])
+        return json.dumps({"type" : "success", "error" : "All books deleted"})
+    
     @cherrypy.expose
     def logout(self):
         cherrypy.lib.sessions.expire()

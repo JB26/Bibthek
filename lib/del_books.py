@@ -12,6 +12,7 @@ def del_all_books(username):
 
 def del_book(mongo, book_id):
     data = mongo.get_by_id(book_id)
-    remove(data['front'])
+    if 'front' in data:
+        remove(data['front'])
     mongo.delete_by_id(book_id)
     return 0

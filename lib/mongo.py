@@ -441,7 +441,7 @@ def mongo_add_user(username, password, email, session_id):
              'session_id' : session_id,
              'reg_date' : str(date.today()),
              'role' : None}
-    if mail != '' :
+    if email != '' :
         query['email'] = email
     user_info.insert(query)
     return '0'

@@ -33,7 +33,7 @@ def export_cover_csv(data, username):
         try:
             zf.write(_file,
                      arcname='covers/' + _file.rsplit('/')[-1])
-        except:
+        except FileNotFoundError:
             pass
     csv_file = export_csv(data, username)
     zf.write(csv_file, arcname='export_' + username + '.csv')

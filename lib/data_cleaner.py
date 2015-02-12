@@ -35,7 +35,7 @@ def clean_import(row):
         if 'reading_stats' not in row or row['reading_stats'] == '':
             try:
                 row['read_count'] = int(row['read_count'])
-            except:
+            except ValueError:
                 row['read_count'] = 0
             row['reading_stats'] = [{"start_date":'',
                                      "finish_date":''}] * row['read_count']

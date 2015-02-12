@@ -197,18 +197,23 @@
       <div class="col-md-7">
         <h3>Description</h3>
         <textarea class="form-control" id="description" name="description" rows="10">${book['description']}</textarea>
-        <button type="submit" name="save">Save!</button>
+        <button class="btn btn-sm btn-success" type="submit" name="save">Save!</button>
         % if book['_id'] == 'new_book':
-        <button type="submit" name="isbn_search" id="isbn_search" style="display:inline;">ISBN search</button>
-        <a href="/delete${'?book_id=' + book['_id']}" id="delete" style="display:none;">Delete!</a>
+        <button class="btn btn-sm btn-default" type="submit" name="isbn_search" id="isbn_search">ISBN search</button>
+        <a class="btn btn-sm btn-danger" href="/delete${'?book_id=' + book['_id']}" id="delete" style="display:none;">Delete!</a>
         % else:
-        <button type="submit" name="isbn_search" id="isbn_search" style="display:none;">ISBN search</button>
-        <a href="/delete${'?book_id=' + book['_id']}" id="delete" style="display:inline;">Delete!</a>
+        <button class="btn btn-sm btn-default" type="submit" name="isbn_search" id="isbn_search" style="display:none;">ISBN search</button>
+        <a class="btn btn-sm btn-danger" href="/delete${'?book_id=' + book['_id']}" id="delete">Delete!</a>
         % endif
-        <br />
-        <a href="https://www.google.de/search?q=${book['isbn']}&tbm=isch" id='isbn_image' target="_blank">Cover search</a>
-        <a href="/" id='goodreads' target="_blank">GoodReads</a>
-        <a href="https://www.amazon.de/gp/search?keywords=${book['isbn']}" id='amazon' target="_blank">Amazon search</a>
+        <a class="btn btn-sm btn-default" href="https://www.google.de/search?q=${book['isbn']}&tbm=isch" id='isbn_image' target="_blank">
+          Cover search
+        </a>
+        <a class="btn btn-sm btn-default" href="/" id='goodreads' target="_blank">
+          GoodReads
+        </a>
+        <a class="btn btn-sm btn-default" href="https://www.amazon.de/gp/search?keywords=${book['isbn']}" id='amazon' target="_blank">
+          Amazon search
+        </a>
       </div>
       <div class="col-md-5">
         <h3>Reading Stats</h3>
@@ -262,6 +267,8 @@
   </form>
 </div>  
 
+<script src="/static/js/local_warning.js"></script>
 <script src="/static/js/local.js"></script>
+<script src="/static/js/local_autocomplete.js"></script>
 </body>
 </html>

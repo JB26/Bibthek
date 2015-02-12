@@ -110,13 +110,13 @@ def unzip(data_zip, username):
             
     try:
         os.mkdir('import/' + username)
-    except:
+    except FileExistsError:
         return None, None, "Last import went wrong"
     zf.extractall('import/' + username )
     data_file = ('import/' + username + '/' + data_file)
     try:
         os.mkdir('static/covers/' + username + '_front')
-    except:
+    except FileExistsError:
         pass
     return data_file, os.listdir('import/' + username + '/covers'), '0'
 

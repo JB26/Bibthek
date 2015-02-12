@@ -1,5 +1,5 @@
 function load_book(book_id){
-  $.getJSON( "/json_book", {book_id:book_id},function(data) {
+  $.getJSON( "/json_book", {book_id:book_id}, function(data) {
     $.each(data, function(input_id, input_value){
       if ($.isArray(input_value)) {
         $('#' + input_id).val(input_value.join(" & "));
@@ -15,8 +15,10 @@ function load_book(book_id){
     $('#delete').show();
     $('#isbn_search').hide();
     $('#reading_stats > tbody tr').remove();
-    for (i = 0; i < data.reading_stats.length; i++) {
+    if (data.reading_stats != null) {
+      for (i = 0; i < data.reading_stats.length; i++) {
       build_reading_stats({start: data.reading_stats[i]['start_date'], finish: data.reading_stats[i]['finish_date'], abdoned : data.reading_stats[i]['abdoned']}, i+1);
+      }
     }
     if (data.type == 'comic') {$('.comic').show()} else {$('.comic').hide()};
   });
@@ -114,8 +116,9 @@ $( '#book_form' ).submit(function( event ) {
     success: function(json_data){
       var data = $.parseJSON(json_data);
       if (data['error'] != 0) {
-        alert(data['error']);
+        warning('danger', data['error']);
       }else{
+        warning('success', "Books saved");
         if (data['new'] == true) {
           window.location.assign(window.location.pathname + "?book_id=" + data['book_id']);
         } else {
@@ -124,6 +127,12 @@ $( '#book_form' ).submit(function( event ) {
       }
     }
   });
+});
+
+$('#delete').click(function(event) {
+  event.preventDefault();
+  var book_id = $(' body ').attr('id');
+  warning("danger", 'Do you really want to delete this book? <a href="/delete?book_id=' + book_id + '" class="alert-link" id="delete_now">YES!</a> ');
 });
 
 $( '.book_title' ).click(function( event ) {
@@ -218,58 +227,4 @@ $('.series_star').click(function(event) {
       };
     };
   });
-});
-
-// Autocomplete can't use variables :(
-$('#authors').autocomplete({
-  //triggerSelectOnValidInput set to false to enable delimter ' & ' (else: Problems with whitespace)
-  triggerSelectOnValidInput: false,
-  deferRequestBy: 100,
-  delimiter: ' & ',
-  serviceUrl: '/autocomplete/authors'
-});
-$('#artist').autocomplete({
-  triggerSelectOnValidInput: false,
-  deferRequestBy: 100,
-  delimiter: ' & ',
-  serviceUrl: '/autocomplete/artist'
-});
-$('#colorist').autocomplete({
-  triggerSelectOnValidInput: false,
-  deferRequestBy: 100,
-  delimiter: ' & ',
-  serviceUrl: '/autocomplete/colorist'
-});
-$('#cover_artist').autocomplete({
-  triggerSelectOnValidInput: false,
-  deferRequestBy: 100,
-  delimiter: ' & ',
-  serviceUrl: '/autocomplete/cover_artist'
-});
-$('#publisher').autocomplete({
-  deferRequestBy: 100,
-  serviceUrl: '/autocomplete/publisher'
-});
-$('#series').autocomplete({
-  deferRequestBy: 100,
-  serviceUrl: '/autocomplete/series'
-});
-$('#language').autocomplete({
-  deferRequestBy: 100,
-  serviceUrl: '/autocomplete/language'
-});
-$('#binding').autocomplete({
-  deferRequestBy: 100,
-  serviceUrl: '/autocomplete/binding'
-});
-$('#shelf').autocomplete({
-  deferRequestBy: 100,
-  triggerSelectOnValidInput: false,
-  serviceUrl: '/autocomplete/shelf'
-});
-$('#genre').autocomplete({
-  deferRequestBy: 100,
-  triggerSelectOnValidInput: false,
-  delimiter: ', ',
-  serviceUrl: '/autocomplete/genre'
 });

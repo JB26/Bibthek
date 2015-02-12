@@ -1,4 +1,5 @@
 <%page args="current_section"/>
+<div id = "alert_placeholder" style="position:fixed;top:20px;z-index:100;"></div>
 <nav class="navbar navbar-default">
   <div class="container-fluid">
     <div>
@@ -16,6 +17,7 @@
         % endif
       </ul>
       <ul class="nav navbar-nav navbar-right">
+        <p class="navbar-text">Signed in as ${user['username']}</p>
         <%include file="menu_view.html" args="current_section=current_section" />
         <li><a href="/logout">Logout</a></li>
       </ul>

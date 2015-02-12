@@ -22,7 +22,7 @@
         </thead>
         <tbody>
         % for user_info in user_list:
-          <tr>
+          <tr id="tr_${user_info['username']}">
             <td>${user_info['username']}</td>
             <td>${user_info['reg_date']}</td>
             <td>${user_info['role']}</td>
@@ -32,14 +32,14 @@
               <td>None</td>
             % endif
             <td>
-              <form action="/reset_pw">
-                <button class="btn btn-sm btn-primary btn-block" type="submit" name="username" value="${user_info['username']}">Reset Password</button>
-              </form>
+              <a class="btn btn-sm btn-primary btn-block reset_pw" href="/reset_pw?username=${user_info['username']}" id="${user_info['username']}">
+                Reset Password
+              </a>
             </td>
             <td>
-              <form action="/delete_acc">
-                <button class="btn btn-sm btn-danger btn-block" type="submit" name="username" value="${user_info['username']}">Delete Account</button>
-              </form>
+              <a class="btn btn-sm btn-danger btn-block delete_acc_warn" href="/delete_acc?username=${user_info['username']}" id="${user_info['username']}">
+                Delete Account
+              </a>
             </td>
           </tr>
         % endfor
@@ -48,5 +48,7 @@
     </div>
   </div>
 </div>
+<script src="/static/js/local_warning.js"></script>
+<script src="/static/js/local_admin.js"></script>
 </body>
 </html>

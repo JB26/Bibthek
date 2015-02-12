@@ -21,17 +21,15 @@ def get_book_data(mongo, book_id, book_type, shelf):
     else:
         book = mongo.get_by_id(book_id)
         for k, v in book_empty.items():
-            try:
-                book[k]
-            except:
+            if k not in book:
                 book[k] = v
         book['_id'] = str(book['_id'])
     return book
 
 def save_book_data(mongo, params):
-    params = sanity_check(params)
-    if params['title'] == '':
-        return None, None, 'Please enter a title!'
+    params, error = sanity_check(params)
+    if error != "0":
+        return None, None, error
     if params['book_id'] == 'new_book':
         new = True
     else:
@@ -45,7 +43,7 @@ def save_book_data(mongo, params):
             return  None, None, error
         try:
             os.mkdir(path)
-        except:
+        except FileExistsError:
             pass
         with open(new_name, 'wb') as f:
                 f.write(params['front'].file.read())
@@ -54,7 +52,7 @@ def save_book_data(mongo, params):
             data = mongo.get_by_id(params['book_id'])
             try:
                 os.remove(data['front'])
-            except:
+            except FileNotFoundError:
                 pass 
     else:
         del params['front']
