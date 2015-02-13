@@ -6,8 +6,14 @@ def check_rights():
     user = mongo_user_rights(view_user)
     if user == None:
         raise cherrypy.HTTPError(404, "Profile not found")
-    elif ( ( 'privacy' not in user or user['privacy'] == 'private' ) and
-           ( view_user != cherrypy.session['username'] ) ):
-        raise cherrypy.HTTPRedirect("/")
+    elif 'privacy' not in user or user['privacy'] == 'private':
+        try:
+            username = cherrypy.session['username']
+        except KeyError:
+            raise cherrypy.HTTPRedirect("/")
+        except AssertionError:
+            raise cherrypy.HTTPRedirect("/")
+        if username != view_user:
+            raise cherrypy.HTTPRedirect("/")
     
 cherrypy.tools.rights = cherrypy.Tool('before_handler', check_rights)
