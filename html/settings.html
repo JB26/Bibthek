@@ -46,6 +46,17 @@
   </div>
   <div class="row">
     <div class="col-md-12">
+      <h2>Profile privacy setting</h2>
+      <p>Your profile is ${user['privacy']}.</p>
+      % if user['privacy'] == 'public':
+        <a class="btn btn-sm btn-default" href="/privacy?status=private">Make your profile private</a>
+      % else:
+        <a class="btn btn-sm btn-default" href="/privacy?status=public">Make your profile public</a>
+      % endif
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-12">
       <h2>Delete your account</h2>
       <form action="/delete_acc">
         <div class="form-group">

@@ -7,7 +7,6 @@ Abbord pencil
 TODO:
 Upload Limits (Set max_request_body_size = 104857600 ???)
 javascript reload menu
-javascript logout error
 Comments and code cleanup
 logging
 Batch delete

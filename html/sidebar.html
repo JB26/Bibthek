@@ -1,3 +1,7 @@
+<link rel="stylesheet" href="/static/css/sidebar.css" type="text/css" />
+% if user == None or user['username'] != view_user:
+  <link rel="stylesheet" href="/static/css/public.css" type="text/css" />
+% endif
 <div class="navmenu navmenu-default navmenu-fixed-left offcanvas-sm">
   <a class="navmenu-brand visible-md visible-lg" href="/">BibThek</a>
   <a class="navmenu-brand">${active_shelf['shelf']} (${active_shelf['#items']})</a>
@@ -8,9 +12,9 @@
       % if 'item_hash' in name:
         % if active_sort.split('/')[1] == 'series':
           % if 'series_complete' in name['books'][0] and name['_id'] != 'Not in a series' and name['books'][0]['series_complete']:
-            <span class="glyphicon glyphicon-star series_star" id="${idx}_star" aria-label="Mark series as complete" title="Mark series as complete"></span>
+            <span class="glyphicon glyphicon-star series_star" id="${idx}_star" aria-label="Series complete" title="Series complete"></span>
           % elif name['_id'] != 'Not in a series':
-            <span class="glyphicon glyphicon-star-empty series_star" id="${idx}_star-empty" aria-label="Mark series as complete" title="Mark series as complete"></span>
+            <span class="glyphicon glyphicon-star-empty series_star" id="${idx}_star-empty" aria-label="Series not complete" title="Series not complete"></span>
           % endif
         % endif
         <a class="dropdown-toggle" id="${idx}_a" data-toggle="dropdown" >${name['_id']}<span class="caret"></span></a>

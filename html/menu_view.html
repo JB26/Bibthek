@@ -2,26 +2,28 @@
 <li class="dropdown">
   <a class="dropdown-toggle" data-toggle="dropdown" href="#">View<span class="caret"></span></a>
   <ul class="dropdown-menu">
-    % if current_section == 'settings':
-      <li class="active">
-    % else:
-      <li>
-    % endif
-    <a href="/settings">Settings</a></li>
-    % if user['role'] == 'admin':
-      % if current_section == 'admin':
+    % if user != None and user['username'] == view_user:
+      % if current_section == 'settings':
         <li class="active">
       % else:
         <li>
       % endif
-      <a href="/admin">Administration</a></li>
+      <a href="/settings">Settings</a></li>
+      % if user['role'] == 'admin':
+        % if current_section == 'admin':
+          <li class="active">
+        % else:
+          <li>
+        % endif
+        <a href="/admin">Administration</a></li>
+      % endif
+      % if current_section == 'import':
+        <li class="active">
+      % else:
+        <li>
+      % endif
+      <a href="/import_books">Import/Export</a></li>
     % endif
-    % if current_section == 'import':
-      <li class="active">
-    % else:
-      <li>
-    % endif
-    <a href="/import_books">Import/Export</a></li>
     % if current_section == 'books':
       <li class="active">
     % else:

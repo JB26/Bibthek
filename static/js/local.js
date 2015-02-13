@@ -1,5 +1,6 @@
 function load_book(book_id){
-  $.getJSON( "/json_book", {book_id:book_id}, function(data) {
+  var view_user = window.location.pathname.split("/")[2]
+  $.getJSON( "/json_book/" + view_user, {book_id:book_id}, function(data) {
     $.each(data, function(input_id, input_value){
       if ($.isArray(input_value)) {
         $('#' + input_id).val(input_value.join(" & "));
@@ -20,8 +21,10 @@ function load_book(book_id){
       build_reading_stats({start: data.reading_stats[i]['start_date'], finish: data.reading_stats[i]['finish_date'], abdoned : data.reading_stats[i]['abdoned']}, i+1);
       }
     }
-    if (data.type == 'comic') {$('.comic').show()} else {$('.comic').hide()};
-    goodreads_id(book_id, '_id');
+    if (data.type == 'comic') {
+      $('.comic').show()} else {$('.comic').hide()
+    };
+    search_links(data.isbn);
   })
   .fail(function() {
     window.location.href = '/';
@@ -62,7 +65,6 @@ function build_reading_stats(data, i) {
 }
 
 function empty_book(){
-  $('#goodreads').hide();
   $('#delete').hide();
   $.getJSON( "/json_book", {book_id:'new_book'},function(data) {
     $.each(data,function(input_id, input_value){
@@ -84,7 +86,7 @@ function isbn_book(isbn){
       $('#' + input_id).val(input_value)
     });
     $('#isbn_search').show();
-    goodreads_id(isbn, 'isbn');
+    search_links(isbn);
     $('#isbn_image').attr('href', 'https://www.google.de/search?q=' + isbn + '&tbm=isch');
     $('#amazon').attr('href', 'https://www.amazon.de/gp/search?keywords=' + isbn);
   })
@@ -102,12 +104,11 @@ function menu_reload(){
   });
 };
 
-function goodreads_id(book_i, type){
-  if (book_i != 'new_book') {
-    if (type == '_id') {var send = "?book_id=" + book_i} else if (type == 'isbn') {var send = "?isbn=" + book_i};
-    $('#goodreads').attr('href','/gr_id' + send);
-    $('#goodreads').show();
-  };
+function search_links(isbn){
+  var send = "?isbn=" + isbn;
+  $('#isbn_image').attr('href','https://www.google.de/search?q=' + isbn + '&tbm=isch');
+  $('#goodreads').attr('href','https://www.goodreads.com/search?utf8=%E2%9C%93&query=' + isbn);
+  $('#amazon').attr('href','https://www.amazon.de/gp/search?keywords=' + isbn);
 };
 
 $( '#book_form' ).submit(function( event ) {
@@ -176,7 +177,6 @@ window.onload = function (){
     history.replaceState(book_id, '', window.location.pathname);
   } else {
     history.replaceState(book_id, '', window.location.pathname + '?book_id=' + book_id)};
-  goodreads_id(book_id, '_id');
 };
 
 $('#reading_stats').on( "click", ".date_js", function() {
@@ -229,14 +229,16 @@ $('.series_star').click(function(event) {
   var id = $( this ).attr('id'),
   status = id.split('_')[1],
   link_number = id.split('_')[0];
-  $.get( "/star_series?series=" + $('#' + link_number + '_a').text() + "&status=" + status, function( data ) {
-    if (data == '0') {
-      $('#' + id).toggleClass('glyphicon-star-empty glyphicon-star');
-      if (status == 'star') {
-        $('#' + id).attr('id', link_number + '_star-empty');
-      } else {
-        $('#' + id).attr('id', link_number + '_star');
+  if ($( this ).css("cursor") == "pointer") {
+    $.get( "/star_series?series=" + $('#' + link_number + '_a').text() + "&status=" + status, function( data ) {
+      if (data == '0') {
+        $('#' + id).toggleClass('glyphicon-star-empty glyphicon-star');
+        if (status == 'star') {
+          $('#' + id).attr('id', link_number + '_star-empty');
+        } else {
+          $('#' + id).attr('id', link_number + '_star');
+        };
       };
-    };
-  });
+    });
+  };
 });

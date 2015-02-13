@@ -492,9 +492,16 @@ def mongo_role(username, role):
                               {"$set" : {"role" : role} })
     return status
 
+def mongo_privacy(username, status):
+    user_info.update({'username' : username},
+                     {"$set" : {"privacy" : status } } )
+    
 def mongo_user_list():
     data = user_info.find({},{"_id" : 0}).sort([("username", 1)])
     return data
+
+def mongo_user_rights(username):
+    return user_info.find_one({"username" : username})
 
 def mongo_drop(username):
     client.bibthek[username].drop()

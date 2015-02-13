@@ -1,0 +1,7 @@
+.series_pencil {
+  display: none;
+}
+
+.series_star:hover {
+  cursor: default;
+}

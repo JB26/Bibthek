@@ -11,13 +11,14 @@ absDir = os.path.join(os.getcwd(), localDir)
 
 from lib.mongo import mongo_db, mongo_user_list, mongo_user_del, mongo_change_pw
 from lib.mongo import mongo_add_user, mongo_user, mongo_login, mongo_role
-from lib.mongo import mongo_change_email, mongo_reset_pw
+from lib.mongo import mongo_change_email, mongo_reset_pw, mongo_privacy
 from lib.book_data import get_book_data, save_book_data
 from lib.get_data import google_books_data
 from lib.import_data import import_file
 from lib.export_data import export_csv, export_cover_csv
 from lib.del_books import del_all_books, del_book
 import lib.auth as auth
+import lib.rights as rights
 from lib.menu_data import menu_data, menu_filter
 
 mylookup = TemplateLookup(directories=['html'], output_encoding='utf-8',
@@ -25,34 +26,44 @@ mylookup = TemplateLookup(directories=['html'], output_encoding='utf-8',
 
 class bibthek(object):
 
-    def db(self):
-        return mongo_db(cherrypy.session['username'])
+    def db(self, user):
+        return mongo_db(user)
 
     @cherrypy.expose
     def index(self):
-        raise cherrypy.HTTPRedirect("/books/All/series/variant1_order")
+        raise cherrypy.HTTPRedirect("/view/" + cherrypy.session['username'])
 
     @cherrypy.expose
-    def books(self, shelf=None, sort_first=None, sort_second=None,
-              _filter = '', book_id='new_book', book_type='book', view="books"):
+    @cherrypy.tools.auth(required = False)
+    @cherrypy.tools.rights()
+    def view(self, view_user, view='books', shelf=None, sort_first=None,
+             sort_second=None, _filter = '', book_id='new_book',
+             book_type='book'):
+        
+        return self.books(view_user, view, shelf, sort_first, sort_second,
+                          _filter, book_id, book_type)
+
+    def books(self, view_user, view, shelf, sort_first, sort_second, _filter,
+              book_id, book_type):
 
         if sort_second == None:
-            raise cherrypy.HTTPRedirect("/" + view +
+            raise cherrypy.HTTPRedirect("/view/" + view_user  + "/" + view +
                                         "/All/series/variant1_order")
         shelf = shelf.encode("latin-1").decode("utf-8")
         _filter = _filter.encode("latin-1").decode("utf-8")
-        book = get_book_data(self.db(), book_id, book_type, shelf)
+        book = get_book_data(self.db(view_user), book_id, book_type, shelf)
         user = mongo_user(cherrypy.session.id)
-        sort1, sort2, active_sort, items = menu_data(self.db(), shelf, _filter,
+        sort1, sort2, active_sort, items = menu_data(self.db(view_user), shelf,
+                                                     _filter,
                                                      sort_first, sort_second)
-        filters = menu_filter(self.db(), shelf)
+        filters = menu_filter(self.db(view_user), shelf)
         mytemplate = mylookup.get_template("book.html")
-        shelfs = self.db().shelfs(_filter)
+        shelfs = self.db(view_user).shelfs(_filter)
         active_shelf = {}
         active_shelf['shelf'] = shelf
-        active_shelf['#items'] = self.db().count_items(shelf, _filter)
+        active_shelf['#items'] = self.db(view_user).count_items(shelf, _filter)
         if view == 'covers':
-            covers = self.db().covers(shelf, _filter)
+            covers = self.db(view_user).covers(shelf, _filter)
         else:
             covers = None
         return mytemplate.render(items=items, book=book, shelfs=shelfs,
@@ -60,63 +71,59 @@ class bibthek(object):
                                  sort1=sort1, sort2=sort2,
                                  active_sort=active_sort,
                                  active_filter=_filter, filters = filters,
-                                 view=view, covers=covers, user=user)
-
-    @cherrypy.expose
-    def books2(self, shelf=None, sort_first=None, sort_second=None,
-               _filter = '', book_id='new_book', book_type='book'):
-        
-        return self.books(shelf, sort_first, sort_second, _filter, book_id,
-                          book_type, "books2")
-
-    @cherrypy.expose
-    def covers(self, shelf=None, sort_first=None, sort_second=None,
-               _filter = '', book_id='new_book', book_type='book'):
-        
-        return self.books(shelf, sort_first, sort_second, _filter, book_id,
-                          book_type, "covers")
-    
+                                 view=view, covers=covers,
+                                 user=user, view_user=view_user)
     
     @cherrypy.expose
-    def json_book(self, book_id, book_type='book', shelf='All'):
-        book = get_book_data(self.db(), book_id, book_type, shelf)
+    @cherrypy.tools.auth(required = False)
+    @cherrypy.tools.rights()
+    def json_book(self, view_user, book_id, book_type='book', shelf='All'):
+        book = get_book_data(self.db(view_user), book_id, book_type, shelf)
         return json.dumps(book)
+
+    
 
     @cherrypy.expose
     def autocomplete(self, field, query):
+        username = cherrypy.session['username']
         if field in ['authors', 'artist', 'colorist', 'cover_artist', 'genre']:
             array = True
-            ac_list = mongo_db.autocomplete(self.db(), query, field, array)
+            ac_list = mongo_db.autocomplete(self.db(username), query, field,
+                                            array)
             return json.dumps(ac_list)
         if field in ['publisher', 'series', 'language', 'binding', 'shelf']:
             array = False
-            ac_list = mongo_db.autocomplete(self.db(), query, field, array)
+            ac_list = mongo_db.autocomplete(self.db(username), query, field,
+                                            array)
             return json.dumps(ac_list)
 
     @cherrypy.expose
     def menu(self, shelf='All'):
         mytemplate = mylookup.get_template("menu.html")
-        series = self.db().series(shelf)
-        shelfs = self.db().shelfs()
+        series = self.db(cherrypy.session['username']).series(shelf)
+        shelfs = self.db(cherrypy.session['username']).shelfs()
         return mytemplate.render(series=series, shelfs=shelfs)
 
     @cherrypy.expose
     def settings(self):
         user = mongo_user(cherrypy.session.id)
+        if 'privacy' not in user:
+            user['privacy'] = 'privat'
         mytemplate = mylookup.get_template("settings.html")
         return mytemplate.render(user=user)
 
     @cherrypy.expose
     def statistics(self, shelf=None, _filter = ''):
+        username = cherrypy.session['username']
         if shelf == None:
             raise cherrypy.HTTPRedirect("/statistics/All")
         shelf = shelf.encode("latin-1").decode("utf-8")
         _filter = _filter.encode("latin-1").decode("utf-8")
-        filters = menu_filter(self.db(), shelf)
-        shelfs = self.db().shelfs(_filter)
+        filters = menu_filter(self.db(username), shelf)
+        shelfs = self.db(username).shelfs(_filter)
         active_shelf = {}
         active_shelf['shelf'] = shelf
-        active_shelf['#items'] = self.db().count_items(shelf, _filter)
+        active_shelf['#items'] = self.db(username).count_items(shelf, _filter)
         user = mongo_user(cherrypy.session.id)
         mytemplate = mylookup.get_template("statistics.html")
         return mytemplate.render(active_sort='', shelfs=shelfs,
@@ -128,18 +135,19 @@ class bibthek(object):
     def json_statistic(self, shelf=None, _filter = '', _type = None):
         shelf = shelf.encode("latin-1").decode("utf-8")
         _filter = _filter.encode("latin-1").decode("utf-8")
+        username = cherrypy.session['username']
         if _type.split('#')[0] in ['release_date', 'add_date']:
-            labels, data = mongo_db.statistic_date_easy(self.db(), shelf,
-                                                         _filter, _type)
+            labels, data = mongo_db.statistic_date_easy(self.db(username),
+                                                        shelf, _filter, _type)
         elif _type.split('#')[0] in ['start_date', 'finish_date']:
-            labels, data = mongo_db.statistic_date_hard(self.db(), shelf,
-                                                        _filter, _type)
+            labels, data = mongo_db.statistic_date_hard(self.db(username),
+                                                        shelf, _filter, _type)
         elif _type.split('#')[0] == 'pages_read':
-            labels, data = mongo_db.statistic_pages_read(self.db(), shelf,
-                                                        _filter, _type)
+            labels, data = mongo_db.statistic_pages_read(self.db(username),
+                                                         shelf, _filter, _type)
         elif _type.split('#')[0] == 'pages_book':
-            labels, data = mongo_db.statistic_pages_book(self.db(), shelf,
-                                                        _filter)
+            labels, data = mongo_db.statistic_pages_book(self.db(username),
+                                                         shelf, _filter)
         return json.dumps({'data' : data, 'labels' : labels,
                            'canvas_id' : _type.split('#')[0] + '_chart'})
 
@@ -150,6 +158,12 @@ class bibthek(object):
         user_list = mongo_user_list()
         mytemplate = mylookup.get_template("admin.html")
         return mytemplate.render(user=user, user_list=user_list)
+
+    @cherrypy.expose
+    def privacy(self, status):
+        if status in ['private', 'public']:
+            mongo_privacy(cherrypy.session['username'], status)
+            raise cherrypy.HTTPRedirect("/settings")
 
     @cherrypy.expose
     def change_email(self, password, email_new):
@@ -201,25 +215,25 @@ class bibthek(object):
 
     @cherrypy.expose
     def import_books(self, data_upload=None, separator=None):
+        username = cherrypy.session['username']
         if data_upload == None or data_upload.file == None:
             user = mongo_user(cherrypy.session.id)
             mytemplate = mylookup.get_template("import.html")
             return mytemplate.render(user=user)
         else:
             data = data_upload
-            username = cherrypy.session['username']
             data, error = import_file(data, username, separator)
             if error != '0':
                 return json.dumps({"type" : "danger", "error" : error})
             else:
                 for row in data:
-                    self.db().insert(row)           
+                    self.db(username).insert(row)           
                 return json.dumps({"type" : "success",
                                    "error" : 'Upload complete'})
 
     @cherrypy.expose
     def export(self, _type):
-        data = self.db().get_all()
+        data = self.db(cherrypy.session['username']).get_all()
         if _type == 'csv':
             file_name = export_csv(data, cherrypy.session['username'])
         elif _type == 'cover_csv':
@@ -230,19 +244,21 @@ class bibthek(object):
         
     @cherrypy.expose
     def save(self, **params):
-        book_id, new, error = save_book_data(self.db(), params)
+        username = cherrypy.session['username']
+        book_id, new, error = save_book_data(self.db(username), params)
         return json.dumps({'book_id' : book_id, 'new' : new, 'error' : error})
 
     @cherrypy.expose
     def batch_edit(self, edit, old_name, new_name):
+        username = cherrypy.session['username']
         if edit in  ['series', 'authors']:
-            self.db().change_field(edit, old_name, new_name)
+            self.db(username).change_field(edit, old_name, new_name)
             raise cherrypy.HTTPRedirect( str(cherrypy.request.headers
                                             .elements('Referer')[0]) )
 
     @cherrypy.expose
     def star_series(self, series, status):
-        self.db().star_series(series, status)
+        self.db(cherrypy.session['username']).star_series(series, status)
         return '0'
 
     @cherrypy.expose
@@ -251,15 +267,8 @@ class bibthek(object):
         return json.dumps(book)
 
     @cherrypy.expose
-    def gr_id(self, book_id='', isbn=''):
-        if book_id != '':
-            isbn = self.db().get_by_id(book_id)['isbn']
-        raise cherrypy.HTTPRedirect("https://www.goodreads.com/search?" +
-                                    "utf8=%E2%9C%93&query=" + isbn)
-
-    @cherrypy.expose
     def delete(self, book_id):
-        del_book(self.db(), book_id)
+        del_book(self.db(cherrypy.session['username']), book_id)
         raise cherrypy.HTTPRedirect("/")
 
     @cherrypy.expose

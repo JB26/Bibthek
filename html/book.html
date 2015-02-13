@@ -10,10 +10,12 @@
   <%include file="sidebar_covers.html" />
   <%include file="menu.html" args="current_section='covers'" />
 % endif
-<link rel="stylesheet" href="/static/css/sidebar.css" type="text/css" />
 <link rel="stylesheet" href="/static/css/autocomplete.css" type="text/css" />
 <div class="container">
   <form method="post" action="/save${'?book_id=' + book['_id']}" enctype="multipart/form-data" id="book_form" class="form-horizontal">
+  % if user == None or user['username'] != view_user:
+  <fieldset disabled>
+  % endif
     <input type="text" id="type" name="type" value="${book['type']}" style="display:none">
     <div class="row">
       <div class="col-md-3">
@@ -197,28 +199,32 @@
       <div class="col-md-7">
         <h3>Description</h3>
         <textarea class="form-control" id="description" name="description" rows="10">${book['description']}</textarea>
-        <button class="btn btn-sm btn-success" type="submit" name="save">Save!</button>
-        % if book['_id'] == 'new_book':
-        <button class="btn btn-sm btn-default" type="submit" name="isbn_search" id="isbn_search">ISBN search</button>
-        <a class="btn btn-sm btn-danger" href="/delete${'?book_id=' + book['_id']}" id="delete" style="display:none;">Delete!</a>
-        % else:
-        <button class="btn btn-sm btn-default" type="submit" name="isbn_search" id="isbn_search" style="display:none;">ISBN search</button>
-        <a class="btn btn-sm btn-danger" href="/delete${'?book_id=' + book['_id']}" id="delete">Delete!</a>
+        % if user != None and user['username'] == view_user:
+          <button class="btn btn-sm btn-success" type="submit" name="save">Save!</button>
+          % if book['_id'] == 'new_book':
+          <button class="btn btn-sm btn-default" type="submit" name="isbn_search" id="isbn_search">ISBN search</button>
+          <a class="btn btn-sm btn-danger" href="/delete${'?book_id=' + book['_id']}" id="delete" style="display:none;">Delete!</a>
+          % else:
+          <button class="btn btn-sm btn-default" type="submit" name="isbn_search" id="isbn_search" style="display:none;">ISBN search</button>
+          <a class="btn btn-sm btn-danger" href="/delete${'?book_id=' + book['_id']}" id="delete">Delete!</a>
+          % endif
+          <a class="btn btn-sm btn-default" href="https://www.google.de/search?q=${book['isbn']}&tbm=isch" id='isbn_image' target="_blank">
+            Cover search
+          </a>
+          <a class="btn btn-sm btn-default" href="https://www.goodreads.com/search?utf8=%E2%9C%93&query=${book['isbn']}" id='goodreads' target="_blank">
+            GoodReads
+          </a>
+          <a class="btn btn-sm btn-default" href="https://www.amazon.de/gp/search?keywords=${book['isbn']}" id='amazon' target="_blank">
+            Amazon search
+          </a>
         % endif
-        <a class="btn btn-sm btn-default" href="https://www.google.de/search?q=${book['isbn']}&tbm=isch" id='isbn_image' target="_blank">
-          Cover search
-        </a>
-        <a class="btn btn-sm btn-default" href="/" id='goodreads' target="_blank">
-          GoodReads
-        </a>
-        <a class="btn btn-sm btn-default" href="https://www.amazon.de/gp/search?keywords=${book['isbn']}" id='amazon' target="_blank">
-          Amazon search
-        </a>
       </div>
       <div class="col-md-5">
         <h3>Reading Stats</h3>
+        % if user != None and user['username'] == view_user:
         <a href="start_reading" id="start_reading">Start reading</a>
         <a href="delete_reading" id="delete_reading">Delete last</a>
+        % endif
         <table class="table table-striped" id="reading_stats">
           <thead>
             <tr>
@@ -264,7 +270,21 @@
         </table>
       </div>
     </div>
+  % if user == None or user['username'] != view_user:
+  </fieldset>
+  % endif
   </form>
+  % if user == None or user['username'] != view_user:
+    <a class="btn btn-sm btn-default" href="https://www.google.de/search?q=${book['isbn']}&tbm=isch" id='isbn_image' target="_blank">
+      Cover search
+    </a>
+    <a class="btn btn-sm btn-default" href="https://www.goodreads.com/search?utf8=%E2%9C%93&query=${book['isbn']}" id='goodreads' target="_blank">
+      GoodReads
+    </a>
+    <a class="btn btn-sm btn-default" href="https://www.amazon.de/gp/search?keywords=${book['isbn']}" id='amazon' target="_blank">
+      Amazon search
+    </a>
+  % endif
 </div>  
 
 <script src="/static/js/local_warning.js"></script>
