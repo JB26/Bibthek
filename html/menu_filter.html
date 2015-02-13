@@ -5,9 +5,9 @@
   % for _filter in filters:
     <%
       if current_section in ['books', 'books2', 'covers']:
-        url = "/" + current_section + "/" + active_shelf['shelf'] + active_sort
+        url = "/view/" + view_user + "/" + current_section + "/" + active_shelf['shelf'] + active_sort
       elif current_section == 'statistics':
-        url = "/statistics/" + active_shelf['shelf']
+        url = "/statistics/" + view_user + "/" + active_shelf['shelf']
     %>
     <li role="presentation" class="dropdown-header">${_filter['name']}</li>
     % for row in _filter['filter']:

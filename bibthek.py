@@ -39,18 +39,16 @@ class bibthek(object):
     def view(self, view_user, view='books', shelf=None, sort_first=None,
              sort_second=None, _filter = '', book_id='new_book',
              book_type='book'):
-        
         return self.books(view_user, view, shelf, sort_first, sort_second,
                           _filter, book_id, book_type)
 
     def books(self, view_user, view, shelf, sort_first, sort_second, _filter,
               book_id, book_type):
-
         if sort_second == None:
             raise cherrypy.HTTPRedirect("/view/" + view_user  + "/" + view +
                                         "/All/series/variant1_order")
         shelf = shelf.encode("latin-1").decode("utf-8")
-        _filter = _filter.encode("latin-1").decode("utf-8")
+        _filter = _filter.encode("latin-1").decode("utf-8") 
         book = get_book_data(self.db(view_user), book_id, book_type, shelf)
         user = mongo_user(cherrypy.session.id)
         sort1, sort2, active_sort, items = menu_data(self.db(view_user), shelf,
@@ -110,43 +108,45 @@ class bibthek(object):
         if 'privacy' not in user:
             user['privacy'] = 'privat'
         mytemplate = mylookup.get_template("settings.html")
-        return mytemplate.render(user=user)
+        return mytemplate.render(user=user, view_user = user['username'])
 
     @cherrypy.expose
-    def statistics(self, shelf=None, _filter = ''):
-        username = cherrypy.session['username']
+    @cherrypy.tools.auth(required = False)
+    @cherrypy.tools.rights()
+    def statistics(self, view_user, shelf=None, _filter = ''):
         if shelf == None:
-            raise cherrypy.HTTPRedirect("/statistics/All")
+            raise cherrypy.HTTPRedirect("/statistics/" + view_user  + "/All")
         shelf = shelf.encode("latin-1").decode("utf-8")
         _filter = _filter.encode("latin-1").decode("utf-8")
-        filters = menu_filter(self.db(username), shelf)
-        shelfs = self.db(username).shelfs(_filter)
+        filters = menu_filter(self.db(view_user), shelf)
+        shelfs = self.db(view_user).shelfs(_filter)
         active_shelf = {}
         active_shelf['shelf'] = shelf
-        active_shelf['#items'] = self.db(username).count_items(shelf, _filter)
+        active_shelf['#items'] = self.db(view_user).count_items(shelf, _filter)
         user = mongo_user(cherrypy.session.id)
         mytemplate = mylookup.get_template("statistics.html")
         return mytemplate.render(active_sort='', shelfs=shelfs,
                                  active_shelf=active_shelf,
                                 active_filter=_filter, filters = filters,
-                                user=user)
+                                user=user, view_user=view_user)
 
     @cherrypy.expose
-    def json_statistic(self, shelf=None, _filter = '', _type = None):
+    @cherrypy.tools.auth(required = False)
+    @cherrypy.tools.rights()
+    def json_statistic(self, view_user, shelf=None, _filter = '', _type = None):
         shelf = shelf.encode("latin-1").decode("utf-8")
         _filter = _filter.encode("latin-1").decode("utf-8")
-        username = cherrypy.session['username']
         if _type.split('#')[0] in ['release_date', 'add_date']:
-            labels, data = mongo_db.statistic_date_easy(self.db(username),
+            labels, data = mongo_db.statistic_date_easy(self.db(view_user),
                                                         shelf, _filter, _type)
         elif _type.split('#')[0] in ['start_date', 'finish_date']:
-            labels, data = mongo_db.statistic_date_hard(self.db(username),
+            labels, data = mongo_db.statistic_date_hard(self.db(view_user),
                                                         shelf, _filter, _type)
         elif _type.split('#')[0] == 'pages_read':
-            labels, data = mongo_db.statistic_pages_read(self.db(username),
+            labels, data = mongo_db.statistic_pages_read(self.db(view_user),
                                                          shelf, _filter, _type)
         elif _type.split('#')[0] == 'pages_book':
-            labels, data = mongo_db.statistic_pages_book(self.db(username),
+            labels, data = mongo_db.statistic_pages_book(self.db(view_user),
                                                          shelf, _filter)
         return json.dumps({'data' : data, 'labels' : labels,
                            'canvas_id' : _type.split('#')[0] + '_chart'})
@@ -157,7 +157,8 @@ class bibthek(object):
         user = mongo_user(cherrypy.session.id)
         user_list = mongo_user_list()
         mytemplate = mylookup.get_template("admin.html")
-        return mytemplate.render(user=user, user_list=user_list)
+        return mytemplate.render(user=user, user_list=user_list,
+                                 view_user=user['username'])
 
     @cherrypy.expose
     def privacy(self, status):
@@ -219,7 +220,7 @@ class bibthek(object):
         if data_upload == None or data_upload.file == None:
             user = mongo_user(cherrypy.session.id)
             mytemplate = mylookup.get_template("import.html")
-            return mytemplate.render(user=user)
+            return mytemplate.render(user=user, view_user=user['username'])
         else:
             data = data_upload
             data, error = import_file(data, username, separator)

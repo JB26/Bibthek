@@ -4,9 +4,9 @@
   <ul class="dropdown-menu">
   % for row in sort1:
     % if row['active']:
-    <li class="active"><a href="/${current_section}/${active_shelf['shelf']}${row['url']}${active_filter}">${row['name']}</a></li>
+    <li class="active"><a href="/view/${view_user}/${current_section}/${active_shelf['shelf']}${row['url']}${active_filter}">${row['name']}</a></li>
     % else:
-    <li><a href="/${current_section}/${active_shelf['shelf']}${row['url']}${active_filter}">${row['name']}</a></li>
+    <li><a href="/view/${view_user}/${current_section}/${active_shelf['shelf']}${row['url']}${active_filter}">${row['name']}</a></li>
     % endif
   % endfor
   </ul>
@@ -16,9 +16,9 @@
   <ul class="dropdown-menu">
   % for row in sort2:
     % if row['active']:
-    <li class="active"><a href="/${current_section}/${active_shelf['shelf']}${row['url']}${active_filter}">${row['name']}</a></li>
+    <li class="active"><a href="/view/${view_user}/${current_section}/${active_shelf['shelf']}${row['url']}${active_filter}">${row['name']}</a></li>
     % else:
-    <li><a href="/${current_section}/${active_shelf['shelf']}${row['url']}${active_filter}">${row['name']}</a></li>
+    <li><a href="/view/${view_user}/${current_section}/${active_shelf['shelf']}${row['url']}${active_filter}">${row['name']}</a></li>
     % endif
   % endfor
   </ul>

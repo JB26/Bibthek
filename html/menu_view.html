@@ -29,24 +29,24 @@
     % else:
       <li>
     % endif
-    <a href="/books">Books</a></li>
+    <a href="/view/${view_user}/books">Books</a></li>
     % if current_section == 'books2':
       <li class="active">
     % else:
       <li>
     % endif
-    <a href="/books2">Books view 2</a></li>
+    <a href="/view/${view_user}/books2">Books view 2</a></li>
     % if current_section == 'covers':
       <li class="active">
     % else:
       <li>
     % endif
-    <a href="/covers">Cover Galery</a></li>
+    <a href="/view/${view_user}/covers">Cover Galery</a></li>
     % if current_section == 'statistics':
       <li class="active">
     % else:
       <li>
     % endif
-    <a href="/statistics">Statistics</a></li>
+    <a href="/statistics/${view_user}">Statistics</a></li>
   </ul>
 </li>
