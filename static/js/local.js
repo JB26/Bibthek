@@ -13,8 +13,13 @@ function load_book(book_id){
     $('#cover').attr('src', '/' + data.front);
     $('#book_form').attr('action', '/save/?book_id=' + data._id);
     $('#delete').attr('href', '/delete/?book_id=' + data._id);
-    $('#delete').show();
-    $('#isbn_search').hide();
+    if (book_id == 'new_book') {
+      $('#delete').hide();
+      $('#isbn_search').show();
+    } else {
+      $('#delete').show();
+      $('#isbn_search').hide();
+    }
     $('#reading_stats > tbody tr').remove();
     if (data.reading_stats != null) {
       for (i = 0; i < data.reading_stats.length; i++) {
@@ -35,22 +40,6 @@ function build_reading_stats(data, i) {
   var view_user = window.location.pathname.split("/")[2]
   $.get( "/reading_stats/" + view_user, {'i' : i, 'start' : data.start, 'finish' : data.finish, 'abdoned' : data.abdoned},  function( data ) {
     $('#reading_stats > tbody:last').append(data);
-  });
-};
-
-function empty_book(){
-  $('#delete').hide();
-  $.getJSON( "/json_book", {book_id:'new_book'},function(data) {
-    $.each(data,function(input_id, input_value){
-      $('#' + input_id).val(input_value)
-    });
-    $('#cover').attr('src', '/static/icons/circle-x.svg');
-    $('#book_form').attr('action', '/save/?book_id=new_book');
-    $('#isbn_search').show();
-    $('#reading_stats > tbody tr').remove();
-  })
-  .fail(function() {
-    window.location.href = '/';
   });
 };
 
@@ -76,8 +65,24 @@ function search_links(isbn){
   $('#amazon').attr('href','https://www.amazon.de/gp/search?keywords=' + isbn);
 };
 
-$( '#book_form' ).submit(function( event ) {
+function save_state(){
   $.localStorage.set({"scroll_book" : $(window).scrollTop(), "scroll_navmenu" : $('.navmenu').scrollTop()});
+  $('.sub_items').each(function() {
+    var name_key = $( this ).data('name')
+    if ( $( this ).is(":visible") ) {
+      $.localStorage.set(name_key, 'true');
+    } else {
+      $.localStorage.remove(name_key);
+    }
+  });
+}
+
+$( '#book_form' ).submit(function( event ) {
+  save_state();
+});
+
+$('.sidebar').on( "click", ".batch_edit", function() {
+  save_sate();
 });
 
 $('.series_pencil').click(function(event) {
@@ -103,26 +108,16 @@ $('.series_pencil').click(function(event) {
   );
 });
 
-$('.sidebar').on( "click", ".batch_edit", function() {
-  $.localStorage.set({"scroll_book" : $(window).scrollTop(), "scroll_navmenu" : $('.navmenu').scrollTop()});
-});
-
 $('.show-toggle').click(function(event) {
   event.preventDefault();
   var idx = $( this ).attr('id').split("_")[0];
   $('#' + idx + '_ul').toggle();
-  var name_key = $('#' + idx + '_ul').data('name')
-  if ( $('#' + idx + '_ul').is(":visible") ) {
-    $.localStorage.set(name_key, 'true');
-  } else {
-    $.localStorage.remove(name_key);
-  };
 });
 
 $('#delete').click(function(event) {
   event.preventDefault();
-  var book_id = $(' body ').attr('id');
-  warning("danger", 'Do you really want to delete this book? <a href="/delete?book_id=' + book_id + '" class="alert-link" id="delete_now">YES!</a> ');
+  var link = $( this ).attr('href');
+  warning("danger", 'Do you really want to delete this book? <a href="' + link + '" class="alert-link" id="delete_now">YES!</a> ');
 });
 
 $( '.book_title' ).click(function( event ) {
@@ -132,13 +127,11 @@ $( '.book_title' ).click(function( event ) {
   load_book(book_id, '_id');
 });
 
-/*
 $('#link_new_book').click(function( event ) {
   event.preventDefault();
-  empty_book();
-  history.pushState('new_book', '', '/');
+  load_book('new_book');
+  history.pushState('new_book', '', window.location.pathname + '?book_type=book');
 });
-*/
 
 window.addEventListener('popstate', function(event){
   var book_id = event.state;
