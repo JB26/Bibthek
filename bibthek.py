@@ -64,13 +64,19 @@ class bibthek(object):
             covers = self.db(view_user).covers(shelf, _filter)
         else:
             covers = None
+        try:
+            error = self.error
+            self.error = None
+        except AttributeError:
+            error = None
         return mytemplate.render(items=items, book=book, shelfs=shelfs,
                                  active_shelf=active_shelf,
                                  sort1=sort1, sort2=sort2,
                                  active_sort=active_sort,
                                  active_filter=_filter, filters = filters,
                                  view=view, covers=covers,
-                                 user=user, view_user=view_user)
+                                 user=user, view_user=view_user,
+                                 error=error)
     
     @cherrypy.expose
     @cherrypy.tools.auth(required = False)
@@ -255,8 +261,11 @@ class bibthek(object):
         book_id, new, error = save_book_data(self.db(username), params)
         url = str(cherrypy.request.headers.elements('Referer')[0])
         url = url.rsplit("=")[0] + "=" + book_id
+        if error == '0':
+            self.error = {'type' : 'success', 'error' : "Book saved!"}
+        else:
+            self.error = {'type' : 'danger', 'error' : error}
         raise cherrypy.HTTPRedirect(url)
-        #return json.dumps({'book_id' : book_id, 'new' : new, 'error' : error})
 
     @cherrypy.expose
     def batch_edit(self, edit, old_name, new_name):

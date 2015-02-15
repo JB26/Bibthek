@@ -293,6 +293,11 @@
   }
 </script>
 <script src="/static/js/local_warning.js"></script>
+% if error != None:
+  <script>
+    warning("${error['type']}", "${error['error']}")
+  </script>
+% endif
 <script src="/static/js/local.js"></script>
 <script src="/static/js/local_autocomplete.js"></script>
 </body>

@@ -124,6 +124,7 @@ $( '.book_title' ).click(function( event ) {
   event.preventDefault();
   var book_id = $(this).attr('id');
   history.pushState(book_id, '', window.location.pathname + '?book_id=' + book_id);
+  $('.alert').alert('close');
   load_book(book_id, '_id');
 });
 
