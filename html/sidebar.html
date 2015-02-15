@@ -18,10 +18,10 @@
           <span class="glyphicon glyphicon-pencil series_pencil" id="${idx}_pencil" aria-label="Edit all" title="Edit all"></span>
         % endif
       % endif
-      <ul class="sub_items" id="${idx}_ul" style="display:none" data-name="${name['_id']}">
+      <ul class="sub_items sub_items_text" id="${idx}_ul" data-name="${name['_id']}">
       % for title in name['books']:
         <li>
-          <a href="?book_id=${title['_id']}" class="book_title" id="${title['_id']}" >
+          <a href="?book_id=${title['_id']}" class="book_title" id="${title['_id']}" style="margin-left: 0px;" >
             % if 'order' in title and title['order'] != '':
                   ${title['order']} - 
             % endif

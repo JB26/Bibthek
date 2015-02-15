@@ -25,7 +25,11 @@
           <p class="navbar-text">Not signed in viewing ${view_user}'s profile</p>
         % endif
         <%include file="menu_view.html" args="current_section=current_section" />
+        % if user == None:
+        <li><a href="/login">Login</a></li>
+        % else:
         <li><a href="/logout">Logout</a></li>
+        % endif
       </ul>
       
     </div>

@@ -60,7 +60,7 @@ class bibthek(object):
         active_shelf = {}
         active_shelf['shelf'] = shelf
         active_shelf['#items'] = self.db(view_user).count_items(shelf, _filter)
-        if view == 'covers':
+        if view in ['covers', 'covers2']:
             covers = self.db(view_user).covers(shelf, _filter)
         else:
             covers = None
@@ -260,7 +260,7 @@ class bibthek(object):
         username = cherrypy.session['username']
         book_id, new, error = save_book_data(self.db(username), params)
         url = str(cherrypy.request.headers.elements('Referer')[0])
-        url = url.rsplit("=")[0] + "=" + book_id
+        url = url.rsplit("?")[0] + "?book_id=" + book_id
         if error == '0':
             self.error = {'type' : 'success', 'error' : "Book saved!"}
         else:
@@ -288,7 +288,8 @@ class bibthek(object):
     @cherrypy.expose
     def delete(self, book_id):
         del_book(self.db(cherrypy.session['username']), book_id)
-        raise cherrypy.HTTPRedirect("/")
+        url = str(cherrypy.request.headers.elements('Referer')[0]).rsplit("?")[0]
+        raise cherrypy.HTTPRedirect(url)
 
     @cherrypy.expose
     def delete_all(self):
@@ -318,12 +319,19 @@ class bibthek(object):
     @cherrypy.tools.auth(required = False)
     def login(self, username = '', password = ''):
         if username == '' and password == '':
+            url = str(cherrypy.request.headers.elements('Referer')[0])
+            if url not in  ["/register", "/register/", "/logout", "/logout/"]:
+                self.login_ref = url
             mytemplate = mylookup.get_template("login.html")
             return mytemplate.render()
         elif mongo_login(username, password, cherrypy.session.id):
             #Make sure the session ID stops changing
             cherrypy.session['username'] = username
-            raise cherrypy.HTTPRedirect("/")
+            try:
+                url = self.login_ref
+            except AttributeError:
+                url = "/"
+            raise cherrypy.HTTPRedirect(url)
         else:
             return "Login problem"
 

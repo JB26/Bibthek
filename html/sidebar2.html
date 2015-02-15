@@ -5,7 +5,7 @@
 % for idx, name in enumerate(items):
   % if 'item_hash' in name:
     <hr class="divid_groups" />
-    <li role="presentation" class="dropdown-header" style="padding-left: 0px;">
+    <li role="presentation" class="dropdown-header">
       % if active_sort.split('/')[1] == 'series':
         % if 'series_complete' in name['books'][0] and name['_id'] != 'Not in a series' and name['books'][0]['series_complete']:
           <span class="glyphicon glyphicon-star series_star" id="${idx}_star" aria-label="Series complete" title="Series complete"></span>

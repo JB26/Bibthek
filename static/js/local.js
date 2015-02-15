@@ -13,7 +13,7 @@ function load_book(book_id){
     $('#cover').attr('src', '/' + data.front);
     $('#book_form').attr('action', '/save/?book_id=' + data._id);
     $('#delete').attr('href', '/delete/?book_id=' + data._id);
-    if (book_id == 'new_book') {
+    if (book_id == 'new_book' || book_id == 'new_comic') {
       $('#delete').hide();
       $('#isbn_search').show();
     } else {
@@ -82,7 +82,11 @@ $( '#book_form' ).submit(function( event ) {
 });
 
 $('.sidebar').on( "click", ".batch_edit", function() {
-  save_sate();
+  save_state();
+});
+
+$('#alert_placeholder').on( "click", '#delete_now', function() {
+  save_state();
 });
 
 $('.series_pencil').click(function(event) {
@@ -132,6 +136,12 @@ $('#link_new_book').click(function( event ) {
   event.preventDefault();
   load_book('new_book');
   history.pushState('new_book', '', window.location.pathname + '?book_type=book');
+});
+
+$('#link_new_comic').click(function( event ) {
+  event.preventDefault();
+  load_book('new_comic');
+  history.pushState('new_comic', '', window.location.pathname + '?book_type=comic');
 });
 
 window.addEventListener('popstate', function(event){

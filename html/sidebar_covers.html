@@ -1,81 +1,63 @@
-<link rel="stylesheet" href="/static/css/sidebar.css" type="text/css" />
-% if user == None or user['username'] != view_user:
-  <link rel="stylesheet" href="/static/css/public.css" type="text/css" />
-% endif
-<div class="navmenu navmenu-default navmenu-fixed-left offcanvas-sm">
-  <a class="navmenu-brand visible-md visible-lg" href="/">BibThek</a>
-  <a class="navmenu-brand">${active_shelf['shelf']} (${active_shelf['#items']})</a>
-  <ul class="nav nav-pills nav-stacked sidebar">
-  <%
-  print(active_sort)
-  %>
+<a class="navmenu-brand visible-md visible-lg" href="/">BibThek</a>
+<a class="navmenu-brand">${active_shelf['shelf']} (${active_shelf['#items']})</a>
+<ul class="nav nav-pills nav-stacked sidebar">
     
-  % for idx, name in enumerate(items):
+% for idx, name in enumerate(items):
+  <li>
     % if 'item_hash' in name:
-      <hr class="divid_groups" />
-      <li role="presentation" class="dropdown-header" style="padding-left: 0px;">
-        % if active_sort.split('/')[1] == 'series':
-          % if 'series_complete' in name['books'][0] and name['_id'] != 'Not in a series' and name['books'][0]['series_complete']:
-            <span class="glyphicon glyphicon-star series_star" id="${idx}_star" aria-label="Series complete" title="Series complete"></span>
-          % elif name['_id'] != 'Not in a series':
-            <span class="glyphicon glyphicon-star-empty series_star" id="${idx}_star-empty" aria-label="Series not complete" title="Series not complete"></span>
-          % endif
+      % if active_sort.split('/')[1] == 'series':
+        % if 'series_complete' in name['books'][0] and name['_id'] != 'Not in a series' and name['books'][0]['series_complete']:
+          <span class="glyphicon glyphicon-star series_star" id="${idx}_star" aria-label="Series complete" title="Series complete"></span>
+        % elif name['_id'] != 'Not in a series':
+          <span class="glyphicon glyphicon-star-empty series_star" id="${idx}_star-empty" aria-label="Series not complete" title="Series not complete"></span>
         % endif
-        <div class="group_name" id="${idx}_a" style="padding-left: 20px;">${name['_id']}<span class="caret"></span></div>
-        % if active_sort.split('/')[1] in ['series', 'author']:
-          % if name['_id'] not in ['Not in a series', 'No author']:
-            <span class="glyphicon glyphicon-pencil series_pencil" id="${idx}_pencil" aria-label="Edit all" title="Edit all"></span>
-          % endif
+      % endif
+      <a class="show-toggle" id="${idx}_a">${name['_id']}<span class="caret"></span></a>
+      % if active_sort.split('/')[1] in ['series', 'author']:
+        % if name['_id'] not in ['Not in a series', 'No author']:
+          <span class="glyphicon glyphicon-pencil series_pencil" id="${idx}_pencil" aria-label="Edit all" title="Edit all"></span>
         % endif
-      </li>
-      <li class="dropdown">
+      % endif
+      <ul class="sub_items sub_items_cover" id="${idx}_ul" data-name="${name['_id']}">
         % for i, title in enumerate(name['books']):
           % if i%2 == 0:
             <li>
-            <form action="">
+              <form action="">
           % endif
-            <button style="width:49%;" type="submit" name="book_id" value="${title['_id']}" class="book_title" id="${title['_id']}">
-              <img src="/${covers[str(title['_id'])]}" alt="Cover" style="width:100%">
-            </button>
+              <button style="width:49%;" type="submit" name="book_id" value="${title['_id']}" class="book_title" id="${title['_id']}">
+                <img src="/${covers[str(title['_id'])]}" alt="Cover" style="width:100%">
+              </button>
           % if i%2 == 1 or i+1 == len(name['books']):
-            </form>
+              </form>
             </li>
           % endif
         % endfor
-      </li>
+      </ul>
     % else:
       % if active_sort[1:6] == 'title':
         % if idx%2 == 0:
           <hr class="divid_groups" />
-          <li class="dropdown">
+          <li>
             <form action="">
         % endif
-              <button style="width:49%;" type="submit" name="book_id" value="${name['books']['_id']}" class="book_title" id="${name['books']['_id']}">
-                <img src="/${covers[str(name['books']['_id'])]}" alt="Cover" style="width:100%">
-              </button>
+            <button style="width:49%;" type="submit" name="book_id" value="${name['books']['_id']}" class="book_title" id="${name['books']['_id']}">
+              <img src="/${covers[str(name['books']['_id'])]}" alt="Cover" style="width:100%">
+            </button>
         % if idx%2 == 1 or idx+1 == len(items):
             </form>
           </li>
         % endif
       % else:
         <hr class="divid_groups" />
-        <li class="dropdown">
+        <li>
           <form action="">
-            <button style="width:49%;" type="submit" name="book_id" value="${name['books']['_id']}" class="book_title" id="${name['books']['_id']}">
-              <img src="/${covers[str(name['books']['_id'])]}" alt="Cover" style="width:100%">
-            </button>
+          <button style="width:49%;" type="submit" name="book_id" value="${name['books']['_id']}" class="book_title" id="${name['books']['_id']}">
+            <img src="/${covers[str(name['books']['_id'])]}" alt="Cover" style="width:100%">
+          </button>
           </form>
         </li>
       % endif
     % endif
-  % endfor
-  </ul>
-</div>
-<div class="navbar navbar-default navbar-fixed-top hidden-md hidden-lg">
-  <button type="button" class="navbar-toggle" data-toggle="offcanvas" data-target=".navmenu">
-    <span class="icon-bar"></span>
-    <span class="icon-bar"></span>
-    <span class="icon-bar"></span>
-  </button>
-  <a class="navbar-brand" href="#">BibThek</a>
-</div>
+  </li>
+% endfor
+</ul>

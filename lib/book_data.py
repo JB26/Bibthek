@@ -9,10 +9,10 @@ from random import random
 
 def get_book_data(mongo, book_id, book_type, shelf):
     book_empty = book_empty_default()
-    if book_id=='new_book':
+    if book_id in ['new_book', 'new_comic']:
         book = book_empty
         book['add_date'] = str(date.today())
-        if book_type == 'comic':
+        if book_id == 'new_comic':
             book['type'] = 'comic'
         else:
             book['type'] = 'book'

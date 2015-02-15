@@ -107,3 +107,17 @@ body {
   height:1px; margin-top:0px;
   margin-bottom:0px;
 }
+
+.sub_items_cover {
+  display:none;
+  list-style-type: none;
+  padding-left:0px;
+}
+
+.sub_items_text {
+  display:none;
+}
+
+.dropdown-header {
+  padding-left: 0px;
+}
