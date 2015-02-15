@@ -247,7 +247,10 @@ class bibthek(object):
     def save(self, **params):
         username = cherrypy.session['username']
         book_id, new, error = save_book_data(self.db(username), params)
-        return json.dumps({'book_id' : book_id, 'new' : new, 'error' : error})
+        url = str(cherrypy.request.headers.elements('Referer')[0])
+        url = url.rsplit("=")[0] + "=" + book_id
+        raise cherrypy.HTTPRedirect(url)
+        #return json.dumps({'book_id' : book_id, 'new' : new, 'error' : error})
 
     @cherrypy.expose
     def batch_edit(self, edit, old_name, new_name):

@@ -112,34 +112,19 @@ function search_links(isbn){
 };
 
 $( '#book_form' ).submit(function( event ) {
+  $.localStorage.set({"scroll_book" : $(window).scrollTop(), "scroll_navmenu" : $('.navmenu').scrollTop()});
+});
+
+$('.show-toggle').click(function(event) {
   event.preventDefault();
-  var $form = $( this ),
-  url = $form.attr( "action" ),
-  formData = new FormData($(this)[0]);
-  $.ajax({
-    url: url,
-    data: formData,
-    cache: false,
-    contentType: false,
-    processData: false,
-    type: 'POST',
-    dataType: 'json',
-    success: function(data){
-      if (data['error'] != 0) {
-        warning('danger', data['error']);
-      }else{
-        warning('success', "Books saved");
-        if (data['new'] == true) {
-          window.location.assign(window.location.pathname + "?book_id=" + data['book_id']);
-        } else {
-          load_book(data['book_id']);
-        }
-      }
-    }
-  })
-  .fail(function() {
-    window.location.href = '/';
-  });
+  var idx = $( this ).attr('id').split("_")[0];
+  $('#' + idx + '_ul').toggle();
+  var name_key = $('#' + idx + '_ul').data('name')
+  if ( $('#' + idx + '_ul').is(":visible") ) {
+    $.localStorage.set(name_key, 'true');
+  } else {
+    $.localStorage.remove(name_key);
+  };
 });
 
 $('#delete').click(function(event) {
@@ -171,13 +156,7 @@ window.addEventListener('popstate', function(event){
     load_book(book_id)};
 });
 
-window.onload = function (){
-  var book_id = $(' body ').attr('id');
-  if (book_id == 'new_book') {
-    history.replaceState(book_id, '', window.location.pathname);
-  } else {
-    history.replaceState(book_id, '', window.location.pathname + '?book_id=' + book_id)};
-};
+
 
 $('#reading_stats').on( "click", ".date_js", function() {
   var d = new Date();

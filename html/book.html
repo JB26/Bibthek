@@ -1,15 +1,40 @@
 <%include file="header.html" />
 <body id="${book['_id']}">
+<link rel="stylesheet" href="/static/css/sidebar.css" type="text/css" />
+% if user == None or user['username'] != view_user:
+  <link rel="stylesheet" href="/static/css/public.css" type="text/css" />
+% endif
+<div class="navmenu navmenu-default navmenu-fixed-left offcanvas-sm">
 % if view == "books":
   <%include file="sidebar.html" />
-  <%include file="menu.html" args="current_section='books'" />
 % elif view == "books2":
   <%include file="sidebar2.html" />
-  <%include file="menu.html" args="current_section='books2'" />
 % elif view == "covers":
   <%include file="sidebar_covers.html" />
-  <%include file="menu.html" args="current_section='covers'" />
 % endif
+</div>
+<script>
+  var scroll_navmenu = $.localStorage.get('scroll_navmenu')
+  if (scroll_navmenu != null) {
+    $('.navmenu').scrollTop(scroll_navmenu);
+    $.localStorage.remove('scroll_navmenu');
+    // Only restore open items if reloading was initiated through clicking on save
+    $('.sub_items').each(function() {
+      if ( $.localStorage.isSet($( this ).data('name')) ) {
+        $( this ).show();
+      };
+    });
+  };
+</script>
+<div class="navbar navbar-default navbar-fixed-top hidden-md hidden-lg">
+  <button type="button" class="navbar-toggle" data-toggle="offcanvas" data-target=".navmenu">
+    <span class="icon-bar"></span>
+    <span class="icon-bar"></span>
+    <span class="icon-bar"></span>
+  </button>
+  <a class="navbar-brand" href="#">BibThek</a>
+</div>
+<%include file="menu.html" args="current_section=view" />
 <link rel="stylesheet" href="/static/css/autocomplete.css" type="text/css" />
 <div class="container">
   <form method="post" action="/save${'?book_id=' + book['_id']}" enctype="multipart/form-data" id="book_form" class="form-horizontal">
@@ -285,8 +310,14 @@
       Amazon search
     </a>
   % endif
-</div>  
-
+</div>
+<script>
+  var scroll_book = $.localStorage.get('scroll_book')
+  if (scroll_book != null) {
+    $( window ).scrollTop(scroll_book)
+    $.localStorage.remove('scroll_book')
+  }
+</script>
 <script src="/static/js/local_warning.js"></script>
 <script src="/static/js/local.js"></script>
 <script src="/static/js/local_autocomplete.js"></script>
