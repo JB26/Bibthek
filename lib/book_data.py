@@ -42,7 +42,7 @@ def save_book_data(mongo, params):
         if error != '0':
             return  None, None, error
         try:
-            os.mkdir(path)
+            os.mkdir(new_name.rsplit('/')[0])
         except FileExistsError:
             pass
         with open(new_name, 'wb') as f:
