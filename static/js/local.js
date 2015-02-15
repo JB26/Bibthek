@@ -115,6 +115,33 @@ $( '#book_form' ).submit(function( event ) {
   $.localStorage.set({"scroll_book" : $(window).scrollTop(), "scroll_navmenu" : $('.navmenu').scrollTop()});
 });
 
+$('.series_pencil').click(function(event) {
+  if (window.location.pathname.split('/')[5] == 'series') {
+    var edit = 'series'; 
+  } else if (window.location.pathname.split('/')[5] == 'author') {
+    var edit = 'authors';
+  } else {
+    return
+  };
+  var id = $( this ).attr('id'),
+  link_number = id.split('_')[0],
+  link_text = $('#' + link_number + '_a').text().replace(/"/g, '&quot;');
+  $('#' + link_number + '_star-empty').hide()
+  $('#' + link_number + '_star').hide()
+  $('#' + link_number + '_pencil').hide()
+  $('#' + link_number + '_a').replaceWith(
+    '<form class="form-inline" action="/batch_edit/' + edit + '" method="post">\
+      <input type="hidden" name="old_name" value="' + link_text + '" />\
+      <input style="margin-left: 20px;" class="form-control" value="' + link_text  + '" name="new_name">\
+      <button type="submit" class="btn btn-sm btn-default batch_edit">OK</button>\
+    </form>'
+  );
+});
+
+$('.sidebar').on( "click", ".batch_edit", function() {
+  $.localStorage.set({"scroll_book" : $(window).scrollTop(), "scroll_navmenu" : $('.navmenu').scrollTop()});
+});
+
 $('.show-toggle').click(function(event) {
   event.preventDefault();
   var idx = $( this ).attr('id').split("_")[0];
@@ -163,29 +190,6 @@ $('#reading_stats').on( "click", ".date_js", function() {
   var time = d.toISOString().split('T')[0];
   var input_id = $( this ).attr('id').split('-')[0]
   $('#' + input_id).val(time);
-});
-
-$('.series_pencil').click(function(event) {
-  if (window.location.pathname.split('/')[3] == 'series') {
-    var edit = 'series'; 
-  } else if (window.location.pathname.split('/')[3] == 'author') {
-    var edit = 'authors';
-  } else {
-    var edit = null
-  };
-  var id = $( this ).attr('id'),
-  link_number = id.split('_')[0],
-  link_text = $('#' + link_number + '_a').text().replace(/"/g, '&quot;');
-  $('#' + link_number + '_star-empty').hide()
-  $('#' + link_number + '_star').hide()
-  $('#' + link_number + '_pencil').hide()
-  $('#' + link_number + '_a').replaceWith(
-    '<form class="form-inline" action="/batch_edit/' + edit + '" method="post">\
-      <input type="hidden" name="old_name" value="' + link_text + '" />\
-      <textarea style="margin-left: 20px;" class="form-control" rows="1" name="new_name">' + link_text + '</textarea>\
-      <button type="submit" class="btn btn-sm btn-default">OK</button>\
-    </form>'
-  );
 });
 
 $('#isbn_search').click(function(event) {
