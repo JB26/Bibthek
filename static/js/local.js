@@ -32,37 +32,11 @@ function load_book(book_id){
 };
 
 function build_reading_stats(data, i) {
-  var status = '';
-  data.start = data.start.replace(/"/g, '&quot;');
-  data.finish = data.finish.replace(/"/g, '&quot;');
-  if (data.abdoned == true) { status = 'checked' };
-  $('#reading_stats > tbody:last').append(
-    '<tr>\
-     <th scope="row">' + i + '</th>\
-     <td>\
-       <div class="form-group">\
-         <label for="start_' + i + '" class="col-sm-4 control-label date_js" id="start_' + i + '-label">Started</label>\
-         <div class="col-sm-8">\
-           <input class="form-control" type="text" name="start_date" id="start_' + i + '" value="' + data.start + '">\
-         </div>\
-       </div>\
-       <div class="form-group">\
-         <label for="finish_' + i + '" class="col-sm-4 control-label date_js" id="finish_' + i + '-label">Finished</label>\
-         <div class="col-sm-8">\
-           <input class="form-control" type="text" name="finish_date" id="finish_' + i + '" value="' + data.finish + '">\
-         </div>\
-       </div>\
-     </td>\
-     <td>\
-       <div class="checkbox">\
-         <label>\
-         <input type="checkbox" name="abdoned" value="' + (i-1) + '" ' + status + '> Abdoned\
-         </label>\
-       </div>\
-     </td>\
-   </tr>'
-  );
-}
+  var view_user = window.location.pathname.split("/")[2]
+  $.get( "/reading_stats/" + view_user, {'i' : i, 'start' : data.start, 'finish' : data.finish, 'abdoned' : data.abdoned},  function( data ) {
+    $('#reading_stats > tbody:last').append(data);
+  });
+};
 
 function empty_book(){
   $('#delete').hide();
@@ -92,15 +66,6 @@ function isbn_book(isbn){
   })
   .fail(function() {
     window.location.href = '/';
-  });
-};
-
-function menu_reload(){
-  shelf = window.location.pathname.split("/")
-  shelf = shelf[shelf.length - 1]
-  if (shelf === undefined) {shelf = ""} else {shelf = "?shelf=" + shelf}
-  $.get( "menu" + shelf, function( data ) {
-    $( "#menu" ).html( data );
   });
 };
 

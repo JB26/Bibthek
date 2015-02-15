@@ -101,7 +101,7 @@ class mongo_db:
                 if not isinstance(data['abdoned'], list):
                     data['abdoned'] = [data['abdoned']]
                 for i in data['abdoned']:
-                    temp[int(i)] = True
+                    temp[int(i)-1] = True
             data['abdoned'] = temp
             
             for start, finish, abdoned in zip(data['start_date'],

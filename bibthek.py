@@ -96,11 +96,17 @@ class bibthek(object):
             return json.dumps(ac_list)
 
     @cherrypy.expose
-    def menu(self, shelf='All'):
-        mytemplate = mylookup.get_template("menu.html")
-        series = self.db(cherrypy.session['username']).series(shelf)
-        shelfs = self.db(cherrypy.session['username']).shelfs()
-        return mytemplate.render(series=series, shelfs=shelfs)
+    @cherrypy.tools.auth(required = False)
+    @cherrypy.tools.rights()
+    def reading_stats(self, view_user, i, start, finish, abdoned = False):
+        if abdoned == 'false':
+            abdoned = False
+        elif abdoned == 'true':
+            abdoned = True
+        mytemplate = mylookup.get_template("reading_stats.html")
+        reading_stats = {'start_date' : start, 'finish_date' : finish,
+                         'abdoned' : abdoned}
+        return mytemplate.render(i=i, reading_stats=reading_stats)
 
     @cherrypy.expose
     def settings(self):
