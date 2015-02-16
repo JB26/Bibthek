@@ -20,6 +20,7 @@ from lib.del_books import del_all_books, del_book
 import lib.auth as auth
 import lib.rights as rights
 from lib.menu_data import menu_data, menu_filter
+from lib.variables import name_fields
 
 mylookup = TemplateLookup(directories=['html'], output_encoding='utf-8',
                           encoding_errors='replace')
@@ -270,7 +271,7 @@ class bibthek(object):
     @cherrypy.expose
     def batch_edit(self, edit, old_name, new_name):
         username = cherrypy.session['username']
-        if edit in  ['series', 'authors']:
+        if edit in ['series'] + name_fields:
             self.db(username).change_field(edit, old_name, new_name)
             raise cherrypy.HTTPRedirect( str(cherrypy.request.headers
                                             .elements('Referer')[0]) )

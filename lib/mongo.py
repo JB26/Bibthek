@@ -1,6 +1,5 @@
 from pymongo import MongoClient
 from bson.objectid import ObjectId
-from hashlib import md5
 from passlib.hash import pbkdf2_sha512
 from datetime import date
 import configparser
@@ -37,13 +36,16 @@ def str_to_array(data):
         data['genre'] = data['genre'].split(', ')
     return data
 
-def hash_remove_empty(data, warning):
+def remove_empty_field(data, warning):
     data_temp = None
     for row in data['result']:
         if row['_id'] == '':
             data_temp = row
             row['_id'] = warning
-        row['item_hash'] = md5(row['item_hash'].encode('utf-8')).hexdigest()
+            row['empty_field'] = True
+        else:
+            row['empty_field'] = False
+        row['sub_items'] = True
 
     data = [x for x in data['result'] if x['_id'] != warning]
     return data, data_temp
@@ -123,7 +125,7 @@ class mongo_db:
         if edit == 'series':
             self.collection.update({edit : old_name},
                                    {"$set" : {edit : new_name}}, multi=True)
-        elif edit == 'authors':
+        elif edit in name_fields:
             self.collection.update({edit : old_name},
                                    {"$set" : {edit + ".$" : new_name}},
                                    multi=True)
@@ -157,7 +159,6 @@ class mongo_db:
     def aggregate_items(self, group_by, get_fields, shelf, _filter,
                         array=False):
         search = [{ "$group" : { "_id" : '$' + group_by,
-                                "item_hash" : {"$last" : "$" + group_by},
                                 "books" :{ "$push": get_fields}}}]
         if array:
             search.insert(0,{"$unwind" : "$" + group_by})
@@ -167,7 +168,7 @@ class mongo_db:
         search.insert(0,{"$match" : query})
         data = self.collection.aggregate(search)
         return data
-
+    
     def series(self, shelf, variant, _filter):
         order_by = variant.split('_')[1]
         if order_by == 'year':
@@ -177,10 +178,11 @@ class mongo_db:
                                      "order": "$" + order_by,
                                      "series_complete": "$series_complete"},
                                     shelf, _filter)
-        data, data_temp = hash_remove_empty(data, 'Not in a series')
+        data, data_temp = remove_empty_field(data, 'Not in a series')
         if variant.split('_')[0] == 'variant1' and data_temp != None:
             for row in data_temp['books']:
                 data.append({'_id' : row['title'],
+                             'sub_items' : False,
                              'books' : {'_id' : row['_id']}})
             data = sorted_series(data, variant)
         else:
@@ -209,7 +211,7 @@ class mongo_db:
                 _filter, array
                 )
             sort_by_order = False
-        data, data_temp = hash_remove_empty(data, 'No ' + sortby)
+        data, data_temp = remove_empty_field(data, 'No ' + sortby)
         data = sorted_apg(data, sort_by_order, sortby)
         data = sort_insert_empty(data_temp, data)
         return data
@@ -228,16 +230,14 @@ class mongo_db:
                                                       "pages" : 1} )
         data = []
         for row in data_temp:
-            if variant == 'title':
-                data.append({'_id' : row['title'],
-                             'books' : {'_id' : row['_id']}})
-            elif variant == 'year':
-                data.append({'_id' : row['title'],
-                             'order' : row['release_date'],
-                             'books' : {'_id' : row['_id']}})
+            temp = {'_id' : row['title'],
+                    'sub_items' : False,
+                    'books' : {'_id' : row['_id']}}
+            if variant == 'year':
+                temp['order'] = row['release_date']
             elif variant == 'pages':
-                data.append({'_id' : row['title'], 'order' : row['pages'],
-                             'books' : {'_id' : row['_id']}})
+                temp['order'] = row['pages']
+            data.append(temp)
         return sorted_titles(data, '_id', variant)
 
     def covers(self, shelf, _filter):

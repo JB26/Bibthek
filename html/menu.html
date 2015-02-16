@@ -5,7 +5,7 @@
     <div>
       <ul class="nav navbar-nav">
         <li class="active"><a href="/">Home</a></li>
-        % if current_section in ['books', 'books2', 'covers']:
+        % if current_section in ['books', 'books2', 'covers', 'covers2']:
           <%include file="menu_new.html" />
           <%include file="menu_shelf.html" args="current_section=current_section" />
           <%include file="menu_sortby.html" args="current_section=current_section" />

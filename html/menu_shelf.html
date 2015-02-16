@@ -4,7 +4,7 @@
   <ul class="dropdown-menu">
   % for shelf in shelfs:
     <%
-      if current_section in ['books', 'books2', 'covers']:
+      if current_section in ['books', 'books2', 'covers', 'covers2']:
         url = "/view/" + view_user + "/" + current_section + "/" + shelf['_id'] + active_sort + active_filter
       elif current_section == 'statistics':
         url = "/statistics/" + view_user + "/" + shelf['_id'] + active_filter

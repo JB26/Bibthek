@@ -90,13 +90,7 @@ $('#alert_placeholder').on( "click", '#delete_now', function() {
 });
 
 $('.series_pencil').click(function(event) {
-  if (window.location.pathname.split('/')[5] == 'series') {
-    var edit = 'series'; 
-  } else if (window.location.pathname.split('/')[5] == 'author') {
-    var edit = 'authors';
-  } else {
-    return
-  };
+  var edit = window.location.pathname.split('/')[5]
   var id = $( this ).attr('id'),
   link_number = id.split('_')[0],
   link_text = $('#' + link_number + '_a').text().replace(/"/g, '&quot;');
