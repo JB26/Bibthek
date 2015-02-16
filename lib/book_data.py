@@ -53,7 +53,9 @@ def save_book_data(mongo, params):
             try:
                 os.remove(data['front'])
             except FileNotFoundError:
-                pass 
+                pass
+            except KeyError:
+                pass
     else:
         del params['front']
     book_id = mongo.update(params)
