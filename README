@@ -5,6 +5,7 @@ Weird dates can break the statistics?
 Abbord pencil
 
 TODO:
+Show items without a shelf
 Duplicate code in statistics
 Use heading "jumps" for no script in sidebar
 Upload Limits (Set max_request_body_size = 104857600 ???)
