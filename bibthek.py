@@ -12,6 +12,7 @@ absDir = os.path.join(os.getcwd(), localDir)
 from lib.mongo import mongo_db, mongo_user_list, mongo_user_del, mongo_change_pw
 from lib.mongo import mongo_add_user, mongo_user, mongo_login, mongo_role
 from lib.mongo import mongo_change_email, mongo_reset_pw, mongo_privacy
+from lib.mongo import mongo_logout, mongo_logout_all, mongo_user_by_session
 from lib.book_data import get_book_data, save_book_data
 from lib.get_data import google_books_data
 from lib.import_data import import_file
@@ -51,7 +52,10 @@ class bibthek(object):
         shelf = shelf.encode("latin-1").decode("utf-8")
         _filter = _filter.encode("latin-1").decode("utf-8") 
         book = get_book_data(self.db(view_user), book_id, book_type, shelf)
-        user = mongo_user(cherrypy.session.id)
+        try:
+            user = mongo_user_by_session(cherrypy.session.id)
+        except KeyError:
+            user = None
         sort1, sort2, active_sort, items = menu_data(self.db(view_user), shelf,
                                                      _filter,
                                                      sort_first, sort_second)
@@ -117,7 +121,7 @@ class bibthek(object):
 
     @cherrypy.expose
     def settings(self):
-        user = mongo_user(cherrypy.session.id)
+        user = mongo_user_by_session(cherrypy.session.id)
         if 'privacy' not in user:
             user['privacy'] = 'privat'
         mytemplate = mylookup.get_template("settings.html")
@@ -136,7 +140,7 @@ class bibthek(object):
         active_shelf = {}
         active_shelf['shelf'] = shelf
         active_shelf['#items'] = self.db(view_user).count_items(shelf, _filter)
-        user = mongo_user(cherrypy.session.id)
+        user = mongo_user_by_session(cherrypy.session.id)
         mytemplate = mylookup.get_template("statistics.html")
         return mytemplate.render(active_sort='', shelfs=shelfs,
                                  active_shelf=active_shelf,
@@ -167,7 +171,7 @@ class bibthek(object):
     @cherrypy.expose
     @cherrypy.tools.auth(user_role='admin')
     def admin(self):
-        user = mongo_user(cherrypy.session.id)
+        user = mongo_user_by_session(cherrypy.session.id)
         user_list = mongo_user_list()
         mytemplate = mylookup.get_template("admin.html")
         return mytemplate.render(user=user, user_list=user_list,
@@ -204,7 +208,7 @@ class bibthek(object):
         if username == None and password != None:
             username = cherrypy.session['username']
             allowed = mongo_login(username, password, None)
-        elif (mongo_user(cherrypy.session.id)['role'] == 'admin' and
+        elif (mongo_user_by_session(cherrypy.session.id)['role'] == 'admin' and
              username != None):
             allowed = True
         if  allowed:
@@ -231,7 +235,7 @@ class bibthek(object):
     def import_books(self, data_upload=None, separator=None):
         username = cherrypy.session['username']
         if data_upload == None or data_upload.file == None:
-            user = mongo_user(cherrypy.session.id)
+            user = mongo_user_by_session(cherrypy.session.id)
             mytemplate = mylookup.get_template("import.html")
             return mytemplate.render(user=user, view_user=user['username'])
         else:
@@ -296,9 +300,16 @@ class bibthek(object):
     def delete_all(self):
         del_all_books(cherrypy.session['username'])
         return json.dumps({"type" : "success", "error" : "All books deleted"})
-    
+
     @cherrypy.expose
     def logout(self):
+        mongo_logout(cherrypy.session.id, cherrypy.session['username'])
+        cherrypy.lib.sessions.expire()
+        raise cherrypy.HTTPRedirect("/")
+
+    @cherrypy.expose
+    def logout_all(self):
+        mongo_logout_all(cherrypy.session['username'])
         cherrypy.lib.sessions.expire()
         raise cherrypy.HTTPRedirect("/")
 
@@ -320,9 +331,13 @@ class bibthek(object):
     @cherrypy.tools.auth(required = False)
     def login(self, username = '', password = ''):
         if username == '' and password == '':
-            url = str(cherrypy.request.headers.elements('Referer')[0])
-            if url not in  ["/register", "/register/", "/logout", "/logout/"]:
-                self.login_ref = url
+            try:
+                url = str(cherrypy.request.headers.elements('Referer')[0])
+                if url not in  ["/register", "/register/", "/logout",
+                                "/logout/", "/logout_all", "/logout_all/"]:
+                    self.login_ref = url
+            except IndexError:
+                pass
             mytemplate = mylookup.get_template("login.html")
             return mytemplate.render()
         elif mongo_login(username, password, cherrypy.session.id):

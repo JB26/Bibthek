@@ -449,17 +449,37 @@ def mongo_add_user(username, password, email, session_id):
 def mongo_login(username, password, session_id):
     user = user_info.find_one({'username' : username})
     if user != None and pbkdf2_sha512.verify(password, user['password']):
-        if session_id != None:
-            user_info.update({'username' : username},
-                             {"$set" : {"session_id" : session_id} })
+        sessions = user_info.find_one({"username" : username},
+                                      {"session_id" : 1})
+        sessions = sessions['session_id']
+        try:
+            sessions.append(session_id)
+        except AttributeError:
+            sessions = [session_id]
+        user_info.update({'username' : username},
+                         {"$set" : {"session_id" : sessions} })
         return True
     return False
 
-def mongo_user(session_id):
-    user = user_info.find_one({'session_id' : session_id})
+def mongo_logout(session_id, username):
+    sessions = user_info.find_one({'session_id' : session_id})['session_id']
+    sessions.remove(session_id)
+    user_info.update({'username' : username},
+                         {"$set" : {"session_id" : sessions} })
+
+def mongo_logout_all(username):
+    user_info.update({'username' : username},
+                         {"$set" : {"session_id" : None} })    
+
+def mongo_user(username):
+    user = user_info.find_one({'username' : username})
     if user != None and 'role' not in user:
         user['role'] = None
     return user
+
+def mongo_user_by_session(session_id):
+    return user_info.find_one({'session_id' : session_id})
+        
 
 def mongo_change_pw(username, password_old, password_new):
     user = user_info.find_one({'username' : username})
@@ -499,9 +519,6 @@ def mongo_privacy(username, status):
 def mongo_user_list():
     data = user_info.find({},{"_id" : 0}).sort([("username", 1)])
     return data
-
-def mongo_user_rights(username):
-    return user_info.find_one({"username" : username})
 
 def mongo_drop(username):
     client.bibthek[username].drop()

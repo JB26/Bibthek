@@ -6,6 +6,10 @@ Abbord pencil
 
 TODO:
 Show items without a shelf
+Show started books
+better isbn search and errors
+sort by added
+import status
 Duplicate code in statistics
 Use heading "jumps" for no script in sidebar
 Upload Limits (Set max_request_body_size = 104857600 ???)
