@@ -1,6 +1,7 @@
 function load_book(book_id){
   var view_user = window.location.pathname.split("/")[2]
-  $.getJSON( "/json_book/" + view_user, {book_id:book_id}, function(data) {
+  var shelf = window.location.pathname.split("/")[4]
+  $.getJSON( "/json_book/" + view_user, {book_id:book_id, shelf:shelf}, function(data) {
     $.each(data, function(input_id, input_value){
       if ($.isArray(input_value)) {
         $('#' + input_id).val(input_value.join(" & "));

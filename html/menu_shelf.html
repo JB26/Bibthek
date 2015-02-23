@@ -5,14 +5,14 @@
   % for shelf in shelfs:
     <%
       if current_section in ['books', 'books2', 'covers', 'covers2']:
-        url = "/view/" + view_user + "/" + current_section + "/" + shelf['_id'] + active_sort + active_filter
+        url = "/view/" + view_user + "/" + current_section + "/" + shelf['name'] + active_sort + active_filter
       elif current_section == 'statistics':
-        url = "/statistics/" + view_user + "/" + shelf['_id'] + active_filter
+        url = "/statistics/" + view_user + "/" + shelf['name'] + active_filter
     %>
-    % if shelf['_id'] == active_shelf['shelf']:
-    <li class="active"><a href=${url}>${shelf['_id']} (${shelf['#items']})</a></li>
+    % if shelf['name'] == active_shelf['shelf']:
+    <li class="active"><a href="${url}">${shelf['name']} (${shelf['#items']})</a></li>
     % else:
-    <li><a href=${url}>${shelf['_id']} (${shelf['#items']})</a></li>
+    <li><a href="${url}">${shelf['name']} (${shelf['#items']})</a></li>
     % endif
   % endfor
   </ul>

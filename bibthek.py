@@ -4,6 +4,7 @@ import cherrypy
 from cherrypy.lib import static
 import json
 from requests import get
+from urllib import request
 
 import os
 localDir = os.path.dirname(__file__)
@@ -87,6 +88,8 @@ class bibthek(object):
     @cherrypy.tools.auth(required = False)
     @cherrypy.tools.rights()
     def json_book(self, view_user, book_id, book_type='book', shelf='All'):
+        shelf = request.url2pathname(shelf)
+        print(shelf)
         book = get_book_data(self.db(view_user), book_id, book_type, shelf)
         return json.dumps(book)
 

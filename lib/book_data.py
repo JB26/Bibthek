@@ -16,7 +16,7 @@ def get_book_data(mongo, book_id, book_type, shelf):
             book['type'] = 'comic'
         else:
             book['type'] = 'book'
-        if shelf != 'All':
+        if shelf not in ['All', 'Not shelfed']:
             book['shelf'] = shelf
     else:
         book = mongo.get_by_id(book_id)

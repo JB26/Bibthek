@@ -163,7 +163,9 @@ class mongo_db:
         if array:
             search.insert(0,{"$unwind" : "$" + group_by})
         query = query_filter(_filter)
-        if shelf != 'All':
+        if shelf == 'Not shelfed':
+            query['shelf'] = ''
+        elif shelf != 'All':
             query['shelf'] = shelf
         search.insert(0,{"$match" : query})
         data = self.collection.aggregate(search)
@@ -218,7 +220,9 @@ class mongo_db:
 
     def titles(self, shelf, variant, _filter):
         query = query_filter(_filter)
-        if shelf != 'All':
+        if shelf == 'Not shelfed':
+            query['shelf'] = ''
+        elif shelf != 'All':
             query['shelf'] = shelf
         if variant == 'title':
             data_temp = self.collection.find(query, {"title" : 1})
@@ -242,7 +246,9 @@ class mongo_db:
 
     def covers(self, shelf, _filter):
         query = query_filter(_filter)
-        if shelf != 'All':
+        if shelf == 'Not shelfed':
+            query['shelf'] = ''
+        elif shelf != 'All':
             query['shelf'] = shelf
         data_temp = self.collection.find(query, {"front" : 1})
         data = {}
@@ -260,7 +266,9 @@ class mongo_db:
     def statistic_date_easy(self, shelf, _filter, _type):
         _type = _type.split('#')
         query = query_filter(_filter)
-        if shelf != 'All':
+        if shelf == 'Not shelfed':
+            query['shelf'] = ''
+        elif shelf != 'All':
             query['shelf'] = shelf
         data_temp = self.collection.find(query, {"_id" : 0, _type[0] : 1} )
         data = []
@@ -282,7 +290,9 @@ class mongo_db:
     def statistic_date_hard(self, shelf, _filter, _type):
         _type = _type.split('#')
         query = query_filter(_filter)
-        if shelf != 'All':
+        if shelf == 'Not shelfed':
+            query['shelf'] = ''
+        elif shelf != 'All':
             query['shelf'] = shelf
         data_temp = self.collection.find(query, {"_id" : 0,
                                                  "reading_stats" : 1} )
@@ -308,7 +318,9 @@ class mongo_db:
     def statistic_pages_read(self, shelf, _filter, _type):
         _type = _type.split('#')
         query = query_filter(_filter)
-        if shelf != 'All':
+        if shelf == 'Not shelfed':
+            query['shelf'] = ''
+        elif shelf != 'All':
             query['shelf'] = shelf
         data_temp = self.collection.find(query, {"_id" : 0,
                                                  "reading_stats" : 1,
@@ -374,7 +386,9 @@ class mongo_db:
 
     def statistic_pages_book(self, shelf, _filter):
         query = query_filter(_filter)
-        if shelf != 'All':
+        if shelf == 'Not shelfed':
+            query['shelf'] = ''
+        elif shelf != 'All':
             query['shelf'] = shelf
         data_temp = self.collection.find(query, {"_id" : 0,
                                                  "pages" : 1} )
@@ -395,13 +409,15 @@ class mongo_db:
         self.collection.remove({'_id' : ObjectId(book_id)})
 
     def shelfs(self, _filter):
-        shelfs = self.collection.aggregate([{"$match" : {"shelf" :
-                                                         {"$ne": ''} } },
-                                            { "$group" : { "_id" : "$shelf"}}])
+        shelfs = self.collection.aggregate([{ "$group" : { "_id" : "$shelf"}}])
         shelfs = sorted_shelfs(shelfs['result'])
         shelfs.insert(0,{'_id' : 'All'})
         for shelf in shelfs:
             shelf['#items'] = self.count_items(shelf['_id'], _filter)
+            if shelf['_id'] != '':
+                shelf['name'] = shelf['_id']
+            else:
+                shelf['name'] = 'Not shelfed'
         return shelfs
 
     def autocomplete(self, query, field, array):
@@ -415,6 +431,8 @@ class mongo_db:
 
     def filter_list(self, shelf, field):
         search = [{ "$group" : {"_id" : "$" + field}}]
+        if shelf == 'Not shelfed':
+            shelf = ''
         if shelf != 'All':
             search.insert(0,{ "$match" : {"shelf" : shelf}})
         filter_list = self.collection.aggregate(search)
@@ -422,7 +440,9 @@ class mongo_db:
 
     def count_items(self, shelf, _filter):
         query = query_filter(_filter)
-        if shelf != 'All':
+        if shelf == 'Not shelfed':
+            query['shelf'] = ''
+        elif shelf != 'All':
             query['shelf'] = shelf
         items = self.collection.find(query).count()
         return str(items)
