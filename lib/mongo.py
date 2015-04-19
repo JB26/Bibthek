@@ -38,7 +38,7 @@ def str_to_array(data):
 
 def remove_empty_field(data, warning):
     data_temp = None
-    for row in data['result']:
+    for row in data:
         if row['_id'] == '':
             data_temp = row
             row['_id'] = warning
@@ -46,8 +46,7 @@ def remove_empty_field(data, warning):
         else:
             row['empty_field'] = False
         row['sub_items'] = True
-
-    data = [x for x in data['result'] if x['_id'] != warning]
+    data = [x for x in data if x['_id'] != warning]
     return data, data_temp
 
 def sort_insert_empty(data_temp, data):
@@ -169,6 +168,7 @@ class mongo_db:
             query['shelf'] = shelf
         search.insert(0,{"$match" : query})
         data = self.collection.aggregate(search)
+        data = [ x for x in data ]
         return data
     
     def series(self, shelf, variant, _filter):
@@ -410,7 +410,7 @@ class mongo_db:
 
     def shelfs(self, _filter):
         shelfs = self.collection.aggregate([{ "$group" : { "_id" : "$shelf"}}])
-        shelfs = sorted_shelfs(shelfs['result'])
+        shelfs = sorted_shelfs([ x for x in shelfs ])
         shelfs.insert(0,{'_id' : 'All'})
         for shelf in shelfs:
             shelf['#items'] = self.count_items(shelf['_id'], _filter)
@@ -426,7 +426,7 @@ class mongo_db:
         if array:
             search.insert(0,{"$unwind" : "$" + field})
         ac_list = self.collection.aggregate(search)
-        ac_list = {'suggestions' : [ x['_id'] for x in ac_list['result'] ]}
+        ac_list = {'suggestions' : [ x['_id'] for x in ac_list ]}
         return ac_list
 
     def filter_list(self, shelf, field):
@@ -436,7 +436,7 @@ class mongo_db:
         if shelf != 'All':
             search.insert(0,{ "$match" : {"shelf" : shelf}})
         filter_list = self.collection.aggregate(search)
-        return [ x['_id'] for x in filter_list['result'] if x['_id'] != '']
+        return [ x['_id'] for x in filter_list if x['_id'] != '']
 
     def count_items(self, shelf, _filter):
         query = query_filter(_filter)
