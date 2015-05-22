@@ -12,7 +12,7 @@ $( '#import_form' ).submit(function( event ) {
     type: 'POST',
     dataType: 'json',
     success: function(json_data){
-      var data = $.parseJSON(json_data);
+      var data = json_data;
       warning(data['type'], data['error']);
     }
   })

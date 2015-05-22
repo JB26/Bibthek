@@ -11,8 +11,8 @@ def sorted_apg(data, sort_by_order, sort_first):
     temp = []
     for row in data:
         for book in row['books']:
-            if 'order' in book and book['order'] != '':
-                book['order'] = book['order'][0:4]
+            if 'order_nr' in book and book['order_nr'] != '':
+                book['order_nr'] = book['order_nr'][0:4]
         row['books'] = library_sorted(row['books'], 'title', sort_by_order)
         if sort_first == 'authors':
             find_surname = row['_id'].rsplit(maxsplit=1)
@@ -29,9 +29,9 @@ def sorted_apg(data, sort_by_order, sort_first):
 def sorted_titles(data, field, variant='year'):
     sort_by_order = False
     for row in data:
-        if 'order' in row and row['order'] != '':
+        if 'order_nr' in row and row['order_nr'] != '':
             if variant == 'year':
-                row['order'] = row['order'][0:4]
+                row['order_nr'] = row['order_nr'][0:4]
             sort_by_order = True
     return library_sorted(data, field, sort_by_order)
 
@@ -41,8 +41,8 @@ def sorted_series(data, variant):
         if series['sub_items']:
             if variant.split('_')[1] == 'year':
                 for row in series['books']:
-                    if 'order' in row and row['order'] != '':
-                        row['order'] = row['order'][0:4]
+                    if 'order_nr' in row and row['order_nr'] != '':
+                        row['order_nr'] = row['order_nr'][0:4]
             series['books'] = library_sorted(series['books'], 'title', True)
     return data
     
@@ -52,7 +52,7 @@ def library_sorted(data, field, sort_by_order):
 
     for row in data:
         if sort_by_order:
-            temp.append( str(row['order']) + " ")
+            temp.append( str(row['order_nr']) + " ")
         else:
             temp.append('')
             find_article = row[field].split(maxsplit=1)

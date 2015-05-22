@@ -12,7 +12,7 @@ $( '.change_mail_pw' ).submit(function( event ) {
     type: 'POST',
     dataType: 'json',
     success: function(json_data){
-      var data = $.parseJSON(json_data);
+      var data = json_data;
       if (data.hasOwnProperty('email')) {
         $('#email').html("Your current Email adress: " + data['email'])
       }

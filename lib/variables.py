@@ -1,7 +1,7 @@
 names = ['authors', 'description', 'release_date', 'genre', 'isbn',
-         'series', 'order', 'pages', 'language', 'title', 'front',
+         'series', 'order_nr', 'pages', 'language', 'title', 'front',
          'publisher', 'binding', 'add_date', 'shelf', 'type', 'colorist',
-         'artist', 'cover_artist', 'book_id', 'form']
+         'artist', 'cover_artist', 'form']
 
 reading_stats_names = ['finish_date', 'start_date', 'abdoned']
 

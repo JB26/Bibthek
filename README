@@ -9,7 +9,6 @@ Show started books
 better isbn search and errors
 sort by added
 import status
-Duplicate code in statistics
 Use heading "jumps" for no script in sidebar
 Upload Limits (Set max_request_body_size = 104857600 ???)
 Dynamic URL in view?
@@ -22,5 +21,4 @@ Combining Shelfs
 
 To start the site use:
 cd WORKING_DIR
-mongod --quiet --config mongodb/mongodb.conf
 python bibthek_app.py

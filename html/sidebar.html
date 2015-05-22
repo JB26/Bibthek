@@ -1,4 +1,4 @@
-<%!
+<%
   from lib.variables import name_fields
 %>
 <a class="navmenu-brand visible-md visible-lg" href="/">BibThek</a>
@@ -25,8 +25,8 @@
       % for title in name['books']:
         <li>
           <a href="?book_id=${title['_id']}" class="book_title" id="${title['_id']}" style="margin-left: 0px;" >
-            % if 'order' in title and title['order'] != '':
-                  ${title['order']} - 
+            % if 'order_nr' in title and title['order_nr'] != '':
+                  ${title['order_nr']} - 
             % endif
                 ${title['title']}
           </a>
@@ -35,8 +35,8 @@
       </ul>
     % else:
       <a href="?book_id=${name['books']['_id']}" class="book_title" id="${name['books']['_id']}" >
-        % if 'order' in name and name['order'] != '':
-              ${name['order']} - 
+        % if 'order_nr' in name and name['order_nr'] != '':
+              ${name['order_nr']} - 
         % endif
             ${name['_id']}
       </a>

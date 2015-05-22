@@ -57,9 +57,9 @@ def import_data(_import, separator):
                                                                 " &")
             if fieldname == 'reading_stats':
                 data_temp[fieldname] = literal_eval(data_temp[fieldname])
-    if ('isbn' in data_temp and
-        data_temp['isbn'] != '') or ('author' in data_temp and
-                                    data_temp['author'] != ''):
+            if fieldname == 'form' and data_temp[fieldname] == '':
+                data_temp[fieldname] = 'Physical'
+    if ('title' in data_temp and data_temp['title'] != ''):
         data_temp = clean_import(data_temp)
         return data_temp
     else:

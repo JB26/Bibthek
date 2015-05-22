@@ -1,13 +1,16 @@
 import cherrypy
-from lib.mongo import mongo_user_by_session
+from lib.db_sql import user_by_name
 
 def check_auth(required = True, user_role = None):
-    user = mongo_user_by_session(cherrypy.session.id)
-
     if required:
-        if user == None:
-            raise cherrypy.HTTPRedirect("/login")
-        elif user_role != None and user['role'] != user_role:
+        if cherrypy.session.get('username') != None:
+            user = user_by_name(cherrypy.session.get('username'))
+            if user == None or cherrypy.session.id not in user['session_ids']:
+                cherrypy.lib.sessions.expire()
+                raise cherrypy.HTTPRedirect("/login")
+            elif user_role != None and user['role'] != user_role:
+                raise cherrypy.HTTPRedirect("/login")
+        else:
             raise cherrypy.HTTPRedirect("/login")
     
 cherrypy.tools.auth = cherrypy.Tool('before_handler', check_auth)

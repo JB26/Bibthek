@@ -18,9 +18,9 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         % if user != None and view_user == user['username']:
-          <p class="navbar-text">Signed in as ${user['username']} viewing ${view_user}'s profile</p>
-        % elif user != None:
           <p class="navbar-text">Signed in as ${user['username']} viewing your profile</p>
+        % elif user != None:
+          <p class="navbar-text">Signed in as ${user['username']} viewing ${view_user}'s profile</p>
         % else:
           <p class="navbar-text">Not signed in viewing ${view_user}'s profile</p>
         % endif

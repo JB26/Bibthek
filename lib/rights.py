@@ -1,15 +1,19 @@
 import cherrypy
-from lib.mongo import mongo_user, mongo_user_by_session
+import lib.db_sql as db_sql
 
 def check_rights():
-    temp = cherrypy.request.path_info.split("/")[2]
-    view_user = mongo_user(temp)
+    try:
+        temp = cherrypy.request.path_info.split("/")[2]
+    except IndexError:
+        raise cherrypy.HTTPRedirect("/")
+    view_user = db_sql.user_by_name(temp)
     if view_user == None:
         raise cherrypy.HTTPError(404, "Profile not found")
-    elif 'privacy' not in view_user or view_user['privacy'] == 'private':
-        user = mongo_user_by_session(cherrypy.session.id)
-        if user != None and user['username'] == view_user['username']:
+    elif view_user['privacy'] == 'private':
+        user = cherrypy.session.get('username')
+        if (user == view_user['username'] and
+            cherrypy.session.id in view_user['session_ids']):
             return
-        raise cherrypy.HTTPRedirect("/")
+        raise cherrypy.HTTPError(404, "Profile not public")
 
 cherrypy.tools.rights = cherrypy.Tool('before_handler', check_rights)

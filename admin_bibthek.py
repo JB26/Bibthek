@@ -1,5 +1,5 @@
 import argparse
-from lib.mongo import mongo_role 
+import lib.db_sql as db_sql 
 
 parser = argparse.ArgumentParser(description='BibThek')
 parser.add_argument('--admin', type = str,
@@ -7,4 +7,4 @@ parser.add_argument('--admin', type = str,
                     metavar = "Username")
 args = parser.parse_args()
 if args.admin != None:
-    print(mongo_role(args.admin, 'admin'))
+    db_sql.role(args.admin, 'admin')

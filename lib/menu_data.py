@@ -1,4 +1,6 @@
-def menu_data(mongo, shelf, _filter, sort_first, sort_second):
+import lib.db_sql as db_sql
+
+def menu_data(username, shelf, _filter, sort_first, sort_second):
     sort1 = [
         {'name' : 'Title', 'url' : '/title/title/', 'active' : False},
         {'name' : 'Series', 'url' : '/series/variant1_order/',
@@ -22,15 +24,15 @@ def menu_data(mongo, shelf, _filter, sort_first, sort_second):
                  {'name' : 'Pages', 'url' : '/title/pages/',
                   'active' : False}]
         if sort_second == 'year':
-            items = mongo.titles(shelf, 'year', _filter)
+            items = db_sql.titles(username, shelf, 'year', _filter)
             sort2[0]['active'] = True
             active_sort = sort2[0]['url']
         elif sort_second == 'title':
-            items = mongo.titles(shelf, 'title', _filter)
+            items = db_sql.titles(username, shelf, 'title', _filter)
             sort2[1]['active'] = True
             active_sort = sort2[1]['url']
         elif sort_second == 'pages':
-            items = mongo.titles(shelf, 'pages', _filter)
+            items = db_sql.titles(username, shelf, 'pages', _filter)
             sort2[2]['active'] = True
             active_sort = sort2[2]['url']
     elif sort_first == 'series':
@@ -46,7 +48,7 @@ def menu_data(mongo, shelf, _filter, sort_first, sort_second):
         sort2_series = ['variant1_order', 'variant1_year',
                            'variant2_order', 'variant2_year']
         if sort_second in sort2_series:
-            items = mongo.series(shelf, sort_second, _filter)
+            items = db_sql.series(username, shelf, sort_second, _filter)
             i = sort2_series.index(sort_second)
             sort2[i]['active'] = True
             active_sort = sort2[i]['url']
@@ -57,17 +59,19 @@ def menu_data(mongo, shelf, _filter, sort_first, sort_second):
                  {'name' : 'Title', 'url' : '/' + sort_first + '/title/',
                   'active' : False}]
         if sort_second == 'year':
-            items = mongo.author_and_more(sort_first, shelf, 'year', _filter)
+            items = db_sql.author_and_more(username, sort_first, shelf,
+                                           'year', _filter)
             sort2[0]['active'] = True
             active_sort = sort2[0]['url']
         elif sort_second == 'title':
-            items = mongo.author_and_more(sort_first, shelf, 'title', _filter)
+            items = db_sql.author_and_more(username, sort_first, shelf,
+                                           'title', _filter)
             sort2[1]['active'] = True
             active_sort = sort2[1]['url']
 
     return sort1, sort2, active_sort, items
 
-def menu_filter(mongo, shelf):
+def menu_filter(username, shelf):
     return [
         {
             'name' : 'Status', 'short' : 'stat_',
@@ -79,10 +83,10 @@ def menu_filter(mongo, shelf):
         },
         {
             'name' : 'Language', 'short' : 'lang_',
-            'filter' : mongo.filter_list(shelf, 'language')
+            'filter' : db_sql.filter_list(username, shelf, 'language')
         },
         {
             'name' : 'Binding', 'short' : 'bind_',
-            'filter' : mongo.filter_list(shelf, 'binding')
+            'filter' : db_sql.filter_list(username, shelf, 'binding')
         }
         ]

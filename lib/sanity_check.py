@@ -36,7 +36,7 @@ def sanity_check(params):
                     if date_temp[i] == False:
                         return None, name + " is not a valid date"
             # Getting rid of unnecessary lists
-            if len(date_temp) == 1:
+            if name not in ['finish_date', 'start_date']:
                 data[name] = date_temp[0]
             else:
                 data[name] = date_temp

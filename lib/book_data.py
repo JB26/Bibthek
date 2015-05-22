@@ -1,13 +1,14 @@
 from datetime import date
-from lib.mongo import mongo_db
-from lib.variables import book_empty_default
-from lib.sanity_check import sanity_check
 import os
 import hashlib
 import cherrypy
 from random import random
 
-def get_book_data(mongo, book_id, book_type, shelf):
+from lib.variables import book_empty_default
+from lib.sanity_check import sanity_check
+import lib.db_sql as db_sql
+
+def get_book_data(username, book_id, book_type, shelf):
     book_empty = book_empty_default()
     if book_id in ['new_book', 'new_comic']:
         book = book_empty
@@ -19,15 +20,17 @@ def get_book_data(mongo, book_id, book_type, shelf):
         if shelf not in ['All', 'Not shelfed']:
             book['shelf'] = shelf
     else:
-        book = mongo.get_by_id(book_id)
+        book = db_sql.get_by_id(username, book_id)
         for k, v in book_empty.items():
             if k not in book:
                 book[k] = v
         book['_id'] = str(book['_id'])
     return book
 
-def save_book_data(mongo, params):
+def save_book_data(username, params):
+    book_id = params['book_id']
     params, error = sanity_check(params)
+    params['book_id'] = book_id
     if error != "0":
         return None, None, error
     if params['book_id'] == 'new_book':
@@ -49,7 +52,7 @@ def save_book_data(mongo, params):
                 f.write(params['front'].file.read())
         params['front'] = new_name
         if new == False:
-            data = mongo.get_by_id(params['book_id'])
+            data = db_sql.get_by_id(username, params['book_id'])
             try:
                 os.remove(data['front'])
             except FileNotFoundError:
@@ -58,7 +61,7 @@ def save_book_data(mongo, params):
                 pass
     else:
         del params['front']
-    book_id = mongo.update(params)
+    book_id = db_sql.update(username, params)
     return book_id, new, "0"
 
 def cover_name(username, file_type):
