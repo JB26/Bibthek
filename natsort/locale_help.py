@@ -13,16 +13,16 @@ from itertools import chain
 from locale import localeconv
 
 # Local imports.
-from natsort.py23compat import py23_zip
+from natsort.py23compat import PY_VERSION
 
 # We need cmp_to_key for Python2 because strxfrm is broken for unicode.
-if sys.version[:3] == '2.7':
+try:
     from functools import cmp_to_key
 # cmp_to_key was not created till 2.7.
-elif sys.version[:3] == '2.6':
+except ImportError:  # pragma: no cover
     def cmp_to_key(mycmp):
         """Convert a cmp= function into a key= function"""
-        class K(object):  # pragma: no cover
+        class K(object):
             __slots__ = ['obj']
 
             def __init__(self, obj):
@@ -52,7 +52,8 @@ elif sys.version[:3] == '2.6':
         return K
 
 # Make the strxfrm function from strcoll on Python2
-# It can be buggy, so prefer PyICU if available.
+# It can be buggy (especially on BSD-based systems),
+# so prefer PyICU if available.
 try:
     import PyICU
     from locale import getlocale
@@ -69,16 +70,37 @@ try:
             _d[l] = c.getSortKey
         return _d[l]
     use_pyicu = True
+    null_string = b''
+
+    def dumb_sort():
+        return False
 except ImportError:
     if sys.version[0] == '2':
         from locale import strcoll
         strxfrm = cmp_to_key(strcoll)
+        null_string = strxfrm('')
     else:
         from locale import strxfrm
+        null_string = ''
     use_pyicu = False
 
-# This little lambda doubles all characters, making letters lowercase.
-groupletters = lambda x: ''.join(chain(*py23_zip(x.lower(), x)))
+    # On some systems, locale is broken and does not sort in the expected
+    # order. We will try to detect this and compensate.
+    def dumb_sort():
+        return strxfrm('A') < strxfrm('a')
+
+
+if PY_VERSION >= 3.3:
+    def _low(x):
+        return x.casefold()
+else:
+    def _low(x):
+        return x.lower()
+
+
+def groupletters(x):
+    """Double all characters, making doubled letters lowercase."""
+    return ''.join(chain.from_iterable([_low(y), y] for y in x))
 
 
 def grouper(val, func):
@@ -89,16 +111,16 @@ def grouper(val, func):
     """
     # Return the number or transformed string.
     # If the input is identical to the output, then no conversion happened.
-    s = func(val)
-    return groupletters(s) if val is s else s
+    s = func[0](val)
+    return groupletters(s) if not func[1](s) else s
 
 
 def locale_convert(val, func, group):
     """\
     Attempt to convert a string to a number, first converting
     the decimal place character if needed. Then, if the conversion
-    was not possible, run it through strxfrm to make the sorting
-    as requested, possibly grouping first.
+    was not possible (i.e. it is not a number), run it through
+    strxfrm to make the work sorting as requested, possibly grouping first.
     """
 
     # Format the number so that the conversion function can interpret it.
@@ -106,7 +128,7 @@ def locale_convert(val, func, group):
     s = val.replace(radix, '.') if radix != '.' else val
 
     # Perform the conversion
-    t = func(s)
+    t = func[0](s)
 
     # Return the number or transformed string.
     # If the input is identical to the output, then no conversion happened.
@@ -116,12 +138,12 @@ def locale_convert(val, func, group):
     if group:
         if use_pyicu:
             xfrm = get_pyicu_transform(getlocale())
-            return xfrm(groupletters(val)) if s is t else t
+            return xfrm(groupletters(val)) if not func[1](t) else t
         else:
-            return strxfrm(groupletters(val)) if s is t else t
+            return strxfrm(groupletters(val)) if not func[1](t) else t
     else:
         if use_pyicu:
             xfrm = get_pyicu_transform(getlocale())
-            return xfrm(val) if s is t else t
+            return xfrm(val) if not func[1](t) else t
         else:
-            return strxfrm(val) if s is t else t
+            return strxfrm(val) if not func[1](t) else t
