@@ -1,6 +1,5 @@
 import locale
 locale.setlocale(locale.LC_ALL, 'de_DE.UTF-8')
-from natsort import index_humansorted, order_by_index
 
 from lib.variables import articles
 
@@ -58,6 +57,5 @@ def library_sorted(data, field, sort_by_order):
             find_article = row[field].split(maxsplit=1)
             if len(find_article) == 2 and find_article[0].lower() in articles:
                 temp[-1] = temp[-1] + find_article[1] + find_article[0]
-        temp[-1] = temp[-1] + row[field]
-    index = index_humansorted(temp)
-    return order_by_index(data, index)
+        temp[-1] = locale.strxfrm(temp[-1] + row[field])
+    return [ i[1] for i in sorted(zip(temp, data)) ]
