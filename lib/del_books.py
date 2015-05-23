@@ -13,7 +13,7 @@ def del_all_books(username):
 
 def del_book(username, book_id):
     data = db_sql.get_by_id(username, book_id)
-    if 'front' in data:
+    if data['front'] != None:
         try:
             remove(data['front'])
         except FileNotFoundError:

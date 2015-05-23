@@ -47,15 +47,18 @@ def init_books(username):
 
 def insert_new_book(username, data):
     c, conn = connect()
-    sql = ("INSERT INTO " + username + " (" + ", ".join(dbnames) +
-           ") VALUES (" + ", ".join(['?']*len(dbnames)) + ")")
+    sql = ("INSERT INTO " + username + " (")
     temp_list = []
-    for key in dbnames:
-        temp_list.append(data[key])
+    for key, value in data.items():
+        if key in dbnames:
+            temp_list.append(value)
+            sql += key + ", "
+    sql = sql[:-2]
+    sql += ") VALUES (" + ", ".join(['?']*len(temp_list)) + ")"
     c.execute(sql, tuple(temp_list))
     conn.commit()
     conn.close()
-    return c.lastrowid
+    return str(c.lastrowid)
 
 def insert_many_new(username, data):
     c, conn = connect()
@@ -186,6 +189,9 @@ def update(username, data):
         del data['start_date']
         del data['finish_date']
         del data['abdoned']
+    else:
+        data['reading_stats'] = []
+        data['read_count'] = 0
     if book_id == 'new_book':
         book_id = insert_new_book(username, data)
     else:

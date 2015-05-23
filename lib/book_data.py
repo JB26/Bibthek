@@ -57,7 +57,7 @@ def save_book_data(username, params):
                 os.remove(data['front'])
             except FileNotFoundError:
                 pass
-            except KeyError:
+            except TypeError:
                 pass
     else:
         del params['front']
