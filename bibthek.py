@@ -31,10 +31,10 @@ class bibthek(object):
         raise cherrypy.HTTPRedirect("/view/" + cherrypy.session.get('username'))
 
     @cherrypy.expose
-    @cherrypy.tools.auth(required = False)
+    @cherrypy.tools.auth(required=False)
     @cherrypy.tools.rights()
     def view(self, view_user, view='books', shelf=None, sort_first=None,
-             sort_second=None, _filter = '', book_id='new_book',
+             sort_second=None, _filter='', book_id='new_book',
              book_type='book'):
         return self.books(view_user, view, shelf, sort_first, sort_second,
                           _filter, book_id, book_type)
@@ -45,7 +45,7 @@ class bibthek(object):
             raise cherrypy.HTTPRedirect("/view/" + view_user  + "/" + view +
                                         "/All/series/variant1_order")
         shelf = shelf.encode("latin-1").decode("utf-8")
-        _filter = _filter.encode("latin-1").decode("utf-8") 
+        _filter = _filter.encode("latin-1").decode("utf-8")
         book = get_book_data(view_user, book_id, book_type, shelf)
         user = db_sql.user_by_name(cherrypy.session.get('username'))
         sort1, sort2, active_sort, items = menu_data(view_user, shelf,
@@ -70,20 +70,18 @@ class bibthek(object):
                                  active_shelf=active_shelf,
                                  sort1=sort1, sort2=sort2,
                                  active_sort=active_sort,
-                                 active_filter=_filter, filters = filters,
+                                 active_filter=_filter, filters=filters,
                                  view=view, covers=covers,
                                  user=user, view_user=view_user,
                                  error=error)
-    
+
     @cherrypy.expose
-    @cherrypy.tools.auth(required = False)
+    @cherrypy.tools.auth(required=False)
     @cherrypy.tools.rights()
     def json_book(self, view_user, book_id, book_type='book', shelf='All'):
         shelf = request.url2pathname(shelf)
         book = get_book_data(view_user, book_id, book_type, shelf)
         return json.dumps(book)
-
-    
 
     @cherrypy.expose
     def autocomplete(self, field, query):
@@ -98,9 +96,9 @@ class bibthek(object):
             return json.dumps(ac_list)
 
     @cherrypy.expose
-    @cherrypy.tools.auth(required = False)
+    @cherrypy.tools.auth(required=False)
     @cherrypy.tools.rights()
-    def reading_stats(self, view_user, i, start, finish, abdoned = False):
+    def reading_stats(self, view_user, i, start, finish, abdoned=False):
         if abdoned == 'false':
             abdoned = False
         elif abdoned == 'true':
@@ -114,12 +112,12 @@ class bibthek(object):
     def settings(self):
         user = db_sql.user_by_name(cherrypy.session.get('username'))
         mytemplate = mylookup.get_template("settings.html")
-        return mytemplate.render(user=user, view_user = user['username'])
+        return mytemplate.render(user=user, view_user=user['username'])
 
     @cherrypy.expose
-    @cherrypy.tools.auth(required = False)
+    @cherrypy.tools.auth(required=False)
     @cherrypy.tools.rights()
-    def statistics(self, view_user, shelf=None, _filter = ''):
+    def statistics(self, view_user, shelf=None, _filter=''):
         if shelf == None:
             raise cherrypy.HTTPRedirect("/statistics/" + view_user  + "/All")
         shelf = shelf.encode("latin-1").decode("utf-8")
@@ -133,13 +131,13 @@ class bibthek(object):
         mytemplate = mylookup.get_template("statistics.html")
         return mytemplate.render(active_sort='', shelfs=shelfs,
                                  active_shelf=active_shelf,
-                                active_filter=_filter, filters = filters,
-                                user=user, view_user=view_user)
+                                 active_filter=_filter, filters=filters,
+                                 user=user, view_user=view_user)
 
     @cherrypy.expose
-    @cherrypy.tools.auth(required = False)
+    @cherrypy.tools.auth(required=False)
     @cherrypy.tools.rights()
-    def json_statistic(self, view_user, shelf=None, _filter = '', _type = None):
+    def json_statistic(self, view_user, shelf=None, _filter='', _type=None):
         shelf = shelf.encode("latin-1").decode("utf-8")
         _filter = _filter.encode("latin-1").decode("utf-8")
         if _type.split('#')[0] in ['release_date', 'add_date', 'start_date',
@@ -148,10 +146,10 @@ class bibthek(object):
                                                  _type)
         elif _type.split('#')[0] == 'pages_read':
             labels, data = db_sql.statistic_pages_read(view_user,
-                                                         shelf, _filter, _type)
+                                                       shelf, _filter, _type)
         elif _type.split('#')[0] == 'pages_book':
             labels, data = db_sql.statistic_pages_book(view_user,
-                                                         shelf, _filter)
+                                                       shelf, _filter)
         return json.dumps({'data' : data, 'labels' : labels,
                            'canvas_id' : _type.split('#')[0] + '_chart'})
 
@@ -175,10 +173,9 @@ class bibthek(object):
         if db_sql.login(cherrypy.session.get('username'), password, None):
             db_sql.change_email(cherrypy.session.get('username'), email_new)
             return json.dumps({'type' : 'success', 'error' : 'Email changed',
-                              'email' : email_new})
+                               'email' : email_new})
         else:
             return json.dumps({'type' : 'danger', 'error' : 'Wrong Password'})
-            
 
     @cherrypy.expose
     def change_pw(self, password_old, password_new):
@@ -215,8 +212,8 @@ class bibthek(object):
     def reset_pw(self, username):
         return json.dumps({'type' : 'success',
                            'error' : 'Please tell ' + username +
-                           ' the new password: "' +
-                           db_sql.reset_pw(username) + '"'})
+                                     ' the new password: "' +
+                                     db_sql.reset_pw(username) + '"'})
 
     @cherrypy.expose
     def import_books(self, data_upload=None, separator=None):
@@ -245,7 +242,7 @@ class bibthek(object):
         path = os.path.join(absDir, file_name)
         return static.serve_file(path, "application/x-download",
                                  "attachment", os.path.basename(path))
-        
+
     @cherrypy.expose
     def save(self, **params):
         username = cherrypy.session.get('username')
@@ -263,8 +260,8 @@ class bibthek(object):
         username = cherrypy.session.get('username')
         if edit in ['series'] + name_fields:
             db_sql.change_field(username, edit, old_name, new_name)
-            raise cherrypy.HTTPRedirect( str(cherrypy.request.headers
-                                            .elements('Referer')[0]) )
+            raise cherrypy.HTTPRedirect(str(cherrypy.request.headers
+                                            .elements('Referer')[0]))
 
     @cherrypy.expose
     def star_series(self, series, status):
@@ -299,8 +296,8 @@ class bibthek(object):
         raise cherrypy.HTTPRedirect("/")
 
     @cherrypy.expose
-    @cherrypy.tools.auth(required = False)
-    def register(self, secret = '', username = '', password = '', mail = ''):
+    @cherrypy.tools.auth(required=False)
+    def register(self, secret='', username='', password='', mail=''):
         if password and username is not '':
             error = db_sql.add_user(username, password, mail,
                                     cherrypy.session.id)
@@ -313,8 +310,8 @@ class bibthek(object):
             return error
 
     @cherrypy.expose
-    @cherrypy.tools.auth(required = False)
-    def login(self, username = '', password = ''):
+    @cherrypy.tools.auth(required=False)
+    def login(self, username='', password=''):
         if username == '' and password == '':
             try:
                 url = str(cherrypy.request.headers.elements('Referer')[0])
