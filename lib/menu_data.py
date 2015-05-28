@@ -79,14 +79,10 @@ def menu_filter(username, shelf):
         },
         {
             'name' : 'Form', 'short' : 'form_',
-            'filter' : ['Physical', 'Digital', 'Borrowed']
+            'filter' : db_sql.filter_list(username, shelf, 'form')
         },
         {
             'name' : 'Language', 'short' : 'lang_',
             'filter' : db_sql.filter_list(username, shelf, 'language')
-        },
-        {
-            'name' : 'Binding', 'short' : 'bind_',
-            'filter' : db_sql.filter_list(username, shelf, 'binding')
         }
         ]

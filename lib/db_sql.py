@@ -36,7 +36,7 @@ def init_books(username):
     sql = ("create table if not exists " + username +
            '''(authors list, description text, release_date text, genre list,
                isbn text, series text, order_nr text, pages text, language text,
-               title text, front text, publisher text, binding text,
+               title text, front text, publisher text,
                add_date text, shelf text, type text, colorist list,
                artist list, cover_artist list, form text, reading_stats list,
                read_count INTEGER, series_complete INTEGER,

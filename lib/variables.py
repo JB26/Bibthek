@@ -1,6 +1,6 @@
 names = ['authors', 'description', 'release_date', 'genre', 'isbn',
          'series', 'order_nr', 'pages', 'language', 'title', 'front',
-         'publisher', 'binding', 'add_date', 'shelf', 'type', 'colorist',
+         'publisher', 'add_date', 'shelf', 'type', 'colorist',
          'artist', 'cover_artist', 'form']
 
 reading_stats_names = ['finish_date', 'start_date', 'abdoned']
@@ -22,5 +22,4 @@ def book_empty_default():
     book_empty['_id'] = 'new_book'
     book_empty['type'] = 'book'
     book_empty['reading_stats'] = None
-    book_empty['form'] = 'Physical'
     return book_empty

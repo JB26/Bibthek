@@ -5,8 +5,6 @@ function load_book(book_id){
     $.each(data, function(input_id, input_value){
       if ($.isArray(input_value)) {
         $('#' + input_id).val(input_value.join(" & "));
-      } else if (input_id == 'form') {
-        $('#' + input_value).prop("checked", true);
       } else {
         $('#' + input_id).val(input_value);
       };
