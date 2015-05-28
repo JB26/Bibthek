@@ -94,7 +94,7 @@ def update_book(username, book_id, data):
 
 def array_to_str(data):
     for field in name_fields:
-            if field in data:
+            if field in data and data[field] != None:
                 data[field] = ' & '.join(data[field])
     if 'genre' in data:
         data['genre'] = ', '.join(data['genre'])
