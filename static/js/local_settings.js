@@ -33,7 +33,7 @@ $('#delete_acc_warn').click(function(event) {
 $('#alert_placeholder').on( "click", "#delete_acc", function(event) {
   event.preventDefault();
   var password = $('#password_del_acc').val();
-  $.getJSON( "/delete_acc", {"password" : password}, function(data) {
+  $.getJSON( "/delete_acc", {"password" : password, "_json" : 'true'}, function(data) {
     warning(data['type'], data['error']);
   });
 });

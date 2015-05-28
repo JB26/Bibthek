@@ -34,19 +34,18 @@ class bibthek(object):
     @cherrypy.tools.auth(required=False)
     @cherrypy.tools.rights()
     def view(self, view_user, view='books', shelf=None, sort_first=None,
-             sort_second=None, _filter='', book_id='new_book',
-             book_type='book'):
+             sort_second=None, _filter='', book_id='new_book'):
         return self.books(view_user, view, shelf, sort_first, sort_second,
-                          _filter, book_id, book_type)
+                          _filter, book_id)
 
     def books(self, view_user, view, shelf, sort_first, sort_second, _filter,
-              book_id, book_type):
+              book_id):
         if sort_second == None:
             raise cherrypy.HTTPRedirect("/view/" + view_user  + "/" + view +
                                         "/All/series/variant1_order")
         shelf = shelf.encode("latin-1").decode("utf-8")
         _filter = _filter.encode("latin-1").decode("utf-8")
-        book = get_book_data(view_user, book_id, book_type, shelf)
+        book = get_book_data(view_user, book_id, shelf)
         user = db_sql.user_by_name(cherrypy.session.get('username'))
         sort1, sort2, active_sort, items = menu_data(view_user, shelf,
                                                      _filter,
@@ -78,9 +77,9 @@ class bibthek(object):
     @cherrypy.expose
     @cherrypy.tools.auth(required=False)
     @cherrypy.tools.rights()
-    def json_book(self, view_user, book_id, book_type='book', shelf='All'):
+    def json_book(self, view_user, book_id, shelf='All'):
         shelf = request.url2pathname(shelf)
-        book = get_book_data(view_user, book_id, book_type, shelf)
+        book = get_book_data(view_user, book_id, shelf)
         return json.dumps(book)
 
     @cherrypy.expose
@@ -187,7 +186,7 @@ class bibthek(object):
             return json.dumps({'type' : 'danger', 'error' : error})
 
     @cherrypy.expose
-    def delete_acc(self, password=None, username=None):
+    def delete_acc(self, password=None, username=None, _json='false'):
         allowed = False
         if username == None and password != None:
             username = cherrypy.session.get('username')
@@ -200,7 +199,12 @@ class bibthek(object):
             db_sql.user_del(username)
             if password != None:
                 cherrypy.lib.sessions.expire()
-                raise cherrypy.HTTPRedirect("/")
+                if _json == 'false':
+                    raise cherrypy.HTTPRedirect("/")
+                else:
+                    print('del')
+                    return json.dumps({'type' : 'success',
+                                       'error' : 'Your account is deleted'})
             else:
                 return json.dumps({'type' : 'success',
                                    'error' : 'Account deleted'})

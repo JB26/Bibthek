@@ -1,5 +1,6 @@
 import locale
 locale.setlocale(locale.LC_ALL, 'de_DE.UTF-8')
+from operator import itemgetter
 
 from lib.variables import articles
 
@@ -21,10 +22,9 @@ def sorted_apg(data, sort_by_order, sort_first):
                 temp.append(row['_id'])
         else:
             temp.append(row['_id'])
-    index = index_humansorted(temp)
-    data = order_by_index(data, index)
-    return data
-    
+        temp[-1] = locale.strxfrm(temp[-1])
+    return [ i[1] for i in sorted(zip(temp, data), key=itemgetter(0)) ]
+
 def sorted_titles(data, field, variant='year'):
     sort_by_order = False
     for row in data:
@@ -58,4 +58,4 @@ def library_sorted(data, field, sort_by_order):
             if len(find_article) == 2 and find_article[0].lower() in articles:
                 temp[-1] = temp[-1] + find_article[1] + find_article[0]
         temp[-1] = locale.strxfrm(temp[-1] + row[field])
-    return [ i[1] for i in sorted(zip(temp, data)) ]
+    return [ i[1] for i in sorted(zip(temp, data), key=itemgetter(0)) ]

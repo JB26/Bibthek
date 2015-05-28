@@ -35,11 +35,11 @@ def init_books(username):
     c, conn = connect(filename='books.db')
     sql = ("create table if not exists " + username +
            '''(authors list, description text, release_date text, genre list,
-               isbn text, series text, order_nr text, pages text, language text,
-               title text, front text, publisher text,
+               isbn text, series text, order_nr text, pages text,
+               language text, title text, front text, publisher text,
                add_date text, shelf text, type text, colorist list,
-               artist list, cover_artist list, form text, reading_stats list,
-               read_count INTEGER, series_complete INTEGER,
+               artist list, cover_artist list, narrator list, form text,
+               reading_stats list, read_count INTEGER, series_complete INTEGER,
                _id INTEGER primary key autoincrement not null)''')
     c.execute(sql)
 
@@ -62,14 +62,15 @@ def insert_new_book(username, data):
 
 def insert_many_new(username, data):
     c, conn = connect()
-    sql = ("INSERT INTO " + username + " (" + ", ".join(dbnames) +
-           ") VALUES (" + ", ".join(['?']*len(dbnames)) + ")")
+    keys = list(data[0].keys())
+    sql = ("INSERT INTO " + username + " (" + ", ".join(keys) +
+           ") VALUES (" + ", ".join(['?']*len(keys)) + ")")
 
     insert_data = []
     for x in data:
         x = str_to_array(x)
         temp_list = []
-        for key in dbnames:
+        for key in keys:
             temp_list.append(x[key])
         insert_data.append(tuple(temp_list))
     c.executemany(sql, insert_data)
@@ -110,7 +111,7 @@ def str_to_array(data):
 def remove_empty_field(data, warning):
     data_temp = None
     for row in data:
-        if row['_id'] == '':
+        if row['_id'] == '' or row['_id'] == None:
             data_temp = row
             row['_id'] = warning
             row['empty_field'] = True
@@ -257,6 +258,8 @@ def aggregate_items(username, group_by, get_fields, shelf, _filter,
     data_temp = []
     if array:
         for row in data:
+            if row[group_by] == None:
+                row[group_by] = ['']
             temp_field = row[group_by][1:]
             row[group_by] = row[group_by][0]
             for x in temp_field:
@@ -643,7 +646,7 @@ def user_list():
 
 def drop(username):
     c, conn = connect()
-    sql = ("DELETE FROM " + username)
+    sql = 'DROP TABLE IF EXISTS ' + username
     c.execute(sql)
     conn.commit()
     conn.close()

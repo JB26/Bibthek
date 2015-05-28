@@ -8,13 +8,14 @@ def menu_data(username, shelf, _filter, sort_first, sort_second):
         {'name' : 'Author', 'url' : '/authors/year/', 'active' : False},
         {'name' : 'Publisher', 'url' : '/publisher/year/', 'active' : False},
         {'name' : 'Genre', 'url' : '/genre/title/', 'active' : False},
+        {'name' : 'Narrator', 'url' : '/narrator/year/', 'active' : False},
         {'name' : 'Artist', 'url' : '/artist/year/', 'active' : False},
         {'name' : 'Colorist', 'url' : '/colorist/year/', 'active' : False},
         {'name' : 'Cover artist', 'url' : '/cover_artist/year/',
          'active' : False},
         ]
     sort_similar = ['authors', 'publisher', 'genre', 'artist', 'colorist',
-                    'cover_artist']
+                    'cover_artist', 'narrator']
     if sort_first == 'title':
         sort1[0]['active'] = True
         sort2 = [{'name' : 'Year', 'url' : '/title/year/',

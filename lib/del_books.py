@@ -5,6 +5,7 @@ import lib.db_sql as db_sql
 
 def del_all_books(username):
     db_sql.drop(username)
+    db_sql.init_books(username)
     try:
         rmtree('static/covers/' + username + '_front/')
     except FileNotFoundError:

@@ -11,8 +11,8 @@ def is_int(s):
 def clean_import(row):
     if 'isbn' in row : row['isbn'] = row['isbn'].replace("-","")
     row['title'] = title_clean(row['title'])
-    if 'order' not in row or row['order'] == '':
-        row['order'], row['title'] = number_clean(row['title'])
+    if 'order_nr' not in row or row['order_nr'] == '':
+        row['order_nr'], row['title'] = number_clean(row['title'])
     for _date in ['release_date', 'add_date', 'start_date', 'finish_date']:
         if _date in row :
             if row[_date] != '':

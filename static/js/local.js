@@ -26,7 +26,14 @@ function load_book(book_id){
       }
     }
     if (data.type == 'comic') {
-      $('.comic').show()} else {$('.comic').hide()
+      $('.comic').show()
+    } else {
+      $('.comic').hide()
+    };
+    if (data.type == 'audiobook') {
+      $('.audiobook').show()
+    } else {
+      $('.audiobook').hide()
     };
     search_links(data.isbn);
   })
@@ -123,18 +130,6 @@ $( '.book_title' ).click(function( event ) {
   history.pushState(book_id, '', window.location.pathname + '?book_id=' + book_id);
   $('.alert').alert('close');
   load_book(book_id, '_id');
-});
-
-$('#link_new_book').click(function( event ) {
-  event.preventDefault();
-  load_book('new_book');
-  history.pushState('new_book', '', window.location.pathname + '?book_type=book');
-});
-
-$('#link_new_comic').click(function( event ) {
-  event.preventDefault();
-  load_book('new_comic');
-  history.pushState('new_comic', '', window.location.pathname + '?book_type=comic');
 });
 
 window.addEventListener('popstate', function(event){

@@ -112,6 +112,22 @@
             </div>
           </div>
         </div>
+        % if book['type'] == 'audiobook':
+        <div class='audiobook' style="display:block">
+        % else:
+        <div class='audiobook' style="display:none">
+        % endif
+          <div class="row">
+            <div class="col-md-12">
+              <div class="form-group">
+                <label for="narrator" class="col-sm-2 control-label">Narrator</label>
+                <div class="col-sm-10">
+                  <input class="form-control" type="text" id="narrator" name="narrator" value="${book['narrator'] | h}">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
         <div class="row">
           <div class="col-md-7">
             <div class="form-group">

@@ -8,13 +8,15 @@ from lib.variables import book_empty_default
 from lib.sanity_check import sanity_check
 import lib.db_sql as db_sql
 
-def get_book_data(username, book_id, book_type, shelf):
+def get_book_data(username, book_id, shelf):
     book_empty = book_empty_default()
-    if book_id in ['new_book', 'new_comic']:
+    if book_id in ['new_book', 'new_comic', 'new_audiobook']:
         book = book_empty
         book['add_date'] = str(date.today())
         if book_id == 'new_comic':
             book['type'] = 'comic'
+        elif book_id == 'new_audiobook':
+            book['type'] = 'audiobook'
         else:
             book['type'] = 'book'
         if shelf not in ['All', 'Not shelfed']:
@@ -22,7 +24,7 @@ def get_book_data(username, book_id, book_type, shelf):
     else:
         book = db_sql.get_by_id(username, book_id)
         for k, v in book_empty.items():
-            if k not in book:
+            if k not in book or book[k] == None:
                 book[k] = v
         book['_id'] = str(book['_id'])
     return book
