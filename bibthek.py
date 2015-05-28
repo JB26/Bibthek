@@ -89,7 +89,7 @@ class bibthek(object):
         array = None
         if field in ['authors', 'artist', 'colorist', 'cover_artist', 'genre']:
             array = True
-        elif field in ['publisher', 'series', 'language', 'binding', 'shelf']:
+        elif field in ['publisher', 'series', 'language', 'form', 'shelf']:
             array = False
         if array != None:
             ac_list = db_sql.autocomplete(username, query, field, array)

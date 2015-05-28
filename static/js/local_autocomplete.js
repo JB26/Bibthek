@@ -36,9 +36,9 @@ $('#language').autocomplete({
   deferRequestBy: 100,
   serviceUrl: '/autocomplete/language'
 });
-$('#binding').autocomplete({
+$('#form').autocomplete({
   deferRequestBy: 100,
-  serviceUrl: '/autocomplete/binding'
+  serviceUrl: '/autocomplete/form'
 });
 $('#shelf').autocomplete({
   deferRequestBy: 100,
