@@ -134,12 +134,6 @@ def query_builder(filters, shelf):
         query = " AND read_count = 0"
     else:
         query = ""
-    if 'form_Physical' in filter_list:
-        query += " AND form = 'Physical'"
-    elif 'form_Digital' in filter_list:
-        query += " AND form = 'Digital'"
-    elif 'form_Borrowed' in filter_list:
-        query += " AND form = 'Borrowed'"
 
     paras = {}
     for _filter in filter_list:
@@ -147,9 +141,9 @@ def query_builder(filters, shelf):
             if _filter[0:5] == 'lang_':
                 query += " AND language=:lang"
                 paras['lang'] = _filter[5:]
-            if  _filter[0:5] == 'bind_':
-                query += " AND binding=:bind"
-                paras['bind'] = _filter[5:]
+            if  _filter[0:5] == 'form_':
+                query += " AND form=:form"
+                paras['form'] = _filter[5:]
 
     if shelf == 'Not shelfed':
         query += " AND shelf = ''"
