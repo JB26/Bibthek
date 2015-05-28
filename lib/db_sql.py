@@ -505,12 +505,12 @@ def autocomplete(username, query, field, array):
                 for name in x[field]:
                     if name[0:len(query)] == query:
                         ac_list.append(name)
-        ac_list = {'suggestions' : ac_list}
-        
     else:
         c.execute(sql, (query + '%', ))
-        ac_list = {'suggestions' : [ x[field] for x in c.fetchall() ]}
-    return ac_list
+        ac_list = [ x[field] for x in c.fetchall() ]
+
+    ac_list = [ key for key,_ in itertools.groupby(sorted(ac_list)) ]
+    return {'suggestions' : ac_list}
 
 def filter_list(username, shelf, field):
     c, conn = connect()
