@@ -1,5 +1,4 @@
 """Webapp for storing what books you own and have already read"""
-from mako.template import Template
 from mako.lookup import TemplateLookup
 MY_LOOKUP = TemplateLookup(directories=['html'], output_encoding='utf-8',
                            encoding_errors='replace')
@@ -7,7 +6,6 @@ MY_LOOKUP = TemplateLookup(directories=['html'], output_encoding='utf-8',
 import cherrypy
 from cherrypy.lib import static
 import json
-from requests import get
 from urllib import request
 
 import os
@@ -27,8 +25,16 @@ import lib.rights as rights
 from lib.menu_data import menu_data, menu_filter
 from lib.variables import name_fields
 
+cherrypy.tools.auth = cherrypy.Tool('before_handler', auth.check_auth)
+cherrypy.tools.rights = cherrypy.Tool('before_handler', rights.check_rights)
+
 class Bibthek(object):
     """The main cherrypy class"""
+
+    def __init__(self):
+        """Init class"""
+        self.error = None
+        self.login_ref = None
 
     @cherrypy.expose
     def index(self):
@@ -64,11 +70,8 @@ class Bibthek(object):
             covers = db_books.covers(view_user, shelf, _filter)
         else:
             covers = None
-        try:
-            error = self.error
-            self.error = None
-        except AttributeError:
-            error = None
+        error = self.error
+        self.error = None
         return mytemplate.render(items=items, book=book, shelfs=shelfs,
                                  active_shelf=active_shelf,
                                  sort1=sort1, sort2=sort2,
@@ -195,7 +198,7 @@ class Bibthek(object):
     def change_pw(self, password_old, password_new):
         """Changes your password"""
         error = db_users.change_pw(cherrypy.session.get('username'),
-                                  password_old, password_new)
+                                   password_old, password_new)
         if error == '0':
             raise cherrypy.HTTPRedirect("/logout")
         else:
@@ -350,27 +353,25 @@ class Bibthek(object):
     def login(self, username='', password=''):
         """Login"""
         if username == '' and password == '':
-            try:
-                url = str(cherrypy.request.headers.elements('Referer')[0])
-                url = url.split('/')[3]
-                if url not in  ["register", "logout", "logout_all"]:
-                    self.login_ref = url
-            except IndexError:
-                pass
+            url = str(cherrypy.request.headers.elements('Referer')[0])
+            url = url.split('/')[3]
+            if url not in  ["register", "logout", "logout_all"]:
+                self.login_ref = url
+            else:
+                self.login_ref = None
             mytemplate = MY_LOOKUP.get_template("login.html")
             return mytemplate.render()
         elif db_users.login(username, password, cherrypy.session.id):
             #Make sure the session ID stops changing
             cherrypy.session['username'] = username
-            try:
+            if self.login_ref != None:
                 url = self.login_ref
-            except AttributeError:
+            else:
                 url = "/"
             raise cherrypy.HTTPRedirect(url)
         else:
             return "Login problem"
 
 if __name__ == '__main__':
-    """Start the webapp"""
     db_sql.init_users()
     cherrypy.quickstart(Bibthek(), '/', 'app.conf')

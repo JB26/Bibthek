@@ -15,5 +15,3 @@ def check_rights():
             cherrypy.session.id in view_user['session_ids']):
             return
         raise cherrypy.HTTPError(404, "Profile not public")
-
-cherrypy.tools.rights = cherrypy.Tool('before_handler', check_rights)

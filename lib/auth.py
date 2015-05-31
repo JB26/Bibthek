@@ -12,5 +12,3 @@ def check_auth(required = True, user_role = None):
                 raise cherrypy.HTTPRedirect("/login")
         else:
             raise cherrypy.HTTPRedirect("/login")
-    
-cherrypy.tools.auth = cherrypy.Tool('before_handler', check_auth)
