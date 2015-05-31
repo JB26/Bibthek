@@ -21,12 +21,11 @@ from lib.import_data import import_file
 from lib.export_data import export_csv, export_cover_csv
 from lib.del_books import del_all_books, del_book
 import lib.auth as auth
-import lib.rights as rights
 from lib.menu_data import menu_data, menu_filter
 from lib.variables import name_fields
 
 cherrypy.tools.auth = cherrypy.Tool('before_handler', auth.check_auth)
-cherrypy.tools.rights = cherrypy.Tool('before_handler', rights.check_rights)
+cherrypy.tools.rights = cherrypy.Tool('before_handler', auth.check_rights)
 
 class Bibthek(object):
     """The main cherrypy class"""
