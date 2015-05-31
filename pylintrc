@@ -10,6 +10,9 @@ max-args=10
 # Maximum number of locals for function / method body
 max-locals=20
 
+# Maximum number of public methods for a class (see R0904).
+max-public-methods=30
+
 [MESSAGES CONTROL]
 
 # Disable "Method could be a function (no-self-use)"

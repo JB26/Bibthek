@@ -44,7 +44,7 @@ function load_book(book_id){
 
 function build_reading_stats(data, i) {
   var view_user = window.location.pathname.split("/")[2]
-  $.get( "/reading_stats/" + view_user, {'i' : i, 'start' : data.start, 'finish' : data.finish, 'abdoned' : data.abdoned},  function( data ) {
+  $.get( "/reading_stats" , {'i' : i, 'start' : data.start, 'finish' : data.finish, 'abdoned' : data.abdoned},  function( data ) {
     $('#reading_stats > tbody:last').append(data);
   });
 };

@@ -34,7 +34,7 @@ def save_book_data(username, params):
     params, error = sanity_check(params)
     params['book_id'] = book_id
     if error != "0":
-        return None, None, error
+        return None, error
     if params['book_id'] == 'new_book':
         new = True
     else:
@@ -42,10 +42,10 @@ def save_book_data(username, params):
     if params['front'].file != None:
         file_type =  params['front'].filename.rsplit('.',1)[-1]
         if file_type not in  ['jpg', 'png', 'jpeg']:
-            return None, None, "Only png and jpg"
+            return None, "Only png and jpg"
         new_name, error = cover_name(cherrypy.session['username'], file_type)
         if error != '0':
-            return  None, None, error
+            return  None, error
         try:
             os.mkdir(new_name.rsplit('/')[0])
         except FileExistsError:
@@ -64,7 +64,7 @@ def save_book_data(username, params):
     else:
         del params['front']
     book_id = db_books.update(username, params)
-    return book_id, new, "0"
+    return book_id, "0"
 
 def cover_name(username, file_type):
     first_run = True

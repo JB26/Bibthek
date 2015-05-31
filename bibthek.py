@@ -103,9 +103,7 @@ class Bibthek(object):
             return json.dumps(ac_list)
 
     @cherrypy.expose
-    @cherrypy.tools.auth(required=False)
-    @cherrypy.tools.rights()
-    def reading_stats(self, view_user, i, start, finish, abdoned=False):
+    def reading_stats(self, i, start, finish, abdoned=False):
         """Returns html that will be inserted into the main page. Containing
          information about how and when a book was read
          """
@@ -196,7 +194,7 @@ class Bibthek(object):
     @cherrypy.expose
     def change_pw(self, password_old, password_new):
         """Changes your password"""
-        error = db_user.change_pw(cherrypy.session.get('username'),
+        error = db_users.change_pw(cherrypy.session.get('username'),
                                   password_old, password_new)
         if error == '0':
             raise cherrypy.HTTPRedirect("/logout")
@@ -275,7 +273,7 @@ class Bibthek(object):
     def save(self, **params):
         """Upload and save changes to a book"""
         username = cherrypy.session.get('username')
-        book_id, new, error = save_book_data(username, params)
+        book_id, error = save_book_data(username, params)
         url = str(cherrypy.request.headers.elements('Referer')[0])
         url = url.rsplit("?")[0] + "?book_id=" + book_id
         if error == '0':
@@ -333,7 +331,8 @@ class Bibthek(object):
 
     @cherrypy.expose
     @cherrypy.tools.auth(required=False)
-    def register(self, secret='', username='', password='', mail=''):
+    #def register(self, secret='', username='', password='', mail=''):
+    def register(self, username='', password='', mail=''):
         """Register an account"""
         if password and username is not '':
             error = db_users.add_user(username, password, mail,
