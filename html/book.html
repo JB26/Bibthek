@@ -73,7 +73,7 @@
             <div class="form-group">
               <label for="authors" class="col-sm-2 control-label">Author</label>
               <div class="col-sm-10">
-                <input class="form-control autocomplete" type="text" id="authors" name="authors" value="${book['authors'] | h}">
+                <input class="form-control autocomplete" type="text" id="authors" name="authors" value="${book['authors'] | h}" title="Split multiples with:' & '">
               </div>
             </div>
           </div>
@@ -88,7 +88,7 @@
               <div class="form-group">
                 <label for="artist" class="col-sm-2 control-label">Artist</label>
                 <div class="col-sm-10">
-                  <input class="form-control" type="text" id="artist" name="artist" value="${book['artist'] | h}">
+                  <input class="form-control" type="text" id="artist" name="artist" value="${book['artist'] | h}" title="Split multiples with:' & '">
                 </div>
               </div>
             </div>
@@ -98,7 +98,7 @@
               <div class="form-group">
                 <label for="colorist" class="col-sm-4 control-label">Colorist</label>
                 <div class="col-sm-8">
-                  <input class="form-control" type="text" id="colorist" name="colorist" value="${book['colorist'] | h}">
+                  <input class="form-control" type="text" id="colorist" name="colorist" value="${book['colorist'] | h}" title="Split multiples with:' & '">
                 </div>
               </div>
             </div>
@@ -106,7 +106,7 @@
               <div class="form-group">
                 <label for="cover_artist" class="col-sm-4 control-label">Cover Artist</label>
                 <div class="col-sm-8">
-                  <input class="form-control" type="text" id="cover_artist" name="cover_artist" value="${book['cover_artist'] | h}">
+                  <input class="form-control" type="text" id="cover_artist" name="cover_artist" value="${book['cover_artist'] | h}" title="Split multiples with:' & '">
                 </div>
               </div>
             </div>
@@ -122,7 +122,7 @@
               <div class="form-group">
                 <label for="narrator" class="col-sm-2 control-label">Narrator</label>
                 <div class="col-sm-10">
-                  <input class="form-control" type="text" id="narrator" name="narrator" value="${book['narrator'] | h}">
+                  <input class="form-control" type="text" id="narrator" name="narrator" value="${book['narrator'] | h}"  title="Split multiples with:' & '">
                 </div>
               </div>
             </div>
@@ -187,7 +187,7 @@
             <div class="form-group">
               <label for="genre" class="col-sm-4 control-label">Genre</label>
               <div class="col-sm-8">
-                <input class="form-control" type="text" id="genre" name="genre" value="${book['genre'] | h}">
+                <input class="form-control" type="text" id="genre" name="genre" value="${book['genre'] | h}" title="Split multiples with:' , '">
               </div>
             </div>
           </div>
