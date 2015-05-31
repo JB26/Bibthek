@@ -1,0 +1,16 @@
+[TYPECHECK]
+
+ignored-modules = cherrypy
+
+[DESIGN]
+
+# Maximum number of arguments for function / method
+max-args=10
+
+# Maximum number of locals for function / method body
+max-locals=20
+
+[MESSAGES CONTROL]
+
+# Disable "Method could be a function (no-self-use)"
+disable=R0201

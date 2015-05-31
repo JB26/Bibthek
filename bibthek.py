@@ -1,5 +1,9 @@
+"""Webapp for storing what books you own and have already read"""
 from mako.template import Template
 from mako.lookup import TemplateLookup
+MY_LOOKUP = TemplateLookup(directories=['html'], output_encoding='utf-8',
+                           encoding_errors='replace')
+
 import cherrypy
 from cherrypy.lib import static
 import json
@@ -7,8 +11,8 @@ from requests import get
 from urllib import request
 
 import os
-localDir = os.path.dirname(__file__)
-absDir = os.path.join(os.getcwd(), localDir)
+LOCAL_DIR = os.path.dirname(__file__)
+ABS_DIR = os.path.join(os.getcwd(), LOCAL_DIR)
 
 import lib.db_sql as db_sql
 import lib.db_books as db_books
@@ -23,13 +27,12 @@ import lib.rights as rights
 from lib.menu_data import menu_data, menu_filter
 from lib.variables import name_fields
 
-mylookup = TemplateLookup(directories=['html'], output_encoding='utf-8',
-                          encoding_errors='replace')
-
-class bibthek(object):
+class Bibthek(object):
+    """The main cherrypy class"""
 
     @cherrypy.expose
     def index(self):
+        """Redirect to the standard view"""
         raise cherrypy.HTTPRedirect("/view/" + cherrypy.session.get('username'))
 
     @cherrypy.expose
@@ -37,11 +40,10 @@ class bibthek(object):
     @cherrypy.tools.rights()
     def view(self, view_user, view='books', shelf=None, sort_first=None,
              sort_second=None, _filter='', book_id='new_book'):
-        return self.books(view_user, view, shelf, sort_first, sort_second,
-                          _filter, book_id)
-
-    def books(self, view_user, view, shelf, sort_first, sort_second, _filter,
-              book_id):
+        """Return a webpage with a list of your books that match your
+        criterias. The page also contains information about the book
+        requested by 'book_id'
+        """
         if sort_second == None:
             raise cherrypy.HTTPRedirect("/view/" + view_user  + "/" + view +
                                         "/All/series/variant1_order")
@@ -53,7 +55,7 @@ class bibthek(object):
                                                      _filter,
                                                      sort_first, sort_second)
         filters = menu_filter(view_user, shelf)
-        mytemplate = mylookup.get_template("book.html")
+        mytemplate = MY_LOOKUP.get_template("book.html")
         shelfs = db_books.shelfs(view_user, _filter)
         active_shelf = {}
         active_shelf['shelf'] = shelf
@@ -80,12 +82,16 @@ class bibthek(object):
     @cherrypy.tools.auth(required=False)
     @cherrypy.tools.rights()
     def json_book(self, view_user, book_id, shelf='All'):
+        """Return information about a book in json format"""
         shelf = request.url2pathname(shelf)
         book = get_book_data(view_user, book_id, shelf)
         return json.dumps(book)
 
     @cherrypy.expose
     def autocomplete(self, field, query):
+        """Returns an array (json format) of suggestions with names that are allready
+        in the database
+        """
         username = cherrypy.session.get('username')
         array = None
         if field in ['authors', 'artist', 'colorist', 'cover_artist', 'genre']:
@@ -100,25 +106,30 @@ class bibthek(object):
     @cherrypy.tools.auth(required=False)
     @cherrypy.tools.rights()
     def reading_stats(self, view_user, i, start, finish, abdoned=False):
+        """Returns html that will be inserted into the main page. Containing
+         information about how and when a book was read
+         """
         if abdoned == 'false':
             abdoned = False
         elif abdoned == 'true':
             abdoned = True
-        mytemplate = mylookup.get_template("reading_stats.html")
+        mytemplate = MY_LOOKUP.get_template("reading_stats.html")
         reading_stats = {'start_date' : start, 'finish_date' : finish,
                          'abdoned' : abdoned}
         return mytemplate.render(i=i, reading_stats=reading_stats)
 
     @cherrypy.expose
     def settings(self):
+        """Returns a settings page (Change PW, mail; Delete Account)"""
         user = db_users.user_by_name(cherrypy.session.get('username'))
-        mytemplate = mylookup.get_template("settings.html")
+        mytemplate = MY_LOOKUP.get_template("settings.html")
         return mytemplate.render(user=user, view_user=user['username'])
 
     @cherrypy.expose
     @cherrypy.tools.auth(required=False)
     @cherrypy.tools.rights()
     def statistics(self, view_user, shelf=None, _filter=''):
+        """Returns a page containing statistics about your books"""
         if shelf == None:
             raise cherrypy.HTTPRedirect("/statistics/" + view_user  + "/All")
         shelf = shelf.encode("latin-1").decode("utf-8")
@@ -129,7 +140,7 @@ class bibthek(object):
         active_shelf['shelf'] = shelf
         active_shelf['#items'] = db_books.count_items(view_user, shelf, _filter)
         user = db_users.user_by_name(cherrypy.session.get('username'))
-        mytemplate = mylookup.get_template("statistics.html")
+        mytemplate = MY_LOOKUP.get_template("statistics.html")
         return mytemplate.render(active_sort='', shelfs=shelfs,
                                  active_shelf=active_shelf,
                                  active_filter=_filter, filters=filters,
@@ -139,38 +150,42 @@ class bibthek(object):
     @cherrypy.tools.auth(required=False)
     @cherrypy.tools.rights()
     def json_statistic(self, view_user, shelf=None, _filter='', _type=None):
+        """Returns statistical data about your books in json form"""
         shelf = shelf.encode("latin-1").decode("utf-8")
         _filter = _filter.encode("latin-1").decode("utf-8")
         if _type.split('#')[0] in ['release_date', 'add_date', 'start_date',
                                    'finish_date']:
             labels, data = db_books.statistic_date(view_user, shelf, _filter,
-                                                 _type)
+                                                   _type)
         elif _type.split('#')[0] == 'pages_read':
             labels, data = db_books.statistic_pages_read(view_user,
-                                                       shelf, _filter, _type)
+                                                         shelf, _filter, _type)
         elif _type.split('#')[0] == 'pages_book':
             labels, data = db_books.statistic_pages_book(view_user,
-                                                       shelf, _filter)
+                                                         shelf, _filter)
         return json.dumps({'data' : data, 'labels' : labels,
                            'canvas_id' : _type.split('#')[0] + '_chart'})
 
     @cherrypy.expose
     @cherrypy.tools.auth(user_role='admin')
     def admin(self):
+        """Administration"""
         user = db_users.user_by_name(cherrypy.session.get('username'))
         user_list = db_users.user_list()
-        mytemplate = mylookup.get_template("admin.html")
+        mytemplate = MY_LOOKUP.get_template("admin.html")
         return mytemplate.render(user=user, user_list=user_list,
                                  view_user=user['username'])
 
     @cherrypy.expose
     def privacy(self, status):
+        """Changes your privacy status"""
         if status in ['private', 'public']:
             db_users.privacy(cherrypy.session.get('username'), status)
             raise cherrypy.HTTPRedirect("/settings")
 
     @cherrypy.expose
     def change_email(self, password, email_new):
+        """Changes your email"""
         if db_users.login(cherrypy.session.get('username'), password, None):
             db_users.change_email(cherrypy.session.get('username'), email_new)
             return json.dumps({'type' : 'success', 'error' : 'Email changed',
@@ -180,8 +195,9 @@ class bibthek(object):
 
     @cherrypy.expose
     def change_pw(self, password_old, password_new):
+        """Changes your password"""
         error = db_user.change_pw(cherrypy.session.get('username'),
-                                 password_old, password_new)
+                                  password_old, password_new)
         if error == '0':
             raise cherrypy.HTTPRedirect("/logout")
         else:
@@ -189,6 +205,7 @@ class bibthek(object):
 
     @cherrypy.expose
     def delete_acc(self, password=None, username=None, _json='false'):
+        """Deletes your account"""
         allowed = False
         if username == None and password != None:
             username = cherrypy.session.get('username')
@@ -216,6 +233,7 @@ class bibthek(object):
     @cherrypy.expose
     @cherrypy.tools.auth(user_role='admin')
     def reset_pw(self, username):
+        """Resets a password for a given user (only an admin can do this)"""
         return json.dumps({'type' : 'success',
                            'error' : 'Please tell ' + username +
                                      ' the new password: "' +
@@ -223,10 +241,13 @@ class bibthek(object):
 
     @cherrypy.expose
     def import_books(self, data_upload=None, separator=None):
+        """Retunrs a page where you can upload your books or export them.
+        If data is uploaded, it gets imported
+        """
         username = cherrypy.session.get('username')
         if data_upload == None or data_upload.file == None:
             user = db_users.user_by_name(username)
-            mytemplate = mylookup.get_template("import.html")
+            mytemplate = MY_LOOKUP.get_template("import.html")
             return mytemplate.render(user=user, view_user=user['username'])
         else:
             data = data_upload
@@ -240,17 +261,19 @@ class bibthek(object):
 
     @cherrypy.expose
     def export(self, _type):
+        """Export your data"""
         data = db_books.get_all(cherrypy.session.get('username'))
         if _type == 'csv':
             file_name = export_csv(data, cherrypy.session.get('username'))
         elif _type == 'cover_csv':
             file_name = export_cover_csv(data, cherrypy.session.get('username'))
-        path = os.path.join(absDir, file_name)
+        path = os.path.join(ABS_DIR, file_name)
         return static.serve_file(path, "application/x-download",
                                  "attachment", os.path.basename(path))
 
     @cherrypy.expose
     def save(self, **params):
+        """Upload and save changes to a book"""
         username = cherrypy.session.get('username')
         book_id, new, error = save_book_data(username, params)
         url = str(cherrypy.request.headers.elements('Referer')[0])
@@ -263,6 +286,7 @@ class bibthek(object):
 
     @cherrypy.expose
     def batch_edit(self, edit, old_name, new_name):
+        """Edit multiple books"""
         username = cherrypy.session.get('username')
         if edit in ['series'] + name_fields:
             db_books.change_field(username, edit, old_name, new_name)
@@ -271,32 +295,38 @@ class bibthek(object):
 
     @cherrypy.expose
     def star_series(self, series, status):
+        """Mark a series as complete"""
         db_books.star_series(cherrypy.session.get('username'), series, status)
         return '0'
 
     @cherrypy.expose
     def new_isbn(self, isbn):
+        """Return google books data for a given ISBN in json format"""
         book = google_books_data(isbn)
         return json.dumps(book)
 
     @cherrypy.expose
     def delete(self, book_id):
+        """Delete a book"""
         del_book(cherrypy.session.get('username'), book_id)
         url = str(cherrypy.request.headers.elements('Referer')[0]).rsplit("?")[0]
         raise cherrypy.HTTPRedirect(url)
 
     @cherrypy.expose
     def delete_all(self):
+        """Delete all your books"""
         del_all_books(cherrypy.session.get('username'))
         return json.dumps({"type" : "success", "error" : "All books deleted"})
 
     @cherrypy.expose
     def logout(self):
+        """Logout"""
         cherrypy.lib.sessions.expire()
         raise cherrypy.HTTPRedirect("/")
 
     @cherrypy.expose
     def logout_all(self):
+        """Logout all your sessions"""
         db_users.logout_all(cherrypy.session.get('username'))
         cherrypy.lib.sessions.expire()
         raise cherrypy.HTTPRedirect("/")
@@ -304,11 +334,12 @@ class bibthek(object):
     @cherrypy.expose
     @cherrypy.tools.auth(required=False)
     def register(self, secret='', username='', password='', mail=''):
+        """Register an account"""
         if password and username is not '':
             error = db_users.add_user(username, password, mail,
-                                    cherrypy.session.id)
+                                      cherrypy.session.id)
         else:
-            mytemplate = mylookup.get_template("register.html")
+            mytemplate = MY_LOOKUP.get_template("register.html")
             return mytemplate.render()
         if error == '0':
             raise cherrypy.HTTPRedirect("/")
@@ -318,6 +349,7 @@ class bibthek(object):
     @cherrypy.expose
     @cherrypy.tools.auth(required=False)
     def login(self, username='', password=''):
+        """Login"""
         if username == '' and password == '':
             try:
                 url = str(cherrypy.request.headers.elements('Referer')[0])
@@ -326,7 +358,7 @@ class bibthek(object):
                     self.login_ref = url
             except IndexError:
                 pass
-            mytemplate = mylookup.get_template("login.html")
+            mytemplate = MY_LOOKUP.get_template("login.html")
             return mytemplate.render()
         elif db_users.login(username, password, cherrypy.session.id):
             #Make sure the session ID stops changing
@@ -340,5 +372,6 @@ class bibthek(object):
             return "Login problem"
 
 if __name__ == '__main__':
+    """Start the webapp"""
     db_sql.init_users()
-    cherrypy.quickstart(bibthek(), '/', 'app.conf')
+    cherrypy.quickstart(Bibthek(), '/', 'app.conf')
