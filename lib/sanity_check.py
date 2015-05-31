@@ -1,28 +1,30 @@
-from lib.variables import fieldnames, date_fields
+"""Check the data fields for unexpected data"""
+from lib.variables import VARIABLES
 from lib.data_cleaner import date_clean
 
 def sanity_check(params):
+    """Check for unexpected data"""
     data = {}
     # Get rid of unexpected values and check for unexpected arrays
-    for name in fieldnames:
+    for name in VARIABLES.fieldnames:
         if name in params:
-            if type(params[name]) is list and name not in ('finish_date',
-                                                           'start_date',
-                                                           'abdoned',
-                                                           'front'):
+            if isinstance(params[name], list) and name not in ('finish_date',
+                                                               'start_date',
+                                                               'abdoned',
+                                                               'front'):
                 return None, "No list allowed in " + name
-            # Cherrypy forgets to decode long strings… 
-            elif type(params[name]) is bytes and name not in ('finish_date',
-                                                              'start_date',
-                                                              'abdoned',
-                                                              'front'):
+            # Cherrypy forgets to decode long strings…
+            elif isinstance(params[name], bytes) and (name not in
+                                                      ('finish_date',
+                                                       'start_date',
+                                                       'abdoned',
+                                                       'front')):
                 params[name] = params[name].decode('utf-8')
-                
             data[name] = params[name]
     if 'title' not in data or data['title'] == '':
         return None, "A book needs a title"
     # Check dates
-    for name in date_fields:
+    for name in VARIABLES.data_fields:
         if name in params:
             # ('finish_date', 'start_date') are allowed to be lists -> make all
             # other dates lists too.
@@ -41,4 +43,3 @@ def sanity_check(params):
             else:
                 data[name] = date_temp
     return data, "0"
-            

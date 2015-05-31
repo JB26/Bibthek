@@ -1,13 +1,16 @@
+"""Sort Books"""
 import locale
 locale.setlocale(locale.LC_ALL, 'de_DE.UTF-8')
 from operator import itemgetter
 
-from lib.variables import articles
+from lib.variables import VARIABLES
 
 def sorted_shelfs(data):
+    """Sort shelfs"""
     return library_sorted(data, '_id', False)
 
 def sorted_apg(data, sort_by_order, sort_first):
+    """Sort author and similar"""
     temp = []
     for row in data:
         for book in row['books']:
@@ -23,9 +26,10 @@ def sorted_apg(data, sort_by_order, sort_first):
         else:
             temp.append(row['_id'])
         temp[-1] = locale.strxfrm(temp[-1])
-    return [ i[1] for i in sorted(zip(temp, data), key=itemgetter(0)) ]
+    return [i[1] for i in sorted(zip(temp, data), key=itemgetter(0))]
 
 def sorted_titles(data, field, variant='year'):
+    """Sort titles"""
     sort_by_order = False
     for row in data:
         if 'order_nr' in row and row['order_nr'] != '':
@@ -35,6 +39,7 @@ def sorted_titles(data, field, variant='year'):
     return library_sorted(data, field, sort_by_order)
 
 def sorted_series(data, variant):
+    """Sort series"""
     data = library_sorted(data, '_id', False)  #Sort series titles
     for series in data:  #Sort book titles in series
         if series['sub_items']:
@@ -44,18 +49,18 @@ def sorted_series(data, variant):
                         row['order_nr'] = row['order_nr'][0:4]
             series['books'] = library_sorted(series['books'], 'title', True)
     return data
-    
 
 def library_sorted(data, field, sort_by_order):
+    """Library sorting"""
     temp = []
-
     for row in data:
         if sort_by_order:
-            temp.append( str(row['order_nr']) + " ")
+            temp.append(str(row['order_nr']) + " ")
         else:
             temp.append('')
             find_article = row[field].split(maxsplit=1)
-            if len(find_article) == 2 and find_article[0].lower() in articles:
+            if len(find_article) == 2 and (find_article[0].lower() in
+                                           VARIABLES.articles):
                 temp[-1] = temp[-1] + find_article[1] + find_article[0]
         temp[-1] = locale.strxfrm(temp[-1] + row[field])
-    return [ i[1] for i in sorted(zip(temp, data), key=itemgetter(0)) ]
+    return [i[1] for i in sorted(zip(temp, data), key=itemgetter(0))]

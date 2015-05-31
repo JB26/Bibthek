@@ -22,7 +22,7 @@ from lib.export_data import export_csv, export_cover_csv
 from lib.del_books import del_all_books, del_book
 import lib.auth as auth
 from lib.menu_data import menu_data, menu_filter
-from lib.variables import name_fields
+from lib.variables import VARIABLES
 
 cherrypy.tools.auth = cherrypy.Tool('before_handler', auth.check_auth)
 cherrypy.tools.rights = cherrypy.Tool('before_handler', auth.check_rights)
@@ -61,7 +61,7 @@ class Bibthek(object):
                                                      sort_first, sort_second)
         filters = menu_filter(view_user, shelf)
         mytemplate = MY_LOOKUP.get_template("book.html")
-        shelfs = db_books.shelfs(view_user, _filter)
+        shelfs = db_books.shelf_list(view_user, _filter)
         active_shelf = {}
         active_shelf['shelf'] = shelf
         active_shelf['#items'] = db_books.count_items(view_user, shelf, _filter)
@@ -135,7 +135,7 @@ class Bibthek(object):
         shelf = shelf.encode("latin-1").decode("utf-8")
         _filter = _filter.encode("latin-1").decode("utf-8")
         filters = menu_filter(view_user, shelf)
-        shelfs = db_books.shelfs(view_user, _filter)
+        shelfs = db_books.shelf_list(view_user, _filter)
         active_shelf = {}
         active_shelf['shelf'] = shelf
         active_shelf['#items'] = db_books.count_items(view_user, shelf, _filter)
@@ -288,7 +288,7 @@ class Bibthek(object):
     def batch_edit(self, edit, old_name, new_name):
         """Edit multiple books"""
         username = cherrypy.session.get('username')
-        if edit in ['series'] + name_fields:
+        if edit in ['series'] + VARIABLES.name_fields:
             db_books.change_field(username, edit, old_name, new_name)
             raise cherrypy.HTTPRedirect(str(cherrypy.request.headers
                                             .elements('Referer')[0]))

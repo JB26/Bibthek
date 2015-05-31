@@ -1,5 +1,5 @@
 <%
-  from lib.variables import name_fields
+  from lib.variables import VARIABLES
 %>
 <a class="navmenu-brand visible-md visible-lg" href="/">BibThek</a>
 <a class="navmenu-brand">${active_shelf['shelf']} (${active_shelf['#items']})</a>
@@ -16,7 +16,7 @@
         % endif
       % endif
       <a class="show-toggle" id="${idx}_a">${name['_id']}<span class="caret"></span></a>
-      % if active_sort.split('/')[1] in (['series'] + name_fields):
+      % if active_sort.split('/')[1] in (['series'] + VARIABLES.name_fields):
         % if not name['empty_field']:
           <span class="glyphicon glyphicon-pencil series_pencil" id="${idx}_pencil" aria-label="Edit all" title="Edit all"></span>
         % endif

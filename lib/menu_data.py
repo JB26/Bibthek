@@ -1,6 +1,8 @@
+"""Return data needed to build the main menu"""
 import lib.db_books as db_books
 
 def menu_data(username, shelf, _filter, sort_first, sort_second):
+    """Build the sort by menu and the sidebar"""
     sort1 = [
         {'name' : 'Title', 'url' : '/title/title/', 'active' : False},
         {'name' : 'Series', 'url' : '/series/variant1_order/',
@@ -47,7 +49,7 @@ def menu_data(username, shelf, _filter, sort_first, sort_second):
                  {'name' : 'Variant 2: Year',
                   'url' : '/series/variant2_year/', 'active' : False}]
         sort2_series = ['variant1_order', 'variant1_year',
-                           'variant2_order', 'variant2_year']
+                        'variant2_order', 'variant2_year']
         if sort_second in sort2_series:
             items = db_books.series(username, shelf, sort_second, _filter)
             i = sort2_series.index(sort_second)
@@ -61,18 +63,19 @@ def menu_data(username, shelf, _filter, sort_first, sort_second):
                   'active' : False}]
         if sort_second == 'year':
             items = db_books.author_and_more(username, sort_first, shelf,
-                                           'year', _filter)
+                                             'year', _filter)
             sort2[0]['active'] = True
             active_sort = sort2[0]['url']
         elif sort_second == 'title':
             items = db_books.author_and_more(username, sort_first, shelf,
-                                           'title', _filter)
+                                             'title', _filter)
             sort2[1]['active'] = True
             active_sort = sort2[1]['url']
 
     return sort1, sort2, active_sort, items
 
 def menu_filter(username, shelf):
+    """Build the filter menu"""
     return [
         {
             'name' : 'Status', 'short' : 'stat_',

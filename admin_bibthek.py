@@ -10,7 +10,7 @@ def give_admin_rights():
                         metavar="Username")
     args = parser.parse_args()
     if args.admin != None:
-        db_users.role(args.admin, 'admin')
+        db_users.chg_role(args.admin, 'admin')
 
 if __name__ == '__main__':
     give_admin_rights()
