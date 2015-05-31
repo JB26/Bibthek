@@ -6,7 +6,7 @@ from random import random
 
 from lib.variables import book_empty_default
 from lib.sanity_check import sanity_check
-import lib.db_sql as db_sql
+import lib.db_books as db_books
 
 def get_book_data(username, book_id, shelf):
     book_empty = book_empty_default()
@@ -22,7 +22,7 @@ def get_book_data(username, book_id, shelf):
         if shelf not in ['All', 'Not shelfed']:
             book['shelf'] = shelf
     else:
-        book = db_sql.get_by_id(username, book_id)
+        book = db_books.get_by_id(username, book_id)
         for k, v in book_empty.items():
             if k not in book or book[k] == None:
                 book[k] = v
@@ -54,7 +54,7 @@ def save_book_data(username, params):
                 f.write(params['front'].file.read())
         params['front'] = new_name
         if new == False:
-            data = db_sql.get_by_id(username, params['book_id'])
+            data = db_books.get_by_id(username, params['book_id'])
             try:
                 os.remove(data['front'])
             except FileNotFoundError:
@@ -63,7 +63,7 @@ def save_book_data(username, params):
                 pass
     else:
         del params['front']
-    book_id = db_sql.update(username, params)
+    book_id = db_books.update(username, params)
     return book_id, new, "0"
 
 def cover_name(username, file_type):

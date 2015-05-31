@@ -1,4 +1,4 @@
-import lib.db_sql as db_sql
+import lib.db_books as db_books
 
 def menu_data(username, shelf, _filter, sort_first, sort_second):
     sort1 = [
@@ -25,15 +25,15 @@ def menu_data(username, shelf, _filter, sort_first, sort_second):
                  {'name' : 'Pages', 'url' : '/title/pages/',
                   'active' : False}]
         if sort_second == 'year':
-            items = db_sql.titles(username, shelf, 'year', _filter)
+            items = db_books.titles(username, shelf, 'year', _filter)
             sort2[0]['active'] = True
             active_sort = sort2[0]['url']
         elif sort_second == 'title':
-            items = db_sql.titles(username, shelf, 'title', _filter)
+            items = db_books.titles(username, shelf, 'title', _filter)
             sort2[1]['active'] = True
             active_sort = sort2[1]['url']
         elif sort_second == 'pages':
-            items = db_sql.titles(username, shelf, 'pages', _filter)
+            items = db_books.titles(username, shelf, 'pages', _filter)
             sort2[2]['active'] = True
             active_sort = sort2[2]['url']
     elif sort_first == 'series':
@@ -49,7 +49,7 @@ def menu_data(username, shelf, _filter, sort_first, sort_second):
         sort2_series = ['variant1_order', 'variant1_year',
                            'variant2_order', 'variant2_year']
         if sort_second in sort2_series:
-            items = db_sql.series(username, shelf, sort_second, _filter)
+            items = db_books.series(username, shelf, sort_second, _filter)
             i = sort2_series.index(sort_second)
             sort2[i]['active'] = True
             active_sort = sort2[i]['url']
@@ -60,12 +60,12 @@ def menu_data(username, shelf, _filter, sort_first, sort_second):
                  {'name' : 'Title', 'url' : '/' + sort_first + '/title/',
                   'active' : False}]
         if sort_second == 'year':
-            items = db_sql.author_and_more(username, sort_first, shelf,
+            items = db_books.author_and_more(username, sort_first, shelf,
                                            'year', _filter)
             sort2[0]['active'] = True
             active_sort = sort2[0]['url']
         elif sort_second == 'title':
-            items = db_sql.author_and_more(username, sort_first, shelf,
+            items = db_books.author_and_more(username, sort_first, shelf,
                                            'title', _filter)
             sort2[1]['active'] = True
             active_sort = sort2[1]['url']
@@ -80,10 +80,10 @@ def menu_filter(username, shelf):
         },
         {
             'name' : 'Form', 'short' : 'form_',
-            'filter' : db_sql.filter_list(username, shelf, 'form')
+            'filter' : db_books.filter_list(username, shelf, 'form')
         },
         {
             'name' : 'Language', 'short' : 'lang_',
-            'filter' : db_sql.filter_list(username, shelf, 'language')
+            'filter' : db_books.filter_list(username, shelf, 'language')
         }
         ]

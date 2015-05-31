@@ -11,6 +11,8 @@ localDir = os.path.dirname(__file__)
 absDir = os.path.join(os.getcwd(), localDir)
 
 import lib.db_sql as db_sql
+import lib.db_books as db_books
+import lib.db_users as db_users
 from lib.book_data import get_book_data, save_book_data
 from lib.get_data import google_books_data
 from lib.import_data import import_file
@@ -46,18 +48,18 @@ class bibthek(object):
         shelf = shelf.encode("latin-1").decode("utf-8")
         _filter = _filter.encode("latin-1").decode("utf-8")
         book = get_book_data(view_user, book_id, shelf)
-        user = db_sql.user_by_name(cherrypy.session.get('username'))
+        user = db_users.user_by_name(cherrypy.session.get('username'))
         sort1, sort2, active_sort, items = menu_data(view_user, shelf,
                                                      _filter,
                                                      sort_first, sort_second)
         filters = menu_filter(view_user, shelf)
         mytemplate = mylookup.get_template("book.html")
-        shelfs = db_sql.shelfs(view_user, _filter)
+        shelfs = db_books.shelfs(view_user, _filter)
         active_shelf = {}
         active_shelf['shelf'] = shelf
-        active_shelf['#items'] = db_sql.count_items(view_user, shelf, _filter)
+        active_shelf['#items'] = db_books.count_items(view_user, shelf, _filter)
         if view in ['covers', 'covers2']:
-            covers = db_sql.covers(view_user, shelf, _filter)
+            covers = db_books.covers(view_user, shelf, _filter)
         else:
             covers = None
         try:
@@ -91,7 +93,7 @@ class bibthek(object):
         elif field in ['publisher', 'series', 'language', 'form', 'shelf']:
             array = False
         if array != None:
-            ac_list = db_sql.autocomplete(username, query, field, array)
+            ac_list = db_books.autocomplete(username, query, field, array)
             return json.dumps(ac_list)
 
     @cherrypy.expose
@@ -109,7 +111,7 @@ class bibthek(object):
 
     @cherrypy.expose
     def settings(self):
-        user = db_sql.user_by_name(cherrypy.session.get('username'))
+        user = db_users.user_by_name(cherrypy.session.get('username'))
         mytemplate = mylookup.get_template("settings.html")
         return mytemplate.render(user=user, view_user=user['username'])
 
@@ -122,11 +124,11 @@ class bibthek(object):
         shelf = shelf.encode("latin-1").decode("utf-8")
         _filter = _filter.encode("latin-1").decode("utf-8")
         filters = menu_filter(view_user, shelf)
-        shelfs = db_sql.shelfs(view_user, _filter)
+        shelfs = db_books.shelfs(view_user, _filter)
         active_shelf = {}
         active_shelf['shelf'] = shelf
-        active_shelf['#items'] = db_sql.count_items(view_user, shelf, _filter)
-        user = db_sql.user_by_name(cherrypy.session.get('username'))
+        active_shelf['#items'] = db_books.count_items(view_user, shelf, _filter)
+        user = db_users.user_by_name(cherrypy.session.get('username'))
         mytemplate = mylookup.get_template("statistics.html")
         return mytemplate.render(active_sort='', shelfs=shelfs,
                                  active_shelf=active_shelf,
@@ -141,13 +143,13 @@ class bibthek(object):
         _filter = _filter.encode("latin-1").decode("utf-8")
         if _type.split('#')[0] in ['release_date', 'add_date', 'start_date',
                                    'finish_date']:
-            labels, data = db_sql.statistic_date(view_user, shelf, _filter,
+            labels, data = db_books.statistic_date(view_user, shelf, _filter,
                                                  _type)
         elif _type.split('#')[0] == 'pages_read':
-            labels, data = db_sql.statistic_pages_read(view_user,
+            labels, data = db_books.statistic_pages_read(view_user,
                                                        shelf, _filter, _type)
         elif _type.split('#')[0] == 'pages_book':
-            labels, data = db_sql.statistic_pages_book(view_user,
+            labels, data = db_books.statistic_pages_book(view_user,
                                                        shelf, _filter)
         return json.dumps({'data' : data, 'labels' : labels,
                            'canvas_id' : _type.split('#')[0] + '_chart'})
@@ -155,8 +157,8 @@ class bibthek(object):
     @cherrypy.expose
     @cherrypy.tools.auth(user_role='admin')
     def admin(self):
-        user = db_sql.user_by_name(cherrypy.session.get('username'))
-        user_list = db_sql.user_list()
+        user = db_users.user_by_name(cherrypy.session.get('username'))
+        user_list = db_users.user_list()
         mytemplate = mylookup.get_template("admin.html")
         return mytemplate.render(user=user, user_list=user_list,
                                  view_user=user['username'])
@@ -164,13 +166,13 @@ class bibthek(object):
     @cherrypy.expose
     def privacy(self, status):
         if status in ['private', 'public']:
-            db_sql.privacy(cherrypy.session.get('username'), status)
+            db_users.privacy(cherrypy.session.get('username'), status)
             raise cherrypy.HTTPRedirect("/settings")
 
     @cherrypy.expose
     def change_email(self, password, email_new):
-        if db_sql.login(cherrypy.session.get('username'), password, None):
-            db_sql.change_email(cherrypy.session.get('username'), email_new)
+        if db_users.login(cherrypy.session.get('username'), password, None):
+            db_users.change_email(cherrypy.session.get('username'), email_new)
             return json.dumps({'type' : 'success', 'error' : 'Email changed',
                                'email' : email_new})
         else:
@@ -178,7 +180,7 @@ class bibthek(object):
 
     @cherrypy.expose
     def change_pw(self, password_old, password_new):
-        error = db_sql.change_pw(cherrypy.session.get('username'),
+        error = db_user.change_pw(cherrypy.session.get('username'),
                                  password_old, password_new)
         if error == '0':
             raise cherrypy.HTTPRedirect("/logout")
@@ -190,13 +192,13 @@ class bibthek(object):
         allowed = False
         if username == None and password != None:
             username = cherrypy.session.get('username')
-            allowed = db_sql.login(username, password, None)
-        elif (db_sql.user_by_name(cherrypy.session.get('username'))['role'] ==
+            allowed = db_users.login(username, password, None)
+        elif (db_users.user_by_name(cherrypy.session.get('username'))['role'] ==
               'admin' and username != None):
             allowed = True
         if  allowed:
             del_all_books(username)
-            db_sql.user_del(username)
+            db_users.user_del(username)
             if password != None:
                 cherrypy.lib.sessions.expire()
                 if _json == 'false':
@@ -217,13 +219,13 @@ class bibthek(object):
         return json.dumps({'type' : 'success',
                            'error' : 'Please tell ' + username +
                                      ' the new password: "' +
-                                     db_sql.reset_pw(username) + '"'})
+                                     db_users.reset_pw(username) + '"'})
 
     @cherrypy.expose
     def import_books(self, data_upload=None, separator=None):
         username = cherrypy.session.get('username')
         if data_upload == None or data_upload.file == None:
-            user = db_sql.user_by_name(username)
+            user = db_users.user_by_name(username)
             mytemplate = mylookup.get_template("import.html")
             return mytemplate.render(user=user, view_user=user['username'])
         else:
@@ -232,13 +234,13 @@ class bibthek(object):
             if error != '0':
                 return json.dumps({"type" : "danger", "error" : error})
             else:
-                db_sql.insert_many_new(username, data)
+                db_books.insert_many_new(username, data)
                 return json.dumps({"type" : "success",
                                    "error" : 'Upload complete'})
 
     @cherrypy.expose
     def export(self, _type):
-        data = db_sql.get_all(cherrypy.session.get('username'))
+        data = db_books.get_all(cherrypy.session.get('username'))
         if _type == 'csv':
             file_name = export_csv(data, cherrypy.session.get('username'))
         elif _type == 'cover_csv':
@@ -263,13 +265,13 @@ class bibthek(object):
     def batch_edit(self, edit, old_name, new_name):
         username = cherrypy.session.get('username')
         if edit in ['series'] + name_fields:
-            db_sql.change_field(username, edit, old_name, new_name)
+            db_books.change_field(username, edit, old_name, new_name)
             raise cherrypy.HTTPRedirect(str(cherrypy.request.headers
                                             .elements('Referer')[0]))
 
     @cherrypy.expose
     def star_series(self, series, status):
-        db_sql.star_series(cherrypy.session.get('username'), series, status)
+        db_books.star_series(cherrypy.session.get('username'), series, status)
         return '0'
 
     @cherrypy.expose
@@ -295,7 +297,7 @@ class bibthek(object):
 
     @cherrypy.expose
     def logout_all(self):
-        db_sql.logout_all(cherrypy.session.get('username'))
+        db_users.logout_all(cherrypy.session.get('username'))
         cherrypy.lib.sessions.expire()
         raise cherrypy.HTTPRedirect("/")
 
@@ -303,7 +305,7 @@ class bibthek(object):
     @cherrypy.tools.auth(required=False)
     def register(self, secret='', username='', password='', mail=''):
         if password and username is not '':
-            error = db_sql.add_user(username, password, mail,
+            error = db_users.add_user(username, password, mail,
                                     cherrypy.session.id)
         else:
             mytemplate = mylookup.get_template("register.html")
@@ -326,7 +328,7 @@ class bibthek(object):
                 pass
             mytemplate = mylookup.get_template("login.html")
             return mytemplate.render()
-        elif db_sql.login(username, password, cherrypy.session.id):
+        elif db_users.login(username, password, cherrypy.session.id):
             #Make sure the session ID stops changing
             cherrypy.session['username'] = username
             try:

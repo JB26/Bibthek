@@ -1,5 +1,5 @@
 import cherrypy
-from lib.db_sql import user_by_name
+from lib.db_users import user_by_name
 
 def check_auth(required = True, user_role = None):
     if required:
