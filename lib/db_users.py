@@ -62,6 +62,19 @@ def user_by_name(username):
     conn.close()
     return user
 
+def user_by_session(session_id):
+    """Get userdata with the session ID"""
+    cursor, conn = db_sql.connect('users.db')
+    sql = "SELECT * FROM users WHERE session_ids LIKE ?"
+    cursor.execute(sql, ('%"' + session_id + '"%', ))
+    temp = cursor.fetchone()
+    if temp != None:
+        user = dict(temp)
+    else:
+        user = None
+    conn.close()
+    return user
+
 def change_pw(username, password_old, password_new):
     """Change the user password"""
     user = user_by_name(username)

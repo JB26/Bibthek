@@ -5,14 +5,11 @@ import lib.db_users as db_users
 def check_auth(required=True, user_role=None):
     """Check authentication"""
     if required:
-        if cherrypy.session.get('username') != None:
-            user = db_users.user_by_name(cherrypy.session.get('username'))
-            if user == None or cherrypy.session.id not in user['session_ids']:
-                cherrypy.lib.sessions.expire()
-                raise cherrypy.HTTPRedirect("/login")
-            elif user_role != None and user['role'] != user_role:
-                raise cherrypy.HTTPRedirect("/login")
-        else:
+        user = db_users.user_by_session(cherrypy.session.id)
+        if user == None:
+            cherrypy.lib.sessions.expire()
+            raise cherrypy.HTTPRedirect("/login")
+        elif user_role != None and user['role'] != user_role:
             raise cherrypy.HTTPRedirect("/login")
 
 def check_rights():
@@ -25,8 +22,6 @@ def check_rights():
     if view_user == None:
         raise cherrypy.HTTPError(404, "Profile not found")
     elif view_user['privacy'] == 'private':
-        user = cherrypy.session.get('username')
-        if (user == view_user['username'] and
-                cherrypy.session.id in view_user['session_ids']):
-            return
-        raise cherrypy.HTTPError(404, "Profile not public")
+        user = db_users.user_by_session(cherrypy.session.id)
+        if user == None or user['username'] != view_user['username']:
+            raise cherrypy.HTTPError(404, "Profile not public")
