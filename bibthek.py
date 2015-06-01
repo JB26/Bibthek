@@ -352,11 +352,14 @@ class Bibthek(object):
     def login(self, username='', password=''):
         """Login"""
         if username == '' and password == '':
-            url = str(cherrypy.request.headers.elements('Referer')[0])
-            url = url.split('/')[3]
-            if url not in  ["register", "logout", "logout_all"]:
-                self.login_ref = url
-            else:
+            try:
+                url = str(cherrypy.request.headers.elements('Referer')[0])
+                url = url.split('/')[3]
+                if url not in  ["register", "logout", "logout_all"]:
+                    self.login_ref = url
+                else:
+                    self.login_ref = None
+            except IndexError:
                 self.login_ref = None
             mytemplate = MY_LOOKUP.get_template("login.html")
             return mytemplate.render()

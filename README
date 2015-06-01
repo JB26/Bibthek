@@ -4,6 +4,7 @@ Bug:
 Weird dates can break the statistics?
 Abbord pencil
 
+
 TODO:
 Show started books
 better isbn search and errors
@@ -13,7 +14,6 @@ Use heading "jumps" for no script in sidebar
 Upload Limits (Set max_request_body_size = 104857600 ???)
 Dynamic URL in view?
 Lazy load for cover view
-Comments and code cleanup
 logging
 Batch delete
 Cover from google books api
