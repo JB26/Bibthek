@@ -1,9 +1,16 @@
 """Init and connect db's"""
 import json
 import sqlite3
+import configparser
+CONFIG = configparser.ConfigParser()
+CONFIG.read('app.conf')
 
-def connect(filename):
+def connect(db):
     """Connect to db"""
+    if db == 'books.db':
+        filename = CONFIG['Databases']['path_books_db'][1:-1]
+    elif db == 'users.db':
+        filename = CONFIG['Databases']['path_users_db'][1:-1]
     conn = sqlite3.connect(filename, detect_types=sqlite3.PARSE_DECLTYPES)
     conn.row_factory = sqlite3.Row
     sqlite3.register_adapter(list, json.dumps)

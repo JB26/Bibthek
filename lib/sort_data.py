@@ -1,7 +1,10 @@
 """Sort Books"""
-import locale
-locale.setlocale(locale.LC_ALL, 'de_DE.UTF-8')
 from operator import itemgetter
+import configparser
+CONFIG = configparser.ConfigParser()
+CONFIG.read('app.conf')
+import locale
+locale.setlocale(locale.LC_ALL, CONFIG['Language']['sort_locale'][1:-1])
 
 from lib.variables import VARIABLES
 
