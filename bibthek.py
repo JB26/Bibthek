@@ -2,15 +2,20 @@
 from mako.lookup import TemplateLookup
 MY_LOOKUP = TemplateLookup(directories=['html'], output_encoding='utf-8',
                            encoding_errors='replace')
-
 import cherrypy
 from cherrypy.lib import static
 import json
 from urllib import request
-
 import os
 LOCAL_DIR = os.path.dirname(__file__)
 ABS_DIR = os.path.join(os.getcwd(), LOCAL_DIR)
+import configparser
+CONFIG = configparser.ConfigParser()
+CONFIG.read('app.conf')
+import gettext
+gettext.translation('messages', localedir='translations',
+                    languages=[CONFIG['Language']['language'][1:-1]],
+                    fallback=True).install()
 
 import lib.db_sql as db_sql
 import lib.db_books as db_books

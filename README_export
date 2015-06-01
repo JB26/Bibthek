@@ -1,5 +1,0 @@
-Die exportierte sql_Datei ist nur ein Script.
-$sqlite3
-  >.read xxx.sql
-  >.save books.sqlite
-  >.exit

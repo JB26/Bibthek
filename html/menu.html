@@ -4,7 +4,7 @@
   <div class="container-fluid">
     <div>
       <ul class="nav navbar-nav">
-        <li class="active"><a href="/">Home</a></li>
+        <li class="active"><a href="/">${_('Home')}</a></li>
         % if current_section in ['books', 'books2', 'covers', 'covers2']:
           <%include file="menu_new.html" />
           <%include file="menu_shelf.html" args="current_section=current_section" />
@@ -18,7 +18,7 @@
       </ul>
       <ul class="nav navbar-nav navbar-right">
         % if user != None and view_user == user['username']:
-          <p class="navbar-text">Signed in as ${user['username']} viewing your profile</p>
+          <p class="navbar-text">${_('Signed in as %s viewing your profile') % user['username']}</p>
         % elif user != None:
           <p class="navbar-text">Signed in as ${user['username']} viewing ${view_user}'s profile</p>
         % else:
