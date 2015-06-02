@@ -117,12 +117,6 @@ $('.show-toggle').click(function(event) {
   $('#' + idx + '_ul').toggle();
 });
 
-$('#delete').click(function(event) {
-  event.preventDefault();
-  var link = $( this ).attr('href');
-  warning("danger", 'Do you really want to delete this book? <a href="' + link + '" class="alert-link" id="delete_now">YES!</a> ');
-});
-
 $( '.book_title' ).click(function( event ) {
   event.preventDefault();
   var book_id = $(this).attr('id');

@@ -4,71 +4,77 @@
 <div class="container">
   <div class="row">
     <div class="col-md-12">
-      <h1>Change your Settings</h1>
+      <h1>${_('Change your Settings')}</h1>
     </div>
   </div>
   <div class="row">
     <div class="col-md-12">
-      <h2>Change your Email</h2>
+      <h2>${_('Change your Email')}</h2>
       % if 'email' in user:
-        <p id="email">Your current Email adress: ${user['email']}</p>
+        <p id="email">${_('Your current Email adress: %s') % user['email']}</p>
       % else:
-        <p id="email">Your current Email adress: None</p>
+        <p id="email">${_('Your current Email adress: None')}</p>
       % endif
       <form action="/change_email" class="change_mail_pw">
         <div class="form-group">
-          <label for="password_old">New Email</label>
+          <label for="password_old">${_('New Email')}</label>
           <input type="email" class="form-control" id="email_new" name="email_new" placeholder="New Email">
         </div>
         <div class="form-group">
-          <label for="password">Password</label>
+          <label for="password">${_('Password')}</label>
           <input type="password" class="form-control" id="password" name="password" placeholder="Password">
         </div>
-        <button type="submit" class="btn btn-default">Change your Email</button>
+        <button type="submit" class="btn btn-default">${_('Change your Email')}</button>
       </form>
     </div>
   </div>
   <div class="row">
     <div class="col-md-12">
-      <h2>Change your Password</h2>
+      <h2>${_('Change your Password')}</h2>
       <form action="/change_pw" class="change_mail_pw">
         <div class="form-group">
-          <label for="password_old">Old password</label>
+          <label for="password_old">${_('Old password')}</label>
           <input type="password" class="form-control" id="password_old" name="password_old" placeholder="Old password">
         </div>
         <div class="form-group">
-          <label for="password_new">New password</label>
+          <label for="password_new">${_('New password')}</label>
           <input type="password" class="form-control" id="password_new" name="password_new" placeholder="New password">
         </div>
-        <button type="submit" class="btn btn-default">Change Password</button>
+        <button type="submit" class="btn btn-default">${_('Change Password')}</button>
       </form>
     </div>
   </div>
   <div class="row">
     <div class="col-md-12">
-      <h2>Profile privacy setting</h2>
-      <p>Your profile is ${user['privacy']}.</p>
+      <h2>${_('Profile privacy setting')}</h2>
+      <p>${_('Your profile is %s.') % user['privacy']}</p>
       % if user['privacy'] == 'public':
-        <a class="btn btn-sm btn-default" href="/privacy?status=private">Make your profile private</a>
+        <a class="btn btn-sm btn-default" href="/privacy?status=private">${_('Make your profile private')}</a>
       % else:
-        <a class="btn btn-sm btn-default" href="/privacy?status=public">Make your profile public</a>
+        <a class="btn btn-sm btn-default" href="/privacy?status=public">${_('Make your profile public')}</a>
       % endif
     </div>
   </div>
   <div class="row">
     <div class="col-md-12">
-      <h2>Delete your account</h2>
+      <h2>${_('Delete your account')}</h2>
       <form action="/delete_acc">
         <div class="form-group">
-          <label for="password">Password</label>
+          <label for="password">${_('Password')}</label>
           <input type="password" class="form-control" id="password_del_acc" name="password" placeholder="Password">
         </div>
-        <button type="submit" class="btn btn-default" id="delete_acc_warn">Delete Account</button>
+        <button type="submit" class="btn btn-default" id="delete_acc_warn">${_('Delete Account')}</button>
       </form>
     </div>
   </div>
 </div>
 <script src="/static/js/local_warning.js"></script>
 <script src="/static/js/local_settings.js"></script>
+<script>
+  $('#delete_acc_warn').click(function(event) {
+    event.preventDefault();
+    warning("danger", "${_('Do you really want to delete your acount?')}" + ' <a href="#" class="alert-link" id="delete_acc">' + "${_('YES!')}" + '</a> ');
+  });
+</script>
 </body>
 </html>

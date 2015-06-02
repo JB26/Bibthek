@@ -1,5 +1,5 @@
 Extract messages
-$ pybabel extract -F babel.cfg -o messages.pot .
+$ pybabel extract -F babel.cfg -k T_ -o messages.pot .
 
 Make the po file (change lang to your country code)
 $ pybabel init -i messages.pot -d translations -l lang

@@ -12,15 +12,17 @@
       elif current_section == 'statistics':
         url = "/statistics/" + view_user  + "/"
     %>
-    <li role="presentation" class="dropdown-header">${_filter['name']}</li>
+    <li role="presentation" class="dropdown-header">${_(_filter['name'])}</li>
     % for row in _filter['filter']:
-    <%
-    %>
       % if _filter['short'] + row['name'] in active_filter:
       <%
         new_filter = '/'.join([quote(x, '') for x in active_filter if x != _filter['short'] + row['name']])
       %>
-      <li class="active"><a href="${url}${new_filter}">${row['name']} (${row['#items']})</a></li>
+        % if row['name'] in ['No format', 'No language', 'Not shelfed', 'Read', 'Unread']:
+          <li class="active"><a href="${url}${new_filter}">${_(row['name'])} (${row['#items']})</a></li>
+        % else:
+          <li class="active"><a href="${url}${new_filter}">${row['name']} (${row['#items']})</a></li>
+        % endif
       % else:
       <%
         if active_filter != '':
@@ -28,7 +30,11 @@
         else:
           new_filter = quote(_filter['short'] + row['name'], '')
       %>
-      <li><a href="${url}${new_filter}">${row['name']} (${row['#items']})</a></li>
+        % if row['name'] in ['No format', 'No language', 'Not shelfed', 'Read', 'Unread']:
+          <li><a href="${url}${new_filter}">${_(row['name'])} (${row['#items']})</a></li>
+        % else:
+          <li><a href="${url}${new_filter}">${row['name']} (${row['#items']})</a></li>
+        % endif
       % endif
     % endfor
   % endfor

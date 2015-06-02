@@ -3,45 +3,45 @@
 <script src="/static/js/chart.min.js"></script>
 <%include file="menu.html" args="current_section='statistics'" />
 <div class="container">
-  <h1>Statistics</h1>
+  <h1>${_('Statistics')}</h1>
   <div class="row">
     <div class="col-md-12">
-      <h2>Release Date</h2>
+      <h2>${_('Release Date')}</h2>
       <!--the width and height are basicly giving the aspect ratio of the graph-->
       <canvas class="chart" id="release_date_chart" width="6px" height="1px"></canvas>
     </div>
   </div>
   <div class="row">
     <div class="col-md-12">
-      <h2>Started</h2>
+      <h2>${_('Started')}</h2>
       <!--the width and height are basicly giving the aspect ratio of the graph-->
       <canvas class="chart" id="start_date_chart" width="6px" height="1px"></canvas>
     </div>
   </div>
   <div class="row">
     <div class="col-md-12">
-      <h2>Finished</h2>
+      <h2>${_('Finished')}</h2>
       <!--the width and height are basicly giving the aspect ratio of the graph-->
       <canvas class="chart" id="finish_date_chart" width="6px" height="1px"></canvas>
     </div>
   </div>
   <div class="row">
     <div class="col-md-12">
-      <h2>Date added</h2>
+      <h2>${_('Date added')}</h2>
       <!--the width and height are basicly giving the aspect ratio of the graph-->
       <canvas class="chart" id="add_date_chart" width="6px" height="1px"></canvas>
     </div>
   </div>
   <div class="row">
     <div class="col-md-12">
-      <h2>Pages read</h2>
+      <h2>${_('Pages read')}</h2>
       <!--the width and height are basicly giving the aspect ratio of the graph-->
       <canvas class="chart" id="pages_read_chart" width="6px" height="1px"></canvas>
     </div>
   </div>
   <div class="row">
     <div class="col-md-12">
-      <h2>Pages per book</h2>
+      <h2>${_('Pages per book')}</h2>
       <!--the width and height are basicly giving the aspect ratio of the graph-->
       <canvas id="pages_book_chart" width="6px" height="1px"></canvas>
     </div>

@@ -197,10 +197,12 @@ class Bibthek(object):
         """Changes your email"""
         if db_users.login(cherrypy.session.get('username'), password, None):
             db_users.change_email(cherrypy.session.get('username'), email_new)
-            return json.dumps({'type' : 'success', 'error' : 'Email changed',
+            return json.dumps({'type' : 'success',
+                               'error' : _('Email changed'),
                                'email' : email_new})
         else:
-            return json.dumps({'type' : 'danger', 'error' : 'Wrong Password'})
+            return json.dumps({'type' : 'danger',
+                               'error' : _('Wrong password')})
 
     @cherrypy.expose
     def change_pw(self, password_old, password_new):
@@ -232,21 +234,22 @@ class Bibthek(object):
                 else:
                     print('del')
                     return json.dumps({'type' : 'success',
-                                       'error' : 'Your account is deleted'})
+                                       'error' : _('Your account is deleted')})
             else:
                 return json.dumps({'type' : 'success',
-                                   'error' : 'Account deleted'})
+                                   'error' : _('Account deleted')})
         else:
-            return json.dumps({'type' : 'danger', 'error' : 'Wrong Password'})
+            return json.dumps({'type' : 'danger',
+                               'error' : _('Wrong password')})
 
     @cherrypy.expose
     @cherrypy.tools.auth(user_role='admin')
     def reset_pw(self, username):
         """Resets a password for a given user (only an admin can do this)"""
         return json.dumps({'type' : 'success',
-                           'error' : 'Please tell ' + username +
-                                     ' the new password: "' +
-                                     db_users.reset_pw(username) + '"'})
+                           'error' : _('Please tell %s the new password: "%s"'
+                                       % (username,
+                                          db_users.reset_pw(username)))})
 
     @cherrypy.expose
     def import_books(self, data_upload=None, separator=None):
@@ -266,7 +269,7 @@ class Bibthek(object):
             else:
                 db_books.insert_many_new(username, data)
                 return json.dumps({"type" : "success",
-                                   "error" : 'Upload complete'})
+                                   "error" : _('Upload complete')})
 
     @cherrypy.expose
     def export(self, _type):
@@ -288,7 +291,7 @@ class Bibthek(object):
         url = str(cherrypy.request.headers.elements('Referer')[0])
         url = url.rsplit("?")[0] + "?book_id=" + book_id
         if error == '0':
-            self.error = {'type' : 'success', 'error' : "Book saved!"}
+            self.error = {'type' : 'success', 'error' : _("Book saved!")}
         else:
             self.error = {'type' : 'danger', 'error' : error}
         raise cherrypy.HTTPRedirect(url)
@@ -325,7 +328,8 @@ class Bibthek(object):
     def delete_all(self):
         """Delete all your books"""
         del_all_books(cherrypy.session.get('username'))
-        return json.dumps({"type" : "success", "error" : "All books deleted"})
+        return json.dumps({"type" : "success",
+                           "error" : _("All books deleted")})
 
     @cherrypy.expose
     def logout(self):

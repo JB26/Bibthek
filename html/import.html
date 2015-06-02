@@ -5,11 +5,11 @@
   <div class="row">
     <form method="post" id="import_form" enctype="multipart/form-data">
       <div class="col-md-12">
-        <h1>Import</h1>
-        <label for="data_file">Import a sqlite3/csv/zip file</label>
+        <h1>${_('Import')}</h1>
+        <label for="data_file">${_('Import a sqlite3/csv/zip file')}</label>
         <input type="file" name="data_upload" id="data_upload"/>
         <div class="radio">
-          <h5>Multiple authors seperated by:</h5>
+          <h5>${_('Multiple authors seperated by:')}</h5>
           <label class="radio-inline">
             <input type="radio" id="radio1" name="separator" value="&" checked> &
           </label>
@@ -26,20 +26,26 @@
   </div>
   <div class="row">
     <div class="col-md-12">
-      <h1>Export</h1>
-      <p><a href="/export?_type=csv">Download csv</a></p>
-      <p><a href="/export?_type=cover_csv">Download covers and csv</a></p>
+      <h1>${_('Export')}</h1>
+      <p><a href="/export?_type=csv">${_('Download csv')}</a></p>
+      <p><a href="/export?_type=cover_csv">${_('Download covers and csv')}</a></p>
     </div>
   </div>
   <div class="row">
     <div class="col-md-12">
-      <h1>Delete Data</h1>
-      <p><a href="/delete_all" id="delete_all_warn">Delete all books</a></p>
+      <h1>${_('Delete Data')}</h1>
+      <p><a href="/delete_all" id="delete_all_warn">${_('Delete all books')}</a></p>
     </div>
   </div>
 </div>
 <script src="/static/js/local_warning.js"></script>
 <script src="/static/js/local_import.js"></script>
+<script>
+  $('#delete_all_warn').click(function(event) {
+    event.preventDefault();
+    warning("danger", "${_('Do you really want to delete all books?')}" + ' <a href="/delete_all" class="alert-link" id="delete_all">' + "${_('YES!')}" + '</a> ');
+  });
+</script>
 </body>
 </html>
 

@@ -21,11 +21,6 @@ $( '#import_form' ).submit(function( event ) {
   });
 });
 
-$('#delete_all_warn').click(function(event) {
-  event.preventDefault();
-  warning("danger", 'Do you really want to delete all books? <a href="/delete_all" class="alert-link" id="delete_all">YES!</a> ');
-});
-
 $('#alert_placeholder').on( "click", "#delete_all", function(event) {
   event.preventDefault();
   $.getJSON( "/delete_all", function(data) {

@@ -25,11 +25,6 @@ $( '.change_mail_pw' ).submit(function( event ) {
   });
 });
 
-$('#delete_acc_warn').click(function(event) {
-  event.preventDefault();
-  warning("danger", 'Do you really want to delete your acount? <a href="#" class="alert-link" id="delete_acc">YES!</a> ');
-});
-
 $('#alert_placeholder').on( "click", "#delete_acc", function(event) {
   event.preventDefault();
   var password = $('#password_del_acc').val();

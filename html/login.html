@@ -4,14 +4,14 @@
   <link rel="stylesheet" href="/static/css/login.css" type="text/css" />
   <div class="container">
     <form class="form-signin" action="/login" method="post">
-      <h2 class="form-signin-heading">Please sign in</h2>
-      <label for="username" class="sr-only">Username</label>
+      <h2 class="form-signin-heading">${_('Please sign in')}</h2>
+      <label for="username" class="sr-only">${_('Username')}</label>
       <input type="text" id="username" name="username" class="form-control" placeholder="Username" required autofocus>
-      <label for="password" class="sr-only">Password</label>
+      <label for="password" class="sr-only">${_('Password')}</label>
       <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
-      <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+      <button class="btn btn-lg btn-primary btn-block" type="submit">${_('Sign in')}</button>
     </form>
-    <a href="/register">Register</a>
+    <a href="/register">${_('Register')}</a>
   </div>
 </body>
 </html>

@@ -13,12 +13,13 @@ def add_user(username, password, email, session_id):
     p_re = re.compile('[A-Z-+_0-9]+', re.IGNORECASE)
     m_re = p_re.match(username)
     if m_re == None:
-        return '"' + username[0] + '" not allowed in the username'
+        return '"' + username[0] + '" ' + _('not allowed in the username')
     elif m_re.group() != username:
-        return '"' + username[m_re.span()[1]] + '" not allowed in the username'
+        return ('"' + username[m_re.span()[1]] +
+                '" ' + _('not allowed in the username'))
     cursor.execute("SELECT * FROM users WHERE username = ?", (username, ))
     if cursor.fetchone() != None:
-        return "Username already exists"
+        return _('Username already exists')
     sql = "INSERT INTO users VALUES (?,?,?,?,?,?,?)"
     cursor.execute(sql, (username, pbkdf2_sha512.encrypt(password),
                          datetime.now(), '', email, 'private', [session_id], ))
@@ -86,7 +87,7 @@ def change_pw(username, password_old, password_new):
         conn.close()
         return "0"
     else:
-        return "Wrong password"
+        return _("Wrong password")
 
 def reset_pw(username):
     """Reset a password"""

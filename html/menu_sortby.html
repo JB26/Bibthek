@@ -8,17 +8,17 @@
   <li role="presentation" class="dropdown-header">${_('First order')}</li>
   % for row in sort1:
     % if row['active']:
-    <li class="active"><a href="/view/${view_user}/${current_section}${row['url']}${'/'.join([quote(x, '') for x in active_filter])}">${row['name']}</a></li>
+    <li class="active"><a href="/view/${view_user}/${current_section}${row['url']}${'/'.join([quote(x, '') for x in active_filter])}">${_(row['name'])}</a></li>
     % else:
-    <li><a href="/view/${view_user}/${current_section}${row['url']}${'/'.join([quote(x, '') for x in active_filter])}">${row['name']}</a></li>
+    <li><a href="/view/${view_user}/${current_section}${row['url']}${'/'.join([quote(x, '') for x in active_filter])}">${_(row['name'])}</a></li>
     % endif
   % endfor
   <li role="presentation" class="dropdown-header">${_('Second order')}</li>
   % for row in sort2:
     % if row['active']:
-    <li class="active"><a href="/view/${view_user}/${current_section}${row['url']}${'/'.join([quote(x, '') for x in active_filter])}">${row['name']}</a></li>
+    <li class="active"><a href="/view/${view_user}/${current_section}${row['url']}${'/'.join([quote(x, '') for x in active_filter])}">${_(row['name'])}</a></li>
     % else:
-    <li><a href="/view/${view_user}/${current_section}${row['url']}${'/'.join([quote(x, '') for x in active_filter])}">${row['name']}</a></li>
+    <li><a href="/view/${view_user}/${current_section}${row['url']}${'/'.join([quote(x, '') for x in active_filter])}">${_(row['name'])}</a></li>
     % endif
   % endfor
   </ul>

@@ -9,6 +9,10 @@ from lib.sort_data import sorted_apg
 from lib.variables import VARIABLES
 import lib.db_sql as db_sql
 
+def T_(message):
+    """For translation with gettext"""
+    return message
+
 def insert_new_book(username, data):
     """Make a new db entry"""
     cursor, conn = db_sql.connect('books.db')
@@ -515,17 +519,17 @@ def filter_list(username, field, active_filters):
     for _filter in all_filters:
         if _filter['name'] == '':
             if field == 'form':
-                filters1.append({'name': 'No format'})
+                filters1.append({'name': T_('No format')})
             elif field == 'language':
-                filters1.append({'name': 'No language'})
+                filters1.append({'name': T_('No language')})
             elif field == 'shelf':
-                filters1.append({'name': 'Not shelfed'})
+                filters1.append({'name': T_('Not shelfed')})
     if field == 'language':
         field = 'lang'
     return add_count(username, field, filters1, active_filters)
 
 def filter_list_stat(username, active_filters):
-    filters1 = [{'name': 'Unread'}, {'name': 'Read'}]
+    filters1 = [{'name': T_('Unread')}, {'name': T_('Read')}]
     return add_count(username, 'stat', filters1, active_filters)
 
 def add_count(username, field, filters1, active_filters):

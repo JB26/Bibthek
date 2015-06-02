@@ -1,6 +1,7 @@
 <%include file="header.html" />
 <body>
 <link rel="stylesheet" href="/static/css/sidebar.css" type="text/css" />
+<link rel="stylesheet" href="/static/css/local.css" type="text/css" />
 % if user == None or user['username'] != view_user:
   <link rel="stylesheet" href="/static/css/public.css" type="text/css" />
 % endif
@@ -45,7 +46,7 @@
     <div class="row">
       <div class="col-md-3">
         <div class="form-group">
-          <label for="isbn" class="col-sm-2 control-label">ISBN</label>
+          <label for="isbn" class="col-sm-2 control-label">${_('ISBN')}</label>
           <div class="col-sm-10">
             <input class="form-control" type="text" id="isbn" name="isbn" value="${book['isbn'] | h}"/>
           </div>
@@ -53,7 +54,7 @@
       </div>
       <div class="col-md-9">
         <div class="form-group">
-          <label for="title" class="col-sm-2 control-label">Title</label>
+          <label for="title" class="col-sm-2 control-label">${_('Title')}</label>
           <div class="col-sm-10">
             <input class="form-control" type="text" id="title" name="title" value="${book['title'] | h}" />
           </div>
@@ -68,7 +69,7 @@
         <div class="row">
           <div class="col-md-12">
             <div class="form-group">
-              <label for="authors" class="col-sm-2 control-label">Author</label>
+              <label for="authors" class="col-sm-2 control-label">${_('Author')}</label>
               <div class="col-sm-10">
                 <input class="form-control autocomplete" type="text" id="authors" name="authors" value="${book['authors'] | h}" title="Split multiples with:' & '">
               </div>
@@ -83,7 +84,7 @@
           <div class="row">
             <div class="col-md-12">
               <div class="form-group">
-                <label for="artist" class="col-sm-2 control-label">Artist</label>
+                <label for="artist" class="col-sm-2 control-label">${_('Artist')}</label>
                 <div class="col-sm-10">
                   <input class="form-control" type="text" id="artist" name="artist" value="${book['artist'] | h}" title="Split multiples with:' & '">
                 </div>
@@ -93,7 +94,7 @@
           <div class="row">
             <div class="col-md-7">
               <div class="form-group">
-                <label for="colorist" class="col-sm-4 control-label">Colorist</label>
+                <label for="colorist" class="col-sm-4 control-label">${_('Colorist')}</label>
                 <div class="col-sm-8">
                   <input class="form-control" type="text" id="colorist" name="colorist" value="${book['colorist'] | h}" title="Split multiples with:' & '">
                 </div>
@@ -101,7 +102,7 @@
             </div>
             <div class="col-md-5">
               <div class="form-group">
-                <label for="cover_artist" class="col-sm-4 control-label">Cover Artist</label>
+                <label for="cover_artist" class="col-sm-4 control-label">${_('Cover Artist')}</label>
                 <div class="col-sm-8">
                   <input class="form-control" type="text" id="cover_artist" name="cover_artist" value="${book['cover_artist'] | h}" title="Split multiples with:' & '">
                 </div>
@@ -117,7 +118,7 @@
           <div class="row">
             <div class="col-md-12">
               <div class="form-group">
-                <label for="narrator" class="col-sm-2 control-label">Narrator</label>
+                <label for="narrator" class="col-sm-2 control-label">${_('Narrator')}</label>
                 <div class="col-sm-10">
                   <input class="form-control" type="text" id="narrator" name="narrator" value="${book['narrator'] | h}"  title="Split multiples with:' & '">
                 </div>
@@ -128,7 +129,7 @@
         <div class="row">
           <div class="col-md-7">
             <div class="form-group">
-              <label for="publisher" class="col-sm-4 control-label">Publisher</label>
+              <label for="publisher" class="col-sm-4 control-label">${_('Publisher')}</label>
               <div class="col-sm-8">
                 <input class="form-control" type="text" id="publisher" name="publisher" value="${book['publisher'] | h}">
               </div>
@@ -136,7 +137,7 @@
           </div>
           <div class="col-md-5">
             <div class="form-group">
-              <label for="release_date" class="col-sm-4 control-label">Published</label>
+              <label for="release_date" class="col-sm-4 control-label">${_('Published')}</label>
               <div class="col-sm-8">
                 <input class="form-control" type="text" id="release_date" name="release_date" value="${book['release_date'] | h}">
               </div>
@@ -146,7 +147,7 @@
         <div class="row">
           <div class="col-md-7">
             <div class="form-group">
-              <label for="series" class="col-sm-4 control-label">Series</label>
+              <label for="series" class="col-sm-4 control-label">${_('Series')}</label>
               <div class="col-sm-8">
                 <input class="form-control" type="text" id="series" name="series" value="${book['series'] | h}">
               </div>
@@ -154,7 +155,7 @@
           </div>
           <div class="col-md-5">
             <div class="form-group">
-              <label for="order_nr" class="col-sm-4 control-label">Order</label>
+              <label for="order_nr" class="col-sm-4 control-label">${_('Order')}</label>
               <div class="col-sm-8">
                 <input class="form-control" type="text" id="order_nr" name="order_nr" value="${book['order_nr'] | h}">
               </div>
@@ -164,7 +165,7 @@
         <div class="row">
           <div class="col-md-7">
             <div class="form-group">
-              <label for="language" class="col-sm-4 control-label">Language</label>
+              <label for="language" class="col-sm-4 control-label">${_('Language')}</label>
               <div class="col-sm-8">
                 <input class="form-control" type="text" id="language" name="language" value="${book['language'] | h}">
               </div>
@@ -172,7 +173,7 @@
           </div>
           <div class="col-md-5">
             <div class="form-group">
-              <label for="pages" class="col-sm-4 control-label">Pages</label>
+              <label for="pages" class="col-sm-4 control-label">${_('Pages')}</label>
               <div class="col-sm-8">
                 <input class="form-control" type="text" id="pages" name="pages" value="${book['pages'] | h}">
               </div>
@@ -182,7 +183,7 @@
         <div class="row">
           <div class="col-md-7">
             <div class="form-group">
-              <label for="genre" class="col-sm-4 control-label">Genre</label>
+              <label for="genre" class="col-sm-4 control-label">${_('Genre')}</label>
               <div class="col-sm-8">
                 <input class="form-control" type="text" id="genre" name="genre" value="${book['genre'] | h}" title="Split multiples with:', '">
               </div>
@@ -190,7 +191,7 @@
           </div>
           <div class="col-md-5">
             <div class="form-group">
-              <label for="form" class="col-sm-4 control-label">Format</label>
+              <label for="form" class="col-sm-4 control-label">${_('Format')}</label>
               <div class="col-sm-8">
                 <input class="form-control" type="text" id="form" name="form" value="${book['form'] | h}">
               </div>
@@ -200,7 +201,7 @@
         <div class="row">
           <div class="col-md-7">
             <div class="form-group">
-              <label for="shelf" class="col-sm-4 control-label">Shelf</label>
+              <label for="shelf" class="col-sm-4 control-label">${_('Shelf')}</label>
               <div class="col-sm-8">
                 <input class="form-control" type="text" id="shelf" name="shelf" value="${book['shelf'] | h}">
               </div>
@@ -208,7 +209,7 @@
           </div>
           <div class="col-md-5">
             <div class="form-group">
-              <label for="add_date" class="col-sm-4 control-label">Date added</label>
+              <label for="add_date" class="col-sm-4 control-label">${_('Date added')}</label>
               <div class="col-sm-8">
                 <input class="form-control" type="text" id="add_date" name="add_date" value="${book['add_date'] | h}">
               </div>
@@ -220,46 +221,45 @@
 
     <div class="row">
       <div class="col-md-7">
-        <label for="front">Cover</label>
+        <label for="front">${_('Cover')}</label>
         <input type="file" name="front">
       </div>
     </div>
     <div class="row">
       <div class="col-md-7">
-        <h3>Description</h3>
+        <h3>${_('Description')}</h3>
         <textarea class="form-control" id="description" name="description" rows="10">${book['description']}</textarea>
         % if user != None and user['username'] == view_user:
-          <button class="btn btn-sm btn-success" type="submit" name="save">Save!</button>
+          <button class="btn btn-sm btn-success" type="submit" name="save">${_('Save!')}</button>
           % if book['_id'] == 'new_book':
-          <button class="btn btn-sm btn-default" type="submit" name="isbn_search" id="isbn_search">ISBN search</button>
-          <a class="btn btn-sm btn-danger" href="/delete${'?book_id=' + book['_id']}" id="delete" style="display:none;">Delete!</a>
+          <button class="btn btn-sm btn-default" type="submit" name="isbn_search" id="isbn_search">${_('ISBN search')}</button>
+          <a class="btn btn-sm btn-danger" href="/delete${'?book_id=' + book['_id']}" id="delete" style="display:none;">${_('Delete!')}</a>
           % else:
-          <button class="btn btn-sm btn-default" type="submit" name="isbn_search" id="isbn_search" style="display:none;">ISBN search</button>
-          <a class="btn btn-sm btn-danger" href="/delete${'?book_id=' + book['_id']}" id="delete">Delete!</a>
+          <button class="btn btn-sm btn-default" type="submit" name="isbn_search" id="isbn_search" style="display:none;">${_('ISBN search')}</button>
+          <a class="btn btn-sm btn-danger" href="/delete${'?book_id=' + book['_id']}" id="delete">${_('Delete!')}</a>
           % endif
           <a class="btn btn-sm btn-default" href="https://www.google.de/search?q=${book['isbn']}&tbm=isch" id='isbn_image' target="_blank">
-            Cover search
+            ${_('Cover search')}
           </a>
           <a class="btn btn-sm btn-default" href="https://www.goodreads.com/search?utf8=%E2%9C%93&query=${book['isbn']}" id='goodreads' target="_blank">
-            GoodReads
+            ${_('GoodReads')}
           </a>
           <a class="btn btn-sm btn-default" href="https://www.amazon.de/gp/search?keywords=${book['isbn']}" id='amazon' target="_blank">
-            Amazon search
+            ${_('Amazon search')}
           </a>
         % endif
       </div>
       <div class="col-md-5">
-        <h3>Reading Stats</h3>
+        <h3>${_('Reading Stats')}</h3>
         % if user != None and user['username'] == view_user:
-        <a href="start_reading" id="start_reading">Start reading</a>
-        <a href="delete_reading" id="delete_reading">Delete last</a>
+        <a href="start_reading" id="start_reading">${_('Start reading')}</a>
         % endif
         <table class="table table-striped" id="reading_stats">
           <thead>
             <tr>
               <th>#</th>
-              <th>Date</th>
-              <th>Abdoned</th>
+              <th>${_('Date')}</th>
+              <th>${_('Abdoned')}</th>
             </tr>
           </thead>
           <tbody>
@@ -270,6 +270,9 @@
             % endif
           </tbody>
         </table>
+        % if user != None and user['username'] == view_user:
+          <a href="delete_reading" id="delete_reading">${_('Delete last')}</a>
+        % endif
       </div>
     </div>
   % if user == None or user['username'] != view_user:
@@ -278,13 +281,13 @@
   </form>
   % if user == None or user['username'] != view_user:
     <a class="btn btn-sm btn-default" href="https://www.google.de/search?q=${book['isbn']}&tbm=isch" id='isbn_image' target="_blank">
-      Cover search
+      ${_('Cover search')}
     </a>
     <a class="btn btn-sm btn-default" href="https://www.goodreads.com/search?utf8=%E2%9C%93&query=${book['isbn']}" id='goodreads' target="_blank">
-      GoodReads
+      ${_('GoodReads')}
     </a>
     <a class="btn btn-sm btn-default" href="https://www.amazon.de/gp/search?keywords=${book['isbn']}" id='amazon' target="_blank">
-      Amazon search
+      ${_('Amazon search')}
     </a>
   % endif
 </div>
@@ -308,6 +311,13 @@
   </script>
 % else:
   <script src="/static/js/local_autocomplete.js"></script>
+  <script>
+    $('#delete').click(function(event) {
+      event.preventDefault();
+      var link = $( this ).attr('href');
+      warning("danger", "${_('Do you really want to delete this book?')}" + ' <a href="' + link + '" class="alert-link" id="delete_now">' + "${_('YES!')}" + '</a> ');
+    });
+  </script>
 % endif
 </body>
 </html>
