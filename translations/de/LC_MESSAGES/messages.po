@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-06-02 18:43+0200\n"
+"POT-Creation-Date: 2015-06-02 19:51+0200\n"
 "PO-Revision-Date: 2015-06-01 22:22+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -17,36 +17,36 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.3\n"
 
-#: bibthek.py:201
+#: bibthek.py:200
 msgid "Email changed"
 msgstr "Email geändert"
 
-#: bibthek.py:205 bibthek.py:243 lib/db_users.py:90
+#: bibthek.py:204 bibthek.py:242 lib/db_users.py:90
 msgid "Wrong password"
 msgstr "Falsches Passwort"
 
-#: bibthek.py:237
+#: bibthek.py:236
 msgid "Your account is deleted"
 msgstr "Dein Account wurde gelöscht"
 
-#: bibthek.py:240
+#: bibthek.py:239
 msgid "Account deleted"
 msgstr "Account gelöscht"
 
-#: bibthek.py:252
+#: bibthek.py:251
 #, python-format
 msgid "Please tell %s the new password: \"%s\""
 msgstr "Bitte schicke %s das neue Passwort: \"%s\""
 
-#: bibthek.py:272
+#: bibthek.py:271
 msgid "Upload complete"
 msgstr "Upload komplett"
 
-#: bibthek.py:294
+#: bibthek.py:293
 msgid "Book saved!"
 msgstr "Buch gespeichert"
 
-#: bibthek.py:332
+#: bibthek.py:331
 msgid "All books deleted"
 msgstr "Alle Bücher gelöscht"
 
@@ -86,7 +86,8 @@ msgstr "Keine"
 msgid "ISBN"
 msgstr "ISBN"
 
-#: html/book.html:57 lib/menu_data.py:11 lib/menu_data.py:67
+#: html/book.html:57 lib/menu_data.py:11 lib/menu_data.py:29
+#: lib/menu_data.py:73
 msgid "Title"
 msgstr "Titel"
 
@@ -126,11 +127,11 @@ msgstr "Serie"
 msgid "Order"
 msgstr "Reihenfolge"
 
-#: html/book.html:168 lib/menu_data.py:94
+#: html/book.html:168 lib/menu_data.py:100
 msgid "Language"
 msgstr "Sprache"
 
-#: html/book.html:176
+#: html/book.html:176 lib/menu_data.py:31
 msgid "Pages"
 msgstr "Seiten"
 
@@ -138,15 +139,15 @@ msgstr "Seiten"
 msgid "Genre"
 msgstr "Genre"
 
-#: html/book.html:194 lib/menu_data.py:90
+#: html/book.html:194 lib/menu_data.py:96
 msgid "Format"
 msgstr "Format"
 
-#: html/book.html:204 lib/menu_data.py:99
+#: html/book.html:204 lib/menu_data.py:105
 msgid "Shelf"
 msgstr "Regal"
 
-#: html/book.html:212 html/statistics.html:30
+#: html/book.html:212 html/statistics.html:30 lib/menu_data.py:33
 msgid "Date added"
 msgstr "Hinzugefügt am"
 
@@ -460,23 +461,23 @@ msgstr "Gelesene Seiten"
 msgid "Pages per book"
 msgstr "Seiten pro Buch"
 
-#: lib/db_books.py:522
+#: lib/db_books.py:524
 msgid "No format"
 msgstr "Kein Format"
 
-#: lib/db_books.py:524
+#: lib/db_books.py:526
 msgid "No language"
 msgstr "Keine Sprache"
 
-#: lib/db_books.py:526
+#: lib/db_books.py:528
 msgid "Not shelfed"
 msgstr "Kein Regal"
 
-#: lib/db_books.py:532
+#: lib/db_books.py:535
 msgid "Unread"
 msgstr "Ungelesen"
 
-#: lib/db_books.py:532
+#: lib/db_books.py:535
 msgid "Read"
 msgstr "Gelesen"
 
@@ -488,27 +489,27 @@ msgstr "dieses Zeichen ist nicht erlaubt"
 msgid "Username already exists"
 msgstr "Benutzername existiert bereits"
 
-#: lib/menu_data.py:47
-msgid "Variant 1: Order"
-msgstr "Variante 1: Reihenfolge"
-
-#: lib/menu_data.py:49
-msgid "Variant 1: Year"
-msgstr "Variante 1: Jahr"
-
-#: lib/menu_data.py:51
-msgid "Variant 2: Order"
-msgstr "Variante 2: Reihenfolge"
-
-#: lib/menu_data.py:53
-msgid "Variant 2: Year"
-msgstr "Variante 2: Jahr"
-
-#: lib/menu_data.py:65
+#: lib/menu_data.py:27 lib/menu_data.py:71
 msgid "Year"
 msgstr "Jahr"
 
-#: lib/menu_data.py:86
+#: lib/menu_data.py:53
+msgid "Variant 1: Order"
+msgstr "Variante 1: Reihenfolge"
+
+#: lib/menu_data.py:55
+msgid "Variant 1: Year"
+msgstr "Variante 1: Jahr"
+
+#: lib/menu_data.py:57
+msgid "Variant 2: Order"
+msgstr "Variante 2: Reihenfolge"
+
+#: lib/menu_data.py:59
+msgid "Variant 2: Year"
+msgstr "Variante 2: Jahr"
+
+#: lib/menu_data.py:92
 msgid "Status"
 msgstr "Status"
 

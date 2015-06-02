@@ -5,7 +5,6 @@ MY_LOOKUP = TemplateLookup(directories=['html'], output_encoding='utf-8',
 import cherrypy
 from cherrypy.lib import static
 import json
-from urllib import request
 import os
 LOCAL_DIR = os.path.dirname(__file__)
 ABS_DIR = os.path.join(os.getcwd(), LOCAL_DIR)

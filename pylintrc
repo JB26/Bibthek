@@ -23,3 +23,10 @@ max-branches=25
 
 # Disable "Method could be a function (no-self-use)"
 disable=R0201
+
+[VARIABLES]
+# Add '_' function from gettext
+additional-builtins=_
+
+[BASIC]
+good-names=T_, i

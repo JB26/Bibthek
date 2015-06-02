@@ -319,7 +319,7 @@ def author_and_more(username, sortby, variant, active_filters):
 def titles(username, variant, active_filters):
     """Return a list of your books orderd by title"""
     cursor, conn = db_sql.connect('books.db')
-    sql = ("SELECT title, release_date, pages, _id FROM " + username)
+    sql = ("SELECT title, release_date, pages, add_date, _id FROM " + username)
     query, paras = query_builder(active_filters)
     cursor.execute(sql + query, paras)
     data_temp = [dict(x) for x in cursor.fetchall()]
@@ -332,6 +332,8 @@ def titles(username, variant, active_filters):
             temp['order_nr'] = row['release_date']
         elif variant == 'pages':
             temp['order_nr'] = row['pages']
+        elif variant == 'added':
+            temp['order_nr'] = row['add_date']
         data.append(temp)
     conn.close()
     return sorted_titles(data, '_id', variant)
@@ -529,10 +531,12 @@ def filter_list(username, field, active_filters):
     return add_count(username, field, filters1, active_filters)
 
 def filter_list_stat(username, active_filters):
+    """Return a list to filter fo read/unread"""
     filters1 = [{'name': T_('Unread')}, {'name': T_('Read')}]
     return add_count(username, 'stat', filters1, active_filters)
 
 def add_count(username, field, filters1, active_filters):
+    """Number of items if filter will be activated"""
     for _filter in filters1:
         if field + '_' + _filter['name'] not in active_filters:
             temp = active_filters + [field + '_' + _filter['name']]

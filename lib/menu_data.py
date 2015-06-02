@@ -24,11 +24,13 @@ def menu_data(username, active_filters, sort_first, sort_second):
                     'colorist', 'cover_artist']
     if sort_first == 'title':
         sort1[0]['active'] = True
-        sort2 = [{'name' : 'Year', 'url' : '/title/year/',
+        sort2 = [{'name' : T_('Year'), 'url' : '/title/year/',
                   'active' : False},
-                 {'name' : 'Title', 'url' : '/title/title/',
+                 {'name' : T_('Title'), 'url' : '/title/title/',
                   'active' : False},
-                 {'name' : 'Pages', 'url' : '/title/pages/',
+                 {'name' : T_('Pages'), 'url' : '/title/pages/',
+                  'active' : False},
+                 {'name' : T_('Date added'), 'url' : '/title/added/',
                   'active' : False}]
         if sort_second == 'year':
             items = db_books.titles(username, 'year', active_filters)
@@ -42,6 +44,10 @@ def menu_data(username, active_filters, sort_first, sort_second):
             items = db_books.titles(username, 'pages', active_filters)
             sort2[2]['active'] = True
             active_sort = sort2[2]['url']
+        elif sort_second == 'added':
+            items = db_books.titles(username, 'added', active_filters)
+            sort2[3]['active'] = True
+            active_sort = sort2[3]['url']
     elif sort_first == 'series':
         sort1[1]['active'] = True
         sort2 = [{'name' : T_('Variant 1: Order'),
