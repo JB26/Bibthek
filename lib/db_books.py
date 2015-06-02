@@ -526,7 +526,7 @@ def filter_list(username, field, active_filters):
 
 def filter_list_stat(username, active_filters):
     filters1 = [{'name': 'Unread'}, {'name': 'Read'}]
-    return add_count(username, 'stats', filters1, active_filters)
+    return add_count(username, 'stat', filters1, active_filters)
 
 def add_count(username, field, filters1, active_filters):
     for _filter in filters1:
