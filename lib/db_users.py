@@ -137,5 +137,6 @@ def user_list():
     cursor, conn = db_sql.connect('users.db')
     sql = ("SELECT * FROM users ORDER BY username")
     cursor.execute(sql)
+    data = [dict(x) for x in cursor.fetchall()]
     conn.close()
-    return [dict(x) for x in cursor.fetchall()]
+    return data

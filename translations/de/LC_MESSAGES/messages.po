@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-06-01 22:20+0200\n"
+"POT-Creation-Date: 2015-06-02 16:27+0200\n"
 "PO-Revision-Date: 2015-06-01 22:22+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -17,12 +17,139 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 1.3\n"
 
+#: html/admin.html:7 html/menu_view.html:18
+msgid "Administration"
+msgstr "Administration"
+
+#: html/admin.html:15
+msgid "Username"
+msgstr "Username"
+
+#: html/admin.html:16
+msgid "Registration date"
+msgstr "Erstellt am"
+
+#: html/admin.html:17
+msgid "Role"
+msgstr "Rechte"
+
+#: html/admin.html:18
+msgid "Email"
+msgstr "Email"
+
+#: html/admin.html:19 html/admin.html:36
+msgid "Reset Password"
+msgstr "Passwort zurücksetzen"
+
+#: html/admin.html:20 html/admin.html:41
+msgid "Delete Account"
+msgstr "Account löschen"
+
+#: html/admin.html:32
+msgid "None"
+msgstr "Keine"
+
 #: html/menu.html:7
 msgid "Home"
 msgstr "Start"
 
-#: html/menu.html:21
+#: html/menu.html:19
 #, python-format
 msgid "Signed in as %s viewing your profile"
 msgstr "Eingelogt als %s, dein Profil wird angezeigt"
 
+#: html/menu.html:21
+#, python-format
+msgid "Signed in as %s viewing %s's profile"
+msgstr "Eingelogt als %s, das Profil von %s wird angezeigt"
+
+#: html/menu.html:23
+#, python-format
+msgid "Not signed in viewing %s's profile"
+msgstr "Nicht eingelogt, das Profil von %s wird angezeigt"
+
+#: html/menu.html:27
+msgid "Login"
+msgstr "Einloggen"
+
+#: html/menu.html:30
+msgid "Logout"
+msgstr "Ausloggen"
+
+#: html/menu.html:32
+msgid "Logout this session"
+msgstr "Diese Sitzung ausloggen"
+
+#: html/menu.html:33
+msgid "Logout all sessions"
+msgstr "Alle Sitzungen ausloggen"
+
+#: html/menu_filter.html:6
+msgid "Filter"
+msgstr "Filter"
+
+#: html/menu_new.html:2
+msgid "New"
+msgstr "Neu"
+
+#: html/menu_new.html:4
+msgid "Book"
+msgstr "Buch"
+
+#: html/menu_new.html:5
+msgid "Comic"
+msgstr "Comic"
+
+#: html/menu_new.html:6
+msgid "Audiobook"
+msgstr "Hörbuch"
+
+#: html/menu_sortby.html:6
+msgid "Sort by"
+msgstr "Sortieren nach"
+
+#: html/menu_sortby.html:8
+msgid "First order"
+msgstr "Erste Ebene"
+
+#: html/menu_sortby.html:16
+msgid "Second order"
+msgstr "Zweite Ebene"
+
+#: html/menu_view.html:3
+msgid "View"
+msgstr "Ansicht"
+
+#: html/menu_view.html:11
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: html/menu_view.html:25
+msgid "Import/Export"
+msgstr "Import/Export"
+
+#: html/menu_view.html:32
+msgid "Books"
+msgstr "Bücher"
+
+#: html/menu_view.html:38
+msgid "Books 2"
+msgstr "Bücher 2"
+
+#: html/menu_view.html:44
+msgid "Cover Galery"
+msgstr "Cover Galerie"
+
+#: html/menu_view.html:50
+msgid "Cover Galery 2"
+msgstr "Cover Galerie 2"
+
+#: html/menu_view.html:56
+msgid "Statistics"
+msgstr "Statistiken"
+
+#: html/sidebar.html:5 html/sidebar2.html:5 html/sidebar2_covers.html:5
+#: html/sidebar_covers.html:5
+#, python-format
+msgid "Number of items: %s"
+msgstr "Anzahl Einträge: %s"
