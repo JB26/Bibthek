@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-06-02 20:35+0200\n"
+"POT-Creation-Date: 2015-06-03 00:58+0200\n"
 "PO-Revision-Date: 2015-06-01 22:22+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -62,7 +62,7 @@ msgstr "Registrierung geschlossen"
 msgid "Login problem"
 msgstr ""
 
-#: html/admin.html:7 html/menu_view.html:18
+#: html/admin.html:7 html/menu/menu_view.html:18
 msgid "Administration"
 msgstr "Administration"
 
@@ -103,133 +103,133 @@ msgstr "Soll Nutzer: "
 msgid " and all his data?"
 msgstr " und all seine Daten wirklich gelöscht werden?"
 
-#: html/admin.html:57 html/book.html:318 html/import.html:46
+#: html/admin.html:57 html/book.html:310 html/import.html:46
 #: html/settings.html:76
 msgid "YES!"
 msgstr "JA!"
 
-#: html/book.html:49
+#: html/book.html:41
 msgid "ISBN"
 msgstr "ISBN"
 
-#: html/book.html:57 lib/menu_data.py:11 lib/menu_data.py:29
+#: html/book.html:49 lib/menu_data.py:11 lib/menu_data.py:29
 #: lib/menu_data.py:73
 msgid "Title"
 msgstr "Titel"
 
-#: html/book.html:72 lib/menu_data.py:14
+#: html/book.html:64 lib/menu_data.py:14
 msgid "Author"
 msgstr "Autor"
 
-#: html/book.html:87 lib/menu_data.py:18
+#: html/book.html:79 lib/menu_data.py:18
 msgid "Artist"
 msgstr "Künstler"
 
-#: html/book.html:97 lib/menu_data.py:19
+#: html/book.html:89 lib/menu_data.py:19
 msgid "Colorist"
 msgstr "Kolorist"
 
-#: html/book.html:105 lib/menu_data.py:20
+#: html/book.html:97 lib/menu_data.py:20
 msgid "Cover Artist"
 msgstr "Cover Künstler"
 
-#: html/book.html:121 lib/menu_data.py:17
+#: html/book.html:113 lib/menu_data.py:17
 msgid "Narrator"
 msgstr "Sprecher"
 
-#: html/book.html:132 lib/menu_data.py:15
+#: html/book.html:124 lib/menu_data.py:15
 msgid "Publisher"
 msgstr "Herausgeber"
 
-#: html/book.html:140
+#: html/book.html:132
 msgid "Published"
 msgstr "Veröffentlicht"
 
-#: html/book.html:150 lib/menu_data.py:12
+#: html/book.html:142 lib/menu_data.py:12
 msgid "Series"
 msgstr "Serie"
 
-#: html/book.html:158
+#: html/book.html:150
 msgid "Order"
 msgstr "Reihenfolge"
 
-#: html/book.html:168 lib/menu_data.py:100
+#: html/book.html:160 lib/menu_data.py:100
 msgid "Language"
 msgstr "Sprache"
 
-#: html/book.html:176 lib/menu_data.py:31
+#: html/book.html:168 lib/menu_data.py:31
 msgid "Pages"
 msgstr "Seiten"
 
-#: html/book.html:186 lib/menu_data.py:16
+#: html/book.html:178 lib/menu_data.py:16
 msgid "Genre"
 msgstr "Genre"
 
-#: html/book.html:194 lib/menu_data.py:96
+#: html/book.html:186 lib/menu_data.py:96
 msgid "Format"
 msgstr "Format"
 
-#: html/book.html:204 lib/menu_data.py:105
+#: html/book.html:196 lib/menu_data.py:105
 msgid "Shelf"
 msgstr "Regal"
 
-#: html/book.html:212 html/statistics.html:30 lib/menu_data.py:33
+#: html/book.html:204 html/statistics.html:30 lib/menu_data.py:33
 msgid "Date added"
 msgstr "Hinzugefügt am"
 
-#: html/book.html:224
+#: html/book.html:216
 msgid "Cover"
 msgstr "Cover"
 
-#: html/book.html:230
+#: html/book.html:222
 msgid "Description"
 msgstr "Beschreibung"
 
-#: html/book.html:233
+#: html/book.html:225
 msgid "Save!"
 msgstr "Speichern!"
 
-#: html/book.html:235 html/book.html:238
+#: html/book.html:227 html/book.html:230
 msgid "ISBN search"
 msgstr "ISBN suche"
 
-#: html/book.html:236 html/book.html:239
+#: html/book.html:228 html/book.html:231
 msgid "Delete!"
 msgstr "Löschen!"
 
-#: html/book.html:242 html/book.html:284
+#: html/book.html:234 html/book.html:276
 msgid "Cover search"
 msgstr "Cover suche"
 
-#: html/book.html:245 html/book.html:287
+#: html/book.html:237 html/book.html:279
 msgid "GoodReads"
 msgstr ""
 
-#: html/book.html:248 html/book.html:290
+#: html/book.html:240 html/book.html:282
 msgid "Amazon search"
 msgstr "Amazon suche"
 
-#: html/book.html:253
+#: html/book.html:245
 msgid "Reading Stats"
 msgstr "Status"
 
-#: html/book.html:255
+#: html/book.html:247
 msgid "Start reading"
 msgstr "Anfangen"
 
-#: html/book.html:261
+#: html/book.html:253
 msgid "Date"
 msgstr "Datum"
 
-#: html/book.html:262
+#: html/book.html:254
 msgid "Abdoned"
 msgstr "Abgebrochen"
 
-#: html/book.html:274
+#: html/book.html:266
 msgid "Delete last"
 msgstr "Lösche letzten"
 
-#: html/book.html:318
+#: html/book.html:310
 msgid "Do you really want to delete this book?"
 msgstr "Soll diese Buch wirklich gelöscht werden?"
 
@@ -286,111 +286,6 @@ msgstr "Einloggen"
 #: html/login.html:14 html/register.html:7 html/register.html:18
 msgid "Register"
 msgstr "Registrieren"
-
-#: html/menu.html:7
-msgid "Home"
-msgstr "Start"
-
-#: html/menu.html:19
-#, python-format
-msgid "Signed in as %s viewing your profile"
-msgstr "Eingelogt als %s, dein Profil wird angezeigt"
-
-#: html/menu.html:21
-#, python-format
-msgid "Signed in as %s viewing %s's profile"
-msgstr "Eingelogt als %s, das Profil von %s wird angezeigt"
-
-#: html/menu.html:23
-#, python-format
-msgid "Not signed in viewing %s's profile"
-msgstr "Nicht eingelogt, das Profil von %s wird angezeigt"
-
-#: html/menu.html:27
-msgid "Login"
-msgstr "Einloggen"
-
-#: html/menu.html:30
-msgid "Logout"
-msgstr "Ausloggen"
-
-#: html/menu.html:32
-msgid "Logout this session"
-msgstr "Diese Sitzung ausloggen"
-
-#: html/menu.html:33
-msgid "Logout all sessions"
-msgstr "Alle Sitzungen ausloggen"
-
-#: html/menu_filter.html:6
-msgid "Filter"
-msgstr "Filter"
-
-#: html/menu_filter.html:15 html/menu_filter.html:22 html/menu_filter.html:34
-#: html/menu_sortby.html:11 html/menu_sortby.html:13 html/menu_sortby.html:19
-#: html/menu_sortby.html:21
-msgid "name"
-msgstr "name"
-
-#: html/menu_new.html:2
-msgid "New"
-msgstr "Neu"
-
-#: html/menu_new.html:4
-msgid "Book"
-msgstr "Buch"
-
-#: html/menu_new.html:5
-msgid "Comic"
-msgstr "Comic"
-
-#: html/menu_new.html:6
-msgid "Audiobook"
-msgstr "Hörbuch"
-
-#: html/menu_sortby.html:6
-msgid "Sort by"
-msgstr "Sortieren nach"
-
-#: html/menu_sortby.html:8
-msgid "First order"
-msgstr "Erste Ebene"
-
-#: html/menu_sortby.html:16
-msgid "Second order"
-msgstr "Zweite Ebene"
-
-#: html/menu_view.html:3
-msgid "View"
-msgstr "Ansicht"
-
-#: html/menu_view.html:11
-msgid "Settings"
-msgstr "Einstellungen"
-
-#: html/menu_view.html:25
-msgid "Import/Export"
-msgstr "Import/Export"
-
-#: html/menu_view.html:32
-msgid "Books"
-msgstr "Bücher"
-
-#: html/menu_view.html:38
-msgid "Books 2"
-msgstr "Bücher 2"
-
-#: html/menu_view.html:44
-msgid "Cover Galery"
-msgstr "Cover Galerie"
-
-#: html/menu_view.html:50
-msgid "Cover Galery 2"
-msgstr "Cover Galerie 2"
-
-#: html/menu_view.html:56 html/statistics.html:6
-msgid "Statistics"
-msgstr "Statistiken"
 
 #: html/reading_stats.html:6 html/statistics.html:16
 msgid "Started"
@@ -466,11 +361,9 @@ msgstr "Deinen Account löschen"
 msgid "Do you really want to delete your acount?"
 msgstr "Soll dein Account wirklich gelöscht werden"
 
-#: html/sidebar.html:5 html/sidebar2.html:5 html/sidebar2_covers.html:5
-#: html/sidebar_covers.html:5
-#, python-format
-msgid "Number of items: %s"
-msgstr "Anzahl Einträge: %s"
+#: html/statistics.html:6 html/menu/menu_view.html:56
+msgid "Statistics"
+msgstr "Statistiken"
 
 #: html/statistics.html:9
 msgid "Release Date"
@@ -483,6 +376,113 @@ msgstr "Gelesene Seiten"
 #: html/statistics.html:44
 msgid "Pages per book"
 msgstr "Seiten pro Buch"
+
+#: html/menu/menu.html:7
+msgid "Home"
+msgstr "Start"
+
+#: html/menu/menu.html:19
+#, python-format
+msgid "Signed in as %s viewing your profile"
+msgstr "Eingelogt als %s, dein Profil wird angezeigt"
+
+#: html/menu/menu.html:21
+#, python-format
+msgid "Signed in as %s viewing %s's profile"
+msgstr "Eingelogt als %s, das Profil von %s wird angezeigt"
+
+#: html/menu/menu.html:23
+#, python-format
+msgid "Not signed in viewing %s's profile"
+msgstr "Nicht eingelogt, das Profil von %s wird angezeigt"
+
+#: html/menu/menu.html:27
+msgid "Login"
+msgstr "Einloggen"
+
+#: html/menu/menu.html:30
+msgid "Logout"
+msgstr "Ausloggen"
+
+#: html/menu/menu.html:32
+msgid "Logout this session"
+msgstr "Diese Sitzung ausloggen"
+
+#: html/menu/menu.html:33
+msgid "Logout all sessions"
+msgstr "Alle Sitzungen ausloggen"
+
+#: html/menu/menu_filter.html:6
+msgid "Filter"
+msgstr "Filter"
+
+#: html/menu/menu_filter.html:15 html/menu/menu_filter.html:22
+#: html/menu/menu_filter.html:34 html/menu/menu_sortby.html:11
+#: html/menu/menu_sortby.html:13 html/menu/menu_sortby.html:19
+#: html/menu/menu_sortby.html:21
+msgid "name"
+msgstr "name"
+
+#: html/menu/menu_new.html:2
+msgid "New"
+msgstr "Neu"
+
+#: html/menu/menu_new.html:4
+msgid "Book"
+msgstr "Buch"
+
+#: html/menu/menu_new.html:5
+msgid "Comic"
+msgstr "Comic"
+
+#: html/menu/menu_new.html:6
+msgid "Audiobook"
+msgstr "Hörbuch"
+
+#: html/menu/menu_sortby.html:6
+msgid "Sort by"
+msgstr "Sortieren nach"
+
+#: html/menu/menu_sortby.html:8
+msgid "First order"
+msgstr "Erste Ebene"
+
+#: html/menu/menu_sortby.html:16
+msgid "Second order"
+msgstr "Zweite Ebene"
+
+#: html/menu/menu_view.html:3
+msgid "View"
+msgstr "Ansicht"
+
+#: html/menu/menu_view.html:11
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: html/menu/menu_view.html:25
+msgid "Import/Export"
+msgstr "Import/Export"
+
+#: html/menu/menu_view.html:32
+msgid "Books"
+msgstr "Bücher"
+
+#: html/menu/menu_view.html:38
+msgid "Books 2"
+msgstr "Bücher 2"
+
+#: html/menu/menu_view.html:44
+msgid "Cover Galery"
+msgstr "Cover Galerie"
+
+#: html/menu/menu_view.html:50
+msgid "Cover Galery 2"
+msgstr "Cover Galerie 2"
+
+#: html/sidebar/sidebar.html:2
+#, python-format
+msgid "Number of items: %s"
+msgstr "Anzahl Einträge: %s"
 
 #: lib/db_books.py:524
 msgid "No format"

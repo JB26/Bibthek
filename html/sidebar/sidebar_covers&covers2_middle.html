@@ -1,0 +1,14 @@
+<%page args="name" />
+% for i, title in enumerate(name['books']):
+  % if i%2 == 0:
+    <li>
+      <form action="">
+  % endif
+      <button style="width:49%;" type="submit" name="book_id" value="${title['_id']}" class="book_title" id="${title['_id']}">
+        <img src="/${covers[str(title['_id'])]}" alt="Cover" style="width:100%">
+      </button>
+  % if i%2 == 1 or i+1 == len(name['books']):
+      </form>
+    </li>
+  % endif
+% endfor

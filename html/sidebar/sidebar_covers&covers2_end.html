@@ -1,0 +1,26 @@
+<%page args="idx, name" />
+<li>
+  % if active_sort[1:6] == 'title':
+    % if idx%2 == 0:
+      <hr class="divid_groups" />
+      <li>
+        <form action="">
+    % endif
+        <button style="width:49%;" type="submit" name="book_id" value="${name['books']['_id']}" class="book_title" id="${name['books']['_id']}">
+          <img src="/${covers[str(name['books']['_id'])]}" alt="Cover" style="width:100%">
+        </button>
+    % if idx%2 == 1 or idx+1 == len(items):
+        </form>
+      </li>
+    % endif
+  % else:
+    <hr class="divid_groups" />
+    <li>
+      <form action="">
+      <button style="width:49%;" type="submit" name="book_id" value="${name['books']['_id']}" class="book_title" id="${name['books']['_id']}">
+        <img src="/${covers[str(name['books']['_id'])]}" alt="Cover" style="width:100%">
+      </button>
+      </form>
+    </li>
+  % endif
+</li>

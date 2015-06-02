@@ -6,15 +6,7 @@
   <link rel="stylesheet" href="/static/css/public.css" type="text/css" />
 % endif
 <div class="navmenu navmenu-default navmenu-fixed-left offcanvas-sm">
-% if view == "books":
-  <%include file="sidebar.html" />
-% elif view == "books2":
-  <%include file="sidebar2.html" />
-% elif view == "covers":
-  <%include file="sidebar_covers.html" />
-% elif view == "covers2":
-  <%include file="sidebar2_covers.html" />
-% endif
+<%include file="sidebar/sidebar.html" />
 </div>
 <script>
   var scroll_navmenu = $.localStorage.get('scroll_navmenu')
@@ -38,7 +30,7 @@
   </button>
   <a class="navbar-brand" href="#">BibThek</a>
 </div>
-<%include file="menu.html" args="current_section=view" />
+<%include file="menu/menu.html" args="current_section=view" />
 <link rel="stylesheet" href="/static/css/autocomplete.css" type="text/css" />
 <div class="container">
   <form method="post" action="/save${'?book_id=' + book['_id']}" enctype="multipart/form-data" id="book_form" class="form-horizontal">

@@ -1,0 +1,11 @@
+<%page args="name" />
+% for title in name['books']:
+<li>
+  <a href="?book_id=${title['_id']}" class="book_title" id="${title['_id']}" style="margin-left: 0px;" >
+    % if 'order_nr' in title and title['order_nr'] != '':
+          ${title['order_nr']} - 
+    % endif
+        ${title['title']}
+  </a>
+</li>
+% endfor

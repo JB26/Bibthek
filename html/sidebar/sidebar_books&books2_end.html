@@ -1,0 +1,9 @@
+<%page args="name" />
+<li>
+  <a href="?book_id=${name['books']['_id']}" class="book_title" id="${name['books']['_id']}" >
+    % if 'order_nr' in name and name['order_nr'] != '':
+          ${name['order_nr']} - 
+    % endif
+        ${name['_id']}
+  </a>
+</li>

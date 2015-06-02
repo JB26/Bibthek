@@ -1,23 +1,23 @@
-The goal of this Project is to make a replacemant for GCstar
+The goal of this Project is to make a replacement for GCstar
 
-Bug:
-Weird dates can break the statistics?
-Abbord pencil
-
+Bugs:
+If a filter has zero elements it's not deleted from the url
 
 TODO:
+Better error message for weird dates
+Abbord pencil
 Show started books
 better isbn search and errors
-sort by added
 import status
 Use heading "jumps" for no script in sidebar
-Upload Limits (Set max_request_body_size = 104857600 ???)
+Upload Limits (Set max_request_body_size = 104857600?)
 Dynamic URL in view menu?
 Lazy load for cover view
+thumbnail covers
 logging
 Batch delete
 Cover from google books api
 
 To start the site use:
 cd WORKING_DIR
-python bibthek_app.py
+python bibthek.py

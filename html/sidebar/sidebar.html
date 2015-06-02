@@ -1,0 +1,39 @@
+<a class="navmenu-brand visible-md visible-lg" href="/">BibThek</a>
+<a class="navmenu-brand">${_('Number of items: %s') % items_count}</a>
+<ul class="nav nav-pills nav-stacked sidebar">
+% for idx, name in enumerate(items):
+  % if name['sub_items']:
+    % if view in ['books', 'covers']:
+      <li>
+    % elif view in ['books2', 'covers2']:
+      <hr class="divid_groups" />
+      <li role="presentation" class="dropdown-header">
+    % endif
+      <%include file="sidebar_all.html" args="idx=idx, name=name" />
+      % if view == 'books':
+        <ul class="sub_items sub_items_text" id="${idx}_ul" data-name="${name['_id']}">
+          <%include file="sidebar_books&books2_middle.html" args="name=name" />
+        </ul>
+      % elif view == 'covers':
+        <ul class="sub_items sub_items_cover" id="${idx}_ul" data-name="${name['_id']}">
+          <%include file="sidebar_covers&covers2_middle.html" args="name=name" />
+        </ul>
+      % endif
+    </li>
+    % if view == 'books2':
+      <%include file="sidebar_books&books2_middle.html" args="name=name" />
+    % elif view == 'covers2':
+      <%include file="sidebar_covers&covers2_middle.html" args="name=name" />
+    % endif
+  % else:
+    % if view in ['books2', 'covers2']:
+      <hr class="divid_groups" />
+    % endif
+    % if view in ['books', 'books2']:
+      <%include file="sidebar_books&books2_end.html" args="name=name" />
+    % elif view in ['covers', 'covers2']:
+      <%include file="sidebar_covers&covers2_end.html" args="idx=idx, name=name" />
+    % endif
+  % endif
+% endfor
+</ul>
