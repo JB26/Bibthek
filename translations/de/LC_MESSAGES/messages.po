@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2015-06-02 19:51+0200\n"
+"POT-Creation-Date: 2015-06-02 20:35+0200\n"
 "PO-Revision-Date: 2015-06-01 22:22+0200\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: de <LL@li.org>\n"
@@ -33,7 +33,7 @@ msgstr "Dein Account wurde gelöscht"
 msgid "Account deleted"
 msgstr "Account gelöscht"
 
-#: bibthek.py:251
+#: bibthek.py:249
 #, python-format
 msgid "Please tell %s the new password: \"%s\""
 msgstr "Bitte schicke %s das neue Passwort: \"%s\""
@@ -50,11 +50,24 @@ msgstr "Buch gespeichert"
 msgid "All books deleted"
 msgstr "Alle Bücher gelöscht"
 
+#: bibthek.py:358
+msgid "Wrong secret key"
+msgstr "Falscher geheimer Schlüssel"
+
+#: bibthek.py:367
+msgid "Registration closed"
+msgstr "Registrierung geschlossen"
+
+#: bibthek.py:394
+msgid "Login problem"
+msgstr ""
+
 #: html/admin.html:7 html/menu_view.html:18
 msgid "Administration"
 msgstr "Administration"
 
-#: html/admin.html:15 html/login.html:8 html/register.html:12
+#: html/admin.html:15 html/login.html:8 html/login.html:9 html/register.html:14
+#: html/register.html:15
 msgid "Username"
 msgstr "Username"
 
@@ -66,7 +79,7 @@ msgstr "Erstellt am"
 msgid "Role"
 msgstr "Rechte"
 
-#: html/admin.html:18 html/register.html:10
+#: html/admin.html:18 html/register.html:12 html/register.html:13
 msgid "Email"
 msgstr "Email"
 
@@ -81,6 +94,19 @@ msgstr "Account löschen"
 #: html/admin.html:32
 msgid "None"
 msgstr "Keine"
+
+#: html/admin.html:57
+msgid "Do you really want to delete the user: "
+msgstr "Soll Nutzer: "
+
+#: html/admin.html:57
+msgid " and all his data?"
+msgstr " und all seine Daten wirklich gelöscht werden?"
+
+#: html/admin.html:57 html/book.html:318 html/import.html:46
+#: html/settings.html:76
+msgid "YES!"
+msgstr "JA!"
 
 #: html/book.html:49
 msgid "ISBN"
@@ -207,10 +233,6 @@ msgstr "Lösche letzten"
 msgid "Do you really want to delete this book?"
 msgstr "Soll diese Buch wirklich gelöscht werden?"
 
-#: html/book.html:318 html/import.html:46 html/settings.html:76
-msgid "YES!"
-msgstr "JA!"
-
 #: html/import.html:8
 msgid "Import"
 msgstr ""
@@ -251,8 +273,9 @@ msgstr "Sollen wirklich alle Bücher gelöscht werden?"
 msgid "Please sign in"
 msgstr "Bitte Einloggen"
 
-#: html/login.html:10 html/register.html:14 html/settings.html:24
-#: html/settings.html:63
+#: html/login.html:10 html/login.html:11 html/register.html:16
+#: html/register.html:17 html/settings.html:24 html/settings.html:25
+#: html/settings.html:63 html/settings.html:64
 msgid "Password"
 msgstr "Passwort"
 
@@ -260,9 +283,9 @@ msgstr "Passwort"
 msgid "Sign in"
 msgstr "Einloggen"
 
-#: html/login.html:14 html/register.html:7 html/register.html:17
+#: html/login.html:14 html/register.html:7 html/register.html:18
 msgid "Register"
-msgstr "Regestrieren"
+msgstr "Registrieren"
 
 #: html/menu.html:7
 msgid "Home"
@@ -377,8 +400,8 @@ msgstr "Angefangen"
 msgid "Finished"
 msgstr "Beendet"
 
-#: html/register.html:8
-msgid "Secret"
+#: html/register.html:9 html/register.html:10
+msgid "Secret key"
 msgstr "Geheimer Schlüssel"
 
 #: html/settings.html:7
@@ -398,7 +421,7 @@ msgstr "Deine aktuelle Email ist: %s"
 msgid "Your current Email adress: None"
 msgstr "Deine aktuelle Email ist: Keine"
 
-#: html/settings.html:20
+#: html/settings.html:20 html/settings.html:21
 msgid "New Email"
 msgstr "Neue Email"
 
@@ -406,11 +429,11 @@ msgstr "Neue Email"
 msgid "Change your Password"
 msgstr "Ändere dein Passwort"
 
-#: html/settings.html:36
+#: html/settings.html:36 html/settings.html:37
 msgid "Old password"
 msgstr "Altes Passwort"
 
-#: html/settings.html:40
+#: html/settings.html:40 html/settings.html:41
 msgid "New password"
 msgstr "Neues Passwort"
 

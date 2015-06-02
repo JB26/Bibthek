@@ -6,9 +6,9 @@
     <form class="form-signin" action="/login" method="post">
       <h2 class="form-signin-heading">${_('Please sign in')}</h2>
       <label for="username" class="sr-only">${_('Username')}</label>
-      <input type="text" id="username" name="username" class="form-control" placeholder="Username" required autofocus>
+      <input type="text" id="username" name="username" class="form-control" placeholder="${_('Username')}" required autofocus>
       <label for="password" class="sr-only">${_('Password')}</label>
-      <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+      <input type="password" id="password" name="password" class="form-control" placeholder="${_('Password')}" required>
       <button class="btn btn-lg btn-primary btn-block" type="submit">${_('Sign in')}</button>
     </form>
     <a href="/register">${_('Register')}</a>

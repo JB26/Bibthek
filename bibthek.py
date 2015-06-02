@@ -246,9 +246,9 @@ class Bibthek(object):
     def reset_pw(self, username):
         """Resets a password for a given user (only an admin can do this)"""
         return json.dumps({'type' : 'success',
-                           'error' : _('Please tell %s the new password: "%s"'
+                           'error' : _('Please tell %s the new password: "%s"')
                                        % (username,
-                                          db_users.reset_pw(username)))})
+                                          db_users.reset_pw(username))})
 
     @cherrypy.expose
     def import_books(self, data_upload=None, separator=None):
@@ -345,19 +345,26 @@ class Bibthek(object):
 
     @cherrypy.expose
     @cherrypy.tools.auth(required=False)
-    #def register(self, secret='', username='', password='', mail=''):
-    def register(self, username='', password='', mail=''):
+    def register(self, secret_key='', username='', password='', mail=''):
         """Register an account"""
-        if password and username is not '':
-            error = db_users.add_user(username, password, mail,
-                                      cherrypy.session.id)
+        reg_status = cherrypy.request.app.config['Registration']
+        if reg_status['registration'] in ['open', 'secret']:
+            if password and username is not '':
+                if (reg_status['registration'] == 'open' or
+                    reg_status['secret_key'] == secret_key):
+                    error = db_users.add_user(username, password, mail,
+                                              cherrypy.session.id)
+                else:
+                    error = _('Wrong secret key')
+            else:
+                mytemplate = MY_LOOKUP.get_template("register.html")
+                return mytemplate.render(reg_status=reg_status['registration'])
+            if error == '0':
+                raise cherrypy.HTTPRedirect("/")
+            else:
+                return error
         else:
-            mytemplate = MY_LOOKUP.get_template("register.html")
-            return mytemplate.render()
-        if error == '0':
-            raise cherrypy.HTTPRedirect("/")
-        else:
-            return error
+            return _('Registration closed')
 
     @cherrypy.expose
     @cherrypy.tools.auth(required=False)
@@ -384,7 +391,7 @@ class Bibthek(object):
                 url = "/"
             raise cherrypy.HTTPRedirect(url)
         else:
-            return "Login problem"
+            return _('Login problem')
 
 if __name__ == '__main__':
     db_sql.init_users()

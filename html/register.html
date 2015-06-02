@@ -5,15 +5,16 @@
   <div class="container">
     <form class="form-signin" action="/register" method="post">
       <h2 class="form-signin-heading">${_('Register')}</h2>
-      <label for="secret" class="sr-only">${_('Secret')}</label>
-      <input type="text" id="secret" name="secret" class="form-control" placeholder="Secret">
+      % if reg_status == 'secret':
+        <label for="secret_key" class="sr-only">${_('Secret key')}</label>
+        <input type="text" id="secret_key" name="secret_key" class="form-control" placeholder="${_('Secret key')}">
+      % endif
       <label for="mail" class="sr-only">${_('Email')}</label>
-      <input type="email" id="mail" name="mail" class="form-control" placeholder="Email">
+      <input type="email" id="mail" name="mail" class="form-control" placeholder="${_('Email')}">
       <label for="username" class="sr-only">${_('Username')}</label>
-      <input type="text" id="username" name="username" class="form-control" placeholder="Username" required autofocus>
+      <input type="text" id="username" name="username" class="form-control" placeholder="${_('Username')}" required autofocus>
       <label for="password" class="sr-only">${_('Password')}</label>
-      <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
-
+      <input type="password" id="password" name="password" class="form-control" placeholder="${_('Password')}" required>
       <button class="btn btn-lg btn-primary btn-block" type="submit">${_('Register')}</button>
     </form>
   </div>

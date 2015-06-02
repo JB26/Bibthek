@@ -50,5 +50,12 @@
 </div>
 <script src="/static/js/local_warning.js"></script>
 <script src="/static/js/local_admin.js"></script>
+<script>
+  $('.delete_acc_warn').click(function(event) {
+    event.preventDefault();
+    var username = $( this ).attr('id');
+    warning("danger", "${_('Do you really want to delete the user: ')}" + username + "${_(' and all his data?')} "+ ' <a href="#" class="alert-link delete_acc" id="' + username + '" >' + "${_('YES!')}" + '</a> ');
+  });
+</script>
 </body>
 </html>
