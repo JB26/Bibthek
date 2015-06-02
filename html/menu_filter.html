@@ -1,3 +1,6 @@
+<%
+  from urllib.parse import quote
+%>
 <%page args="current_section"/>
 <li class="dropdown">
   <a class="dropdown-toggle" data-toggle="dropdown" href="#">Filter<span class="caret"></span></a>
@@ -5,25 +8,27 @@
   % for _filter in filters:
     <%
       if current_section in ['books', 'books2', 'covers', 'covers2']:
-        url = "/view/" + view_user + "/" + current_section + "/" + active_shelf['shelf'] + active_sort
+        url = "/view/" + view_user + "/" + current_section + active_sort
       elif current_section == 'statistics':
-        url = "/statistics/" + view_user + "/" + active_shelf['shelf'] + "/"
+        url = "/statistics/" + view_user  + "/"
     %>
     <li role="presentation" class="dropdown-header">${_filter['name']}</li>
     % for row in _filter['filter']:
-      % if _filter['short'] + row in active_filter.split('+'):
+    <%
+    %>
+      % if _filter['short'] + row['name'] in active_filter:
       <%
-        new_filter = '+'.join([ x for x in active_filter.split('+') if x != _filter['short'] + row ])
+        new_filter = '/'.join([quote(x, '') for x in active_filter if x != _filter['short'] + row['name']])
       %>
-      <li class="active"><a href="${url}${new_filter}">${row}</a></li>
+      <li class="active"><a href="${url}${new_filter}">${row['name']} (${row['#items']})</a></li>
       % else:
       <%
         if active_filter != '':
-          new_filter = '+'.join([ x for x in active_filter.split('+') if x[5:] not in _filter['filter'] ] + [_filter['short'] + row])
+          new_filter = '/'.join([quote(x, '') for x in (active_filter + [_filter['short'] + row['name']])])
         else:
-          new_filter = _filter['short'] + row
+          new_filter = quote(_filter['short'] + row['name'], '')
       %>
-      <li><a href="${url}${new_filter}">${row}</a></li>
+      <li><a href="${url}${new_filter}">${row['name']} (${row['#items']})</a></li>
       % endif
     % endfor
   % endfor

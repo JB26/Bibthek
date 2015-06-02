@@ -4,7 +4,7 @@ import itertools
 import operator
 from copy import copy
 
-from lib.sort_data import sorted_series, sorted_titles, sorted_shelfs
+from lib.sort_data import sorted_series, sorted_titles, sorted_filters
 from lib.sort_data import sorted_apg
 from lib.variables import VARIABLES
 import lib.db_sql as db_sql
@@ -100,32 +100,49 @@ def sort_append_rearranged(data_temp, data):
         data.append(data_temp)
     return data
 
-def query_builder(filters, shelf):
+def query_builder(active_filters):
     """Build the query according to the activated shelf and filters"""
-    active_filters = filters.split('+')
-    if 'stat_Read' in active_filters:
-        query = " AND read_count > 0"
-    elif 'stat_Unread' in active_filters:
-        query = " AND read_count = 0"
-    else:
-        query = ""
     paras = {}
+    para_list = ()
+    query = ""
     for _filter in active_filters:
-        if len(_filter) > 5:
-            if _filter[0:5] == 'lang_':
-                query += " AND language=:lang"
-                paras['lang'] = _filter[5:]
-            if  _filter[0:5] == 'form_':
-                query += " AND form=:form"
-                paras['form'] = _filter[5:]
-    if shelf == 'Not shelfed':
-        query += " AND shelf = ''"
-    elif shelf != 'All':
-        query += " AND shelf=:shelf"
-        paras['shelf'] = shelf
+        if 'stat_Read' == _filter:
+            query += " AND read_count > 0"
+        elif 'stat_Unread' == _filter:
+            query += " AND read_count = 0"
+        elif _filter[0:5] == 'lang_':
+            if _filter[5:] == 'No language':
+                _filter = 'lang_'
+            if 'lang' in paras:
+                paras['lang'] += (_filter[5:], )
+            else:
+                paras['lang'] = (_filter[5:], )
+        elif _filter[0:5] == 'form_':
+            if _filter[5:] == 'No format':
+                _filter = 'form_'
+            if 'form' in paras:
+                paras['form'] += (_filter[5:], )
+            else:
+                paras['form'] = (_filter[5:], )
+        elif _filter[0:6] == 'shelf_':
+            if _filter[6:] == 'Not shelfed':
+                _filter = 'shelf_'
+            if 'shelf' in paras:
+                paras['shelf'] += (_filter[6:], )
+            else:
+                paras['shelf'] = (_filter[6:], )
+    if 'lang' in paras:
+        query += " AND language IN (%s)" % ','.join('?'*len(paras['lang']))
+        para_list += paras['lang']
+    if 'form' in paras:
+        query += " AND form IN (%s)" % ','.join('?'*len(paras['form']))
+        para_list += paras['form']
+    if 'shelf' in paras:
+        query += " AND shelf IN (%s)" % ','.join('?'*len(paras['shelf']))
+        para_list += paras['shelf']
     if query != '':
         query = " WHERE" + query[4:]
-    return query, paras
+    return query, para_list
 
 def update(username, data):
     """Prepare updated or new data to be stored in the db"""
@@ -221,13 +238,13 @@ def get_all(username):
     conn.close()
     return data
 
-def aggregate_items(username, group_by, get_fields, shelf, _filter,
+def aggregate_items(username, group_by, get_fields, active_filters,
                     array=False):
     """Return a list of all books that statisfy the current filters"""
     cursor, conn = db_sql.connect('books.db')
     sql = ("SELECT " + group_by + ", " +
            ", ".join(get_fields) + " FROM " + username)
-    query, paras = query_builder(_filter, shelf)
+    query, paras = query_builder(active_filters)
     cursor.execute(sql + query, paras)
     data = [dict(x) for x in cursor.fetchall()]
     data_temp = []
@@ -248,7 +265,7 @@ def aggregate_items(username, group_by, get_fields, shelf, _filter,
     conn.close()
     return list1
 
-def series(username, shelf, variant, _filter):
+def series(username, variant, active_filters):
     """Return a list of your books orderd by series"""
     order_by = variant.split('_')[1]
     if order_by == 'year':
@@ -257,7 +274,7 @@ def series(username, shelf, variant, _filter):
         order_by = 'order_nr'
     data = aggregate_items(username, 'series',
                            ["title", "_id", order_by, "series_complete"],
-                           shelf, _filter)
+                           active_filters)
     data, data_temp = rearrange_data(data, 'Not in a series')
     if variant.split('_')[0] == 'variant1' and data_temp != None:
         for row in data_temp['books']:
@@ -270,7 +287,7 @@ def series(username, shelf, variant, _filter):
         data = sort_append_rearranged(data_temp, data)
     return data
 
-def author_and_more(username, sortby, shelf, variant, _filter):
+def author_and_more(username, sortby, variant, active_filters):
     """Return a list of your books orderd by author or similar"""
     if sortby in VARIABLES.name_fields or sortby == 'genre':
         array = True
@@ -280,14 +297,14 @@ def author_and_more(username, sortby, shelf, variant, _filter):
         data = aggregate_items(
             username, sortby,
             ["title", "_id", "release_date AS order_nr"],
-            shelf, _filter, array
+            active_filters, array
             )
         sort_by_order = True
     elif variant == 'title':
         data = aggregate_items(
             username, sortby,
             ["title", "_id"],
-            shelf, _filter, array
+            active_filters, array
             )
         sort_by_order = False
     data, data_temp = rearrange_data(data, 'No ' + sortby)
@@ -295,11 +312,11 @@ def author_and_more(username, sortby, shelf, variant, _filter):
     data = sort_append_rearranged(data_temp, data)
     return data
 
-def titles(username, shelf, variant, _filter):
+def titles(username, variant, active_filters):
     """Return a list of your books orderd by title"""
     cursor, conn = db_sql.connect('books.db')
     sql = ("SELECT title, release_date, pages, _id FROM " + username)
-    query, paras = query_builder(_filter, shelf)
+    query, paras = query_builder(active_filters)
     cursor.execute(sql + query, paras)
     data_temp = [dict(x) for x in cursor.fetchall()]
     data = []
@@ -315,11 +332,11 @@ def titles(username, shelf, variant, _filter):
     conn.close()
     return sorted_titles(data, '_id', variant)
 
-def covers(username, shelf, _filter):
+def covers(username, active_filters):
     """Return a list of your book covers"""
     cursor, conn = db_sql.connect('books.db')
     sql = ("SELECT front, _id FROM " + username)
-    query, paras = query_builder(_filter, shelf)
+    query, paras = query_builder(active_filters)
     cursor.execute(sql + query, paras)
     data_temp = [dict(x) for x in cursor.fetchall()]
     data = {}
@@ -328,11 +345,11 @@ def covers(username, shelf, _filter):
     conn.close()
     return data
 
-def statistic_date(username, shelf, _filter, _type):
+def statistic_date(username, active_filters, _type):
     """Date statistics"""
     _type = _type.split('#')
     cursor, conn = db_sql.connect('books.db')
-    query, paras = query_builder(_filter, shelf)
+    query, paras = query_builder(active_filters)
     if _type[0] in ['release_date', 'add_date']:
         sql = ("SELECT " + _type[0] + " FROM " + username)
     else:
@@ -367,11 +384,11 @@ def statistic_date(username, shelf, _filter, _type):
     conn.close()
     return labels, data
 
-def statistic_pages_read(username, shelf, _filter, _type):
+def statistic_pages_read(username, active_filters, _type):
     """Pages read statistics"""
     _type = _type.split('#')
     cursor, conn = db_sql.connect('books.db')
-    query, paras = query_builder(_filter, shelf)
+    query, paras = query_builder(active_filters)
     sql = ("SELECT reading_stats, pages FROM " + username)
     cursor.execute(sql + query, paras)
     data_temp = [dict(x) for x in cursor.fetchall()]
@@ -435,10 +452,10 @@ def statistic_pages_read(username, shelf, _filter, _type):
     conn.close()
     return labels, data
 
-def statistic_pages_book(username, shelf, _filter):
+def statistic_pages_book(username, active_filters):
     """Pages per book statistics"""
     cursor, conn = db_sql.connect('books.db')
-    query, paras = query_builder(_filter, shelf)
+    query, paras = query_builder(active_filters)
     sql = ("SELECT pages FROM " + username)
     cursor.execute(sql + query, paras)
     data_temp = [dict(x) for x in cursor.fetchall()]
@@ -464,24 +481,6 @@ def delete_by_id(username, book_id):
     conn.commit()
     conn.close()
 
-def shelf_list(username, _filter):
-    """Return a list of all user shelfs"""
-    query, paras = query_builder(_filter, 'All')
-    sql = "SELECT DISTINCT shelf AS _id FROM " + username
-    cursor, conn = db_sql.connect('books.db')
-    cursor.execute(sql + query, paras)
-    shelfs = [dict(x) for x in cursor.fetchall()]
-    shelfs = sorted_shelfs(shelfs)
-    shelfs.insert(0, {'_id' : 'All'})
-    for shelf in shelfs:
-        shelf['#items'] = count_items(username, shelf['_id'], _filter)
-        if shelf['_id'] != '':
-            shelf['name'] = shelf['_id']
-        else:
-            shelf['name'] = 'Not shelfed'
-    conn.close()
-    return shelfs
-
 def autocomplete(username, query, field, array):
     """Return a list of suggestions"""
     cursor, conn = db_sql.connect('books.db')
@@ -505,27 +504,44 @@ def autocomplete(username, query, field, array):
     conn.close()
     return {'suggestions' : ac_list}
 
-def filter_list(username, shelf, field):
+def filter_list(username, field, active_filters):
     """Return a list of all possible user filters"""
     cursor, conn = db_sql.connect('books.db')
-    sql = "SELECT DISTINCT " + field + " AS '_id' FROM " + username
-    if shelf == 'Not shelfed':
-        shelf = ''
-    if shelf != 'All':
-        sql += " WHERE shelf = ?"
-        cursor.execute(sql, (shelf, ))
-    else:
-        cursor.execute(sql)
-
+    sql = "SELECT DISTINCT " + field + " AS 'name' FROM " + username
+    cursor.execute(sql)
     all_filters = [dict(x) for x in cursor.fetchall()]
     conn.close()
-    return [x['_id'] for x in all_filters if x['_id'] != '']
+    filters1 = sorted_filters([x for x in all_filters if x['name'] != ''])
+    for _filter in all_filters:
+        if _filter['name'] == '':
+            if field == 'form':
+                filters1.append({'name': 'No format'})
+            elif field == 'language':
+                filters1.append({'name': 'No language'})
+            elif field == 'shelf':
+                filters1.append({'name': 'Not shelfed'})
+    if field == 'language':
+        field = 'lang'
+    return add_count(username, field, filters1, active_filters)
 
-def count_items(username, shelf, _filter):
+def filter_list_stat(username, active_filters):
+    filters1 = [{'name': 'Unread'}, {'name': 'Read'}]
+    return add_count(username, 'stats', filters1, active_filters)
+
+def add_count(username, field, filters1, active_filters):
+    for _filter in filters1:
+        if field + '_' + _filter['name'] not in active_filters:
+            temp = active_filters + [field + '_' + _filter['name']]
+        else:
+            temp = active_filters
+        _filter['#items'] = count_items(username, temp)
+    return filters1
+
+def count_items(username, active_filters):
     """Count books on a shelf"""
     cursor, conn = db_sql.connect('books.db')
     sql = "SELECT COUNT(*) AS items FROM " + username
-    query, paras = query_builder(_filter, shelf)
+    query, paras = query_builder(active_filters)
     cursor.execute(sql + query, paras)
     items = cursor.fetchone()['items']
     conn.close()

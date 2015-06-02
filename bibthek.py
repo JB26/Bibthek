@@ -32,6 +32,20 @@ from lib.variables import VARIABLES
 cherrypy.tools.auth = cherrypy.Tool('before_handler', auth.check_auth)
 cherrypy.tools.rights = cherrypy.Tool('before_handler', auth.check_rights)
 
+def args_to_list(args):
+    """Convert given args to a list"""
+    if args == None:
+        args = ('', )
+    else:
+        if not isinstance(args, tuple):
+            args = [args]
+        else:
+            args = list(args)
+    active_filters = []
+    for _filter in args:
+        active_filters.append(_filter.encode("latin-1").decode("utf-8"))
+    return active_filters
+
 class Bibthek(object):
     """The main cherrypy class"""
 
@@ -43,44 +57,43 @@ class Bibthek(object):
     @cherrypy.expose
     def index(self):
         """Redirect to the standard view"""
-        raise cherrypy.HTTPRedirect("/view/" + cherrypy.session.get('username'))
+        raise cherrypy.HTTPRedirect("/view/" +
+                                    cherrypy.session.get('username'))
 
     @cherrypy.expose
     @cherrypy.tools.auth(required=False)
     @cherrypy.tools.rights()
-    def view(self, view_user, view='books', shelf=None, sort_first=None,
-             sort_second=None, _filter='', book_id='new_book'):
+    def view(self, view_user, view='books', sort_first=None, sort_second=None,
+             *args, **kw):
         """Return a webpage with a list of your books that match your
         criterias. The page also contains information about the book
         requested by 'book_id'
         """
         if sort_second == None:
             raise cherrypy.HTTPRedirect("/view/" + view_user  + "/" + view +
-                                        "/All/series/variant1_order")
-        shelf = shelf.encode("latin-1").decode("utf-8")
-        _filter = _filter.encode("latin-1").decode("utf-8")
-        book = get_book_data(view_user, book_id, shelf)
+                                        "/series/variant1_order")
+        if 'book_id' not in kw:
+            kw['book_id'] = 'new_book'
+        active_filters = args_to_list(args)
+        book = get_book_data(view_user, kw['book_id'])
         user = db_users.user_by_name(cherrypy.session.get('username'))
-        sort1, sort2, active_sort, items = menu_data(view_user, shelf,
-                                                     _filter,
+        sort1, sort2, active_sort, items = menu_data(view_user,
+                                                     active_filters,
                                                      sort_first, sort_second)
-        filters = menu_filter(view_user, shelf)
+        filters = menu_filter(view_user, active_filters)
         mytemplate = MY_LOOKUP.get_template("book.html")
-        shelfs = db_books.shelf_list(view_user, _filter)
-        active_shelf = {}
-        active_shelf['shelf'] = shelf
-        active_shelf['#items'] = db_books.count_items(view_user, shelf, _filter)
+        items_count = db_books.count_items(view_user, active_filters)
         if view in ['covers', 'covers2']:
-            covers = db_books.covers(view_user, shelf, _filter)
+            covers = db_books.covers(view_user, active_filters)
         else:
             covers = None
         error = self.error
         self.error = None
-        return mytemplate.render(items=items, book=book, shelfs=shelfs,
-                                 active_shelf=active_shelf,
+        return mytemplate.render(items=items, book=book,
                                  sort1=sort1, sort2=sort2,
                                  active_sort=active_sort,
-                                 active_filter=_filter, filters=filters,
+                                 items_count=items_count,
+                                 active_filter=active_filters, filters=filters,
                                  view=view, covers=covers,
                                  user=user, view_user=view_user,
                                  error=error)
@@ -88,10 +101,9 @@ class Bibthek(object):
     @cherrypy.expose
     @cherrypy.tools.auth(required=False)
     @cherrypy.tools.rights()
-    def json_book(self, view_user, book_id, shelf='All'):
+    def json_book(self, view_user, book_id):
         """Return information about a book in json format"""
-        shelf = request.url2pathname(shelf)
-        book = get_book_data(view_user, book_id, shelf)
+        book = get_book_data(view_user, book_id)
         return json.dumps(book)
 
     @cherrypy.expose
@@ -133,41 +145,32 @@ class Bibthek(object):
     @cherrypy.expose
     @cherrypy.tools.auth(required=False)
     @cherrypy.tools.rights()
-    def statistics(self, view_user, shelf=None, _filter=''):
+    def statistics(self, view_user, *args):
         """Returns a page containing statistics about your books"""
-        if shelf == None:
-            raise cherrypy.HTTPRedirect("/statistics/" + view_user  + "/All")
-        shelf = shelf.encode("latin-1").decode("utf-8")
-        _filter = _filter.encode("latin-1").decode("utf-8")
-        filters = menu_filter(view_user, shelf)
-        shelfs = db_books.shelf_list(view_user, _filter)
-        active_shelf = {}
-        active_shelf['shelf'] = shelf
-        active_shelf['#items'] = db_books.count_items(view_user, shelf, _filter)
+        active_filters = args_to_list(args)
+        filters = menu_filter(view_user, active_filters)
         user = db_users.user_by_name(cherrypy.session.get('username'))
         mytemplate = MY_LOOKUP.get_template("statistics.html")
-        return mytemplate.render(active_sort='', shelfs=shelfs,
-                                 active_shelf=active_shelf,
-                                 active_filter=_filter, filters=filters,
+        return mytemplate.render(active_sort='',
+                                 active_filter=active_filters, filters=filters,
                                  user=user, view_user=view_user)
 
     @cherrypy.expose
     @cherrypy.tools.auth(required=False)
     @cherrypy.tools.rights()
-    def json_statistic(self, view_user, shelf=None, _filter='', _type=None):
+    def json_statistic(self, view_user, _type=None, *args):
         """Returns statistical data about your books in json form"""
-        shelf = shelf.encode("latin-1").decode("utf-8")
-        _filter = _filter.encode("latin-1").decode("utf-8")
+        active_filters = args_to_list(args)
         if _type.split('#')[0] in ['release_date', 'add_date', 'start_date',
                                    'finish_date']:
-            labels, data = db_books.statistic_date(view_user, shelf, _filter,
+            labels, data = db_books.statistic_date(view_user, active_filters,
                                                    _type)
         elif _type.split('#')[0] == 'pages_read':
             labels, data = db_books.statistic_pages_read(view_user,
-                                                         shelf, _filter, _type)
+                                                         active_filters, _type)
         elif _type.split('#')[0] == 'pages_book':
             labels, data = db_books.statistic_pages_book(view_user,
-                                                         shelf, _filter)
+                                                         active_filters)
         return json.dumps({'data' : data, 'labels' : labels,
                            'canvas_id' : _type.split('#')[0] + '_chart'})
 

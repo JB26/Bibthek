@@ -12,12 +12,11 @@ sort by added
 import status
 Use heading "jumps" for no script in sidebar
 Upload Limits (Set max_request_body_size = 104857600 ???)
-Dynamic URL in view?
+Dynamic URL in view menu?
 Lazy load for cover view
 logging
 Batch delete
 Cover from google books api
-Combining Shelfs
 
 To start the site use:
 cd WORKING_DIR

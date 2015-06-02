@@ -24,7 +24,7 @@ def sanity_check(params):
     if 'title' not in data or data['title'] == '':
         return None, "A book needs a title"
     # Check dates
-    for name in VARIABLES.data_fields:
+    for name in VARIABLES.date_fields:
         if name in params:
             # ('finish_date', 'start_date') are allowed to be lists -> make all
             # other dates lists too.

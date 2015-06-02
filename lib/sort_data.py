@@ -8,9 +8,9 @@ locale.setlocale(locale.LC_ALL, CONFIG['Language']['sort_locale'][1:-1])
 
 from lib.variables import VARIABLES
 
-def sorted_shelfs(data):
-    """Sort shelfs"""
-    return library_sorted(data, '_id', False)
+def sorted_filters(data):
+    """Sort filters"""
+    return library_sorted(data, 'name', False)
 
 def sorted_apg(data, sort_by_order, sort_first):
     """Sort author and similar"""
