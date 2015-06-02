@@ -1,6 +1,6 @@
 <%page args="current_section"/>
 <li class="dropdown">
-  <a class="dropdown-toggle" data-toggle="dropdown" href="#">View<span class="caret"></span></a>
+  <a class="dropdown-toggle" data-toggle="dropdown" href="#">${_('View')}<span class="caret"></span></a>
   <ul class="dropdown-menu">
     % if user != None and user['username'] == view_user:
       % if current_section == 'settings':
@@ -8,51 +8,51 @@
       % else:
         <li>
       % endif
-      <a href="/settings">Settings</a></li>
+      <a href="/settings">${_('Settings')}</a></li>
       % if user['role'] == 'admin':
         % if current_section == 'admin':
           <li class="active">
         % else:
           <li>
         % endif
-        <a href="/admin">Administration</a></li>
+        <a href="/admin">${_('Administration')}</a></li>
       % endif
       % if current_section == 'import':
         <li class="active">
       % else:
         <li>
       % endif
-      <a href="/import_books">Import/Export</a></li>
+      <a href="/import_books">${_('Import/Export')}</a></li>
     % endif
     % if current_section == 'books':
       <li class="active">
     % else:
       <li>
     % endif
-    <a href="/view/${view_user}/books">Books</a></li>
+    <a href="/view/${view_user}/books">${_('Books')}</a></li>
     % if current_section == 'books2':
       <li class="active">
     % else:
       <li>
     % endif
-    <a href="/view/${view_user}/books2">Books 2</a></li>
+    <a href="/view/${view_user}/books2">${_('Books 2')}</a></li>
     % if current_section == 'covers':
       <li class="active">
     % else:
       <li>
     % endif
-    <a href="/view/${view_user}/covers">Cover Galery</a></li>
+    <a href="/view/${view_user}/covers">${_('Cover Galery')}</a></li>
     % if current_section == 'covers2':
       <li class="active">
     % else:
       <li>
     % endif
-    <a href="/view/${view_user}/covers2">Cover Galery 2</a></li>
+    <a href="/view/${view_user}/covers2">${_('Cover Galery 2')}</a></li>
     % if current_section == 'statistics':
       <li class="active">
     % else:
       <li>
     % endif
-    <a href="/statistics/${view_user}">Statistics</a></li>
+    <a href="/statistics/${view_user}">${_('Statistics')}</a></li>
   </ul>
 </li>

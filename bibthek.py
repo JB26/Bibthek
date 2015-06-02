@@ -122,6 +122,7 @@ class Bibthek(object):
             return json.dumps(ac_list)
 
     @cherrypy.expose
+    @cherrypy.tools.auth(required=False)
     def reading_stats(self, i, start, finish, abdoned=False):
         """Returns html that will be inserted into the main page. Containing
          information about how and when a book was read

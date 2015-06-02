@@ -3,9 +3,9 @@
 %>
 <%page args="current_section"/>
 <li class="dropdown">
-  <a class="dropdown-toggle" data-toggle="dropdown" href="#">Sort by<span class="caret"></span></a>
+  <a class="dropdown-toggle" data-toggle="dropdown" href="#">${_('Sort by')}<span class="caret"></span></a>
   <ul class="dropdown-menu">
-  <li role="presentation" class="dropdown-header">First order</li>
+  <li role="presentation" class="dropdown-header">${_('First order')}</li>
   % for row in sort1:
     % if row['active']:
     <li class="active"><a href="/view/${view_user}/${current_section}${row['url']}${'/'.join([quote(x, '') for x in active_filter])}">${row['name']}</a></li>
@@ -13,7 +13,7 @@
     <li><a href="/view/${view_user}/${current_section}${row['url']}${'/'.join([quote(x, '') for x in active_filter])}">${row['name']}</a></li>
     % endif
   % endfor
-  <li role="presentation" class="dropdown-header">Second order</li>
+  <li role="presentation" class="dropdown-header">${_('Second order')}</li>
   % for row in sort2:
     % if row['active']:
     <li class="active"><a href="/view/${view_user}/${current_section}${row['url']}${'/'.join([quote(x, '') for x in active_filter])}">${row['name']}</a></li>

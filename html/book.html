@@ -41,9 +41,6 @@
 <link rel="stylesheet" href="/static/css/autocomplete.css" type="text/css" />
 <div class="container">
   <form method="post" action="/save${'?book_id=' + book['_id']}" enctype="multipart/form-data" id="book_form" class="form-horizontal">
-  % if user == None or user['username'] != view_user:
-  <fieldset disabled>
-  % endif
     <input type="text" id="type" name="type" value="${book['type'] | h}" style="display:none">
     <div class="row">
       <div class="col-md-3">
@@ -305,6 +302,12 @@
   </script>
 % endif
 <script src="/static/js/local.js"></script>
-<script src="/static/js/local_autocomplete.js"></script>
+% if user == None or user['username'] != view_user:
+  <script>
+    $('.form-control').attr("readonly", "true");
+  </script>
+% else:
+  <script src="/static/js/local_autocomplete.js"></script>
+% endif
 </body>
 </html>

@@ -2,7 +2,7 @@
   from lib.variables import VARIABLES
 %>
 <a class="navmenu-brand visible-md visible-lg" href="/">BibThek</a>
-<a class="navmenu-brand">Number of items: ${items_count}</a>
+<a class="navmenu-brand">${_('Number of items: %s') % items_count}</a>
 <ul class="nav nav-pills nav-stacked sidebar">
 
 % for idx, name in enumerate(items):

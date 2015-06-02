@@ -4,7 +4,7 @@
 <div class="container">
   <div class="row">
     <div class="col-md-12">
-      <h1>Admin Page</h1>
+      <h1>${_('Admin Page')}</h1>
     </div>
   </div>
   <div class="row">
@@ -12,12 +12,12 @@
       <table class="table table-striped">
         <thead>
           <tr>
-            <th>Username</th>
-            <th>Registration date</th>
-            <th>Role</th>
-            <th>Email</th>
-            <th>Reset Password</th>
-            <th>Delete Account</th>
+            <th>${_('Username')}</th>
+            <th>${_('Registration date')}</th>
+            <th>${_('Role')}</th>
+            <th>${_('Email')}</th>
+            <th>${_('Reset Password')}</th>
+            <th>${_('Delete Account')}</th>
           </tr>
         </thead>
         <tbody>
@@ -29,16 +29,16 @@
             % if 'email' in user_info:
               <td>${user_info['email']}</td>
             % else:
-              <td>None</td>
+              <td>${_('None')}</td>
             % endif
             <td>
               <a class="btn btn-sm btn-primary btn-block reset_pw" href="/reset_pw?username=${user_info['username']}" id="${user_info['username']}">
-                Reset Password
+                ${_('Reset Password')}
               </a>
             </td>
             <td>
               <a class="btn btn-sm btn-danger btn-block delete_acc_warn" href="/delete_acc?username=${user_info['username']}" id="${user_info['username']}">
-                Delete Account
+                ${_('Delete Account')}
               </a>
             </td>
           </tr>
