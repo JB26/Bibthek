@@ -8,19 +8,15 @@ from random import random
 from lib.variables import book_empty_default
 from lib.sanity_check import sanity_check
 import lib.db_books as db_books
+from lib.templates import ORDER
 
 def get_book_data(username, book_id):
     """Retrieve and prepare book data for displaying"""
     book_empty = book_empty_default()
-    if book_id in ['new_book', 'new_comic', 'new_audiobook']:
+    if book_id[4:] in ORDER:
         book = book_empty
         book['add_date'] = str(date.today())
-        if book_id == 'new_comic':
-            book['type'] = 'comic'
-        elif book_id == 'new_audiobook':
-            book['type'] = 'audiobook'
-        else:
-            book['type'] = 'book'
+        book['type'] = book_id[4:]
     else:
         book = db_books.get_by_id(username, book_id)
         for key, value in book_empty.items():
