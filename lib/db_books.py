@@ -114,6 +114,8 @@ def query_builder(active_filters):
             query += " AND read_count > 0"
         elif 'stat_Unread' == _filter:
             query += " AND read_count = 0"
+        elif 'stat_Currently reading':
+            query += " AND read_current = 1"
         elif _filter[0:5] == 'lang_':
             if _filter[5:] == 'No language':
                 _filter = 'lang_'
@@ -161,6 +163,10 @@ def update(username, data):
             data['finish_date'] = [data['finish_date']]
         temp = [False] * len(data['start_date'])
         data['read_count'] = len(data['start_date'])
+        if data['start_date'][-1] != '' and data['finish_date'][-1] == '':
+            data['read_current'] = 1
+        else:
+            data['read_current'] = 0
         if 'abdoned' in data:
             if not isinstance(data['abdoned'], list):
                 data['abdoned'] = [data['abdoned']]
@@ -532,7 +538,8 @@ def filter_list(username, field, active_filters):
 
 def filter_list_stat(username, active_filters):
     """Return a list to filter fo read/unread"""
-    filters1 = [{'name': T_('Unread')}, {'name': T_('Read')}]
+    filters1 = [{'name': T_('Unread')}, {'name': T_('Read')},
+                {'name': T_('Currently reading')}]
     return add_count(username, 'stat', filters1, active_filters)
 
 def add_count(username, field, filters1, active_filters):

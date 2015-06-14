@@ -26,7 +26,6 @@ def init_users():
                       privacy text, session_ids list)''')
     cursor.execute('''CREATE INDEX IF NOT EXISTS username_idx ON
                       users(username)''')
-
     conn.close()
 
 def init_books(username):
@@ -41,5 +40,4 @@ def init_books(username):
                reading_stats list, read_count INTEGER, series_complete INTEGER,
                _id INTEGER primary key autoincrement not null)''')
     cursor.execute(sql)
-
     conn.close()

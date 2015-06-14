@@ -4,12 +4,12 @@ Bugs:
 If a filter has zero elements it's not deleted from the url
 
 TODO:
+Make your own template for new items
 Better error message for weird dates
 Abbord pencil
 Show started books
 better isbn search and errors
 import status
-Use heading "jumps" for no script in sidebar
 Upload Limits (Set max_request_body_size = 104857600?)
 Dynamic URL in view menu?
 Lazy load for cover view

@@ -10,7 +10,7 @@ class Variables:
         self.reading_stats_names = ['finish_date', 'start_date', 'abdoned']
         self.fieldnames = self.names + self.reading_stats_names
         self.dbnames = self.names + ['reading_stats', 'read_count',
-                                     'series_complete']
+                                     'read_current', 'series_complete']
         self.articles = ["le", "la", "les", "l", "un", "une", "des", "a",
                          "the", "der", "die", "das", "ein", "eine", "el",
                          "los", "una"]
