@@ -383,6 +383,7 @@ class Bibthek(object):
             mytemplate = MY_LOOKUP.get_template("login.html")
             return mytemplate.render()
         elif db_users.login(username, password, cherrypy.session.id):
+            db_sql.init_books(username)
             #Make sure the session ID stops changing
             cherrypy.session['username'] = username
             if self.login_ref != None:

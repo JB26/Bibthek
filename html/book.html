@@ -1,4 +1,7 @@
 <%include file="header.html" />
+<%
+  from lib.templates import TEMPLATES
+%>
 <body>
 <link rel="stylesheet" href="/static/css/sidebar.css" type="text/css" />
 <link rel="stylesheet" href="/static/css/local.css" type="text/css" />
@@ -13,7 +16,6 @@
   if (scroll_navmenu != null) {
     $('.navmenu').scrollTop(scroll_navmenu);
     $.localStorage.remove('scroll_navmenu');
-    // Only restore open items if reloading was initiated through clicking on save
     $('.sub_items').each(function() {
       if ( $.localStorage.isSet($( this ).data('name')) ) {
         $( this ).show();
@@ -58,66 +60,27 @@
         <img src="/${book['front']}" alt="Cover" id="cover" style="width:100%">
       </div>
       <div class="col-md-9">
-        <div class="row">
-          <div class="col-md-12">
-            <div class="form-group">
-              <label for="authors" class="col-sm-2 control-label">${_('Author')}</label>
-              <div class="col-sm-10">
-                <input class="form-control autocomplete" type="text" id="authors" name="authors" value="${book['authors'] | h}" title="Split multiples with:' & '">
-              </div>
-            </div>
-          </div>
-        </div>
-        % if book['type'] == 'comic':
-        <div class='comic' style="display:block">
-        % else:
-        <div class='comic' style="display:none">
-        % endif
+        % for row in TEMPLATES[book['type']]['fields']:
           <div class="row">
-            <div class="col-md-12">
-              <div class="form-group">
-                <label for="artist" class="col-sm-2 control-label">${_('Artist')}</label>
-                <div class="col-sm-10">
-                  <input class="form-control" type="text" id="artist" name="artist" value="${book['artist'] | h}" title="Split multiples with:' & '">
+            % for column in row:
+              % if len(row) == 1:
+                <div class="col-md-12">
+                  <div class="form-group">
+                    <label for="${column['field']}" class="col-sm-2 control-label">${column['text']}</label>
+                    <div class="col-sm-10">
+              % elif len(row) == 2:
+                <div class="col-md-6">
+                  <div class="form-group">
+                    <label for="${column['field']}" class="col-sm-4 control-label">${column['text']}</label>
+                    <div class="col-sm-8">
+              % endif
+                    <input class="form-control autocomplete" type="${column['field']}" id="${column['field']}" name="${column['field']}" value="${book[column['field']] | h}" title="Split multiples with:' & '">
+                  </div>
                 </div>
               </div>
-            </div>
+            % endfor
           </div>
-          <div class="row">
-            <div class="col-md-7">
-              <div class="form-group">
-                <label for="colorist" class="col-sm-4 control-label">${_('Colorist')}</label>
-                <div class="col-sm-8">
-                  <input class="form-control" type="text" id="colorist" name="colorist" value="${book['colorist'] | h}" title="Split multiples with:' & '">
-                </div>
-              </div>
-            </div>
-            <div class="col-md-5">
-              <div class="form-group">
-                <label for="cover_artist" class="col-sm-4 control-label">${_('Cover Artist')}</label>
-                <div class="col-sm-8">
-                  <input class="form-control" type="text" id="cover_artist" name="cover_artist" value="${book['cover_artist'] | h}" title="Split multiples with:' & '">
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        % if book['type'] == 'audiobook':
-        <div class='audiobook' style="display:block">
-        % else:
-        <div class='audiobook' style="display:none">
-        % endif
-          <div class="row">
-            <div class="col-md-12">
-              <div class="form-group">
-                <label for="narrator" class="col-sm-2 control-label">${_('Narrator')}</label>
-                <div class="col-sm-10">
-                  <input class="form-control" type="text" id="narrator" name="narrator" value="${book['narrator'] | h}"  title="Split multiples with:' & '">
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        % endfor
         <div class="row">
           <div class="col-md-7">
             <div class="form-group">

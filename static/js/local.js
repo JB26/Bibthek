@@ -1,53 +1,3 @@
-function load_book(book_id){
-  var view_user = window.location.pathname.split("/")[2]
-  $.getJSON( "/json_book/" + view_user, {book_id:book_id}, function(data) {
-    $.each(data, function(input_id, input_value){
-      if ($.isArray(input_value)) {
-        $('#' + input_id).val(input_value.join(" & "));
-      } else {
-        $('#' + input_id).val(input_value);
-      };
-    });
-    $('#cover').attr('src', '/' + data.front);
-    $('#book_form').attr('action', '/save/?book_id=' + data._id);
-    $('#delete').attr('href', '/delete/?book_id=' + data._id);
-    if (book_id == 'new_book' || book_id == 'new_comic') {
-      $('#delete').hide();
-      $('#isbn_search').show();
-    } else {
-      $('#delete').show();
-      $('#isbn_search').hide();
-    }
-    $('#reading_stats > tbody tr').remove();
-    if (data.reading_stats != null) {
-      for (i = 0; i < data.reading_stats.length; i++) {
-      build_reading_stats({start: data.reading_stats[i]['start_date'], finish: data.reading_stats[i]['finish_date'], abdoned : data.reading_stats[i]['abdoned']}, i+1);
-      }
-    }
-    if (data.type == 'comic') {
-      $('.comic').show()
-    } else {
-      $('.comic').hide()
-    };
-    if (data.type == 'audiobook') {
-      $('.audiobook').show()
-    } else {
-      $('.audiobook').hide()
-    };
-    search_links(data.isbn);
-  })
-  .fail(function() {
-    window.location.href = '/';
-  });
-};
-
-function build_reading_stats(data, i) {
-  var view_user = window.location.pathname.split("/")[2]
-  $.get( "/reading_stats" , {'i' : i, 'start' : data.start, 'finish' : data.finish, 'abdoned' : data.abdoned},  function( data ) {
-    $('#reading_stats > tbody:last').append(data);
-  });
-};
-
 function isbn_book(isbn){
   $.getJSON( "/new_isbn", {isbn:isbn}, function(data) {
     $.each(data,function(input_id, input_value){
@@ -118,22 +68,16 @@ $('.show-toggle').click(function(event) {
 });
 
 $( '.book_title' ).click(function( event ) {
-  event.preventDefault();
-  var book_id = $(this).attr('id');
-  history.pushState(book_id, '', window.location.pathname + '?book_id=' + book_id);
+  save_state();
   $('.alert').alert('close');
-  load_book(book_id, '_id');
 });
 
-window.addEventListener('popstate', function(event){
-  var book_id = event.state;
-  if (book_id == 'new_book') {
-    empty_book();
-  } else {
-    load_book(book_id)};
-});
-
-
+function build_reading_stats(data, i) {
+  var view_user = window.location.pathname.split("/")[2]
+  $.get( "/reading_stats" , {'i' : i, 'start' : data.start, 'finish' : data.finish, 'abdoned' : data.abdoned},  function( data ) {
+    $('#reading_stats > tbody:last').append(data);
+  });
+};
 
 $('#reading_stats').on( "click", ".date_js", function() {
   var d = new Date();

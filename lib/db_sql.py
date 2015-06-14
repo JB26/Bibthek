@@ -5,6 +5,8 @@ import configparser
 CONFIG = configparser.ConfigParser()
 CONFIG.read('app.conf')
 
+from lib.variables import VARIABLES
+
 def connect(db):
     """Connect to db"""
     if db == 'books.db':
@@ -32,12 +34,18 @@ def init_books(username):
     """Init db books"""
     cursor, conn = connect('books.db')
     sql = ("create table if not exists " + username +
-           '''(authors list, description text, release_date text, genre list,
+           '''(description text, release_date text, genre list,
                isbn text, series text, order_nr text, pages text,
                language text, title text, front text, publisher text,
-               add_date text, shelf text, type text, colorist list,
-               artist list, cover_artist list, narrator list, form text,
+               add_date text, shelf text, type text, form text,
                reading_stats list, read_count INTEGER, series_complete INTEGER,
+               read_current INTEGER,
                _id INTEGER primary key autoincrement not null)''')
     cursor.execute(sql)
+    cursor = conn.execute('select * from ' + username)
+    columns = [description[0] for description in cursor.description]
+    for name in VARIABLES.name_fields:
+        if name not in columns:
+            cursor.execute('alter table ' + username + ' add column ' + name +
+                           ' list')
     conn.close()
