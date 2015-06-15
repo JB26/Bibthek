@@ -115,7 +115,7 @@ def query_builder(active_filters):
             query += " AND read_count > 0"
         elif 'stat_Unread' == _filter:
             query += " AND read_count = 0"
-        elif 'stat_Currently reading':
+        elif 'stat_Currently reading' == _filter:
             query += " AND read_current = 1"
         elif _filter[0:5] == 'lang_':
             if _filter[5:] == 'No language':
