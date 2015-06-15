@@ -16,11 +16,27 @@ $ cd WORKING_DIR
 $ python bibthek.py
 ```
 
-##Dependencies
+## Dependencies
 * python3
 * python3-cherrypy
 * python3-passlib
 * python3-pillow
+
+## Screenshots
+### Add a new book
+![Screenshot](screenshots/new_book.png)
+### Sort by series in books view mode
+![Screenshot](screenshots/book_series-view.png)
+### Sort by series in cover view mode
+![Screenshot](screenshots/book_series-view_covers.png)
+### Sort by artist in books view mode
+![Screenshot](screenshots/comic_artist-view.png)
+
+Of course more sorting options are avaible.
+### Statistics 
+Tipp: click on a year to get more detailed statistics for that year.
+
+![Screenshot](screenshots/statistics.png)
 
 ##JS, CSS, Fonts, Icons distributed with this release
 * [Bootstrap](http://getbootstrap.com/)
