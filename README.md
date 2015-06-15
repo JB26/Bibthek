@@ -21,6 +21,7 @@ $ python bibthek.py
 * python3-cherrypy
 * python3-passlib
 * python3-pillow
+* python3-mako
 
 ## Screenshots
 ### Add a new book
