@@ -20,7 +20,7 @@ def sorted_apg(data, sort_by_order, sort_first):
             if 'order_nr' in book and book['order_nr'] != '':
                 book['order_nr'] = book['order_nr'][0:4]
         row['books'] = library_sorted(row['books'], 'title', sort_by_order)
-        if sort_first == 'authors':
+        if sort_first in VARIABLES.name_fields:
             find_surname = row['_id'].rsplit(maxsplit=1)
             if len(find_surname) == 2:
                 temp.append(find_surname[1] + ' ' + find_surname[0])
