@@ -19,6 +19,7 @@ gettext.translation('messages', localedir='translations',
 import lib.db_sql as db_sql
 import lib.db_books as db_books
 import lib.db_users as db_users
+import lib.gen_thumbs as gen_thumbs
 from lib.book_data import get_book_data, save_book_data
 from lib.get_data import google_books_data
 from lib.import_data import import_file
@@ -104,6 +105,15 @@ class Bibthek(object):
         """Return information about a book in json format"""
         book = get_book_data(view_user, book_id)
         return json.dumps(book)
+
+    @cherrypy.expose
+    @cherrypy.tools.auth(required=False)
+    def thumbnails(self, folder1, folder2, folder3, thumbnail):
+        """Genarate thumbnail and return it"""
+        thumbnail = folder1 + '/' + folder2 + '/' + folder3 + '/' + thumbnail
+        file_name = gen_thumbs.gen_thumbs(thumbnail)
+        path = os.path.join(ABS_DIR, file_name)
+        return static.serve_file(path)
 
     @cherrypy.expose
     def autocomplete(self, field, query):

@@ -3,6 +3,7 @@ from collections import Counter
 import itertools
 import operator
 from copy import copy
+import os.path
 
 from lib.sort_data import sorted_series, sorted_titles, sorted_filters
 from lib.sort_data import sorted_apg
@@ -345,7 +346,7 @@ def titles(username, variant, active_filters):
     return sorted_titles(data, '_id', variant)
 
 def covers(username, active_filters):
-    """Return a list of your book covers"""
+    """Return a list of your book covers as thumbs"""
     cursor, conn = db_sql.connect('books.db')
     sql = ("SELECT front, _id FROM " + username)
     query, paras = query_builder(active_filters)
@@ -353,7 +354,14 @@ def covers(username, active_filters):
     data_temp = [dict(x) for x in cursor.fetchall()]
     data = {}
     for row in data_temp:
-        data[str(row["_id"])] = row["front"]
+        if row["front"] != None:
+            if os.path.isfile(row["front"] + '_thumb.jpg'):
+                data[str(row["_id"])] = row["front"] + '_thumb.jpg'
+            else:
+                data[str(row["_id"])] = ('thumbnails/' + row["front"] +
+                                         '_thumb.jpg')
+        else:
+            data[str(row["_id"])] = 'static/icons/circle-x.svg'
     conn.close()
     return data
 
