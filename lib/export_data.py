@@ -12,7 +12,7 @@ def export_csv(data, username):
 
         writer.writeheader()
         for row in data:
-            if 'front' in row:
+            if 'front' in row and row['front'] != None:
                 row['front'] = 'covers/' + row['front'].rsplit('/', 1)[-1]
             #For development
             illegal_keys = []
@@ -30,7 +30,7 @@ def export_cover_csv(data, username):
     zip_name = "export/covers+csv_" + username + ".zip"
     zip_file = zipfile.ZipFile(zip_name, 'w')
     for row in data:
-        if 'front' in row:
+        if 'front' in row and row['front'] != None:
             file_list.append(row['front'])
     for _file in file_list:
         try:
