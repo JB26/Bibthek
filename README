@@ -1,23 +1,16 @@
-The goal of this Project is to make a replacement for GCstar
+Bibthek is a webapp to organize your book/comic/audiobook collection.
+Sort and filter your books by different options.
+Track what you are reading and what you have already read.
 
-Bugs:
-If a filter has zero elements it's not deleted from the url
+First start:
+Copy "app.conf.example" to "app.conf"
 
-TODO:
-Make your own template for new items
-Better error message for weird dates
-Abbord pencil
-Show started books
-better isbn search and errors
-import status
-Upload Limits (Set max_request_body_size = 104857600?)
-Dynamic URL in view menu?
-Lazy load for cover view
-thumbnail covers
-logging
-Batch delete
-Cover from google books api
+To start the app use:
+$ cd WORKING_DIR
+$ python bibthek.py
 
-To start the site use:
-cd WORKING_DIR
-python bibthek.py
+Dependencies:
+python3
+python3-cherrypy
+python3-passlib
+python3-pillow

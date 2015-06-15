@@ -1,0 +1,18 @@
+If a filter has zero elements it's not deleted from the url
+
+Better error message for bad formated dates
+
+Abbord batch edit
+
+Better isbn search and errors
+Openlibrary search for new books
+
+Import status
+
+Better documentation of the import/export system
+
+Change upload limits (Set max_request_body_size = 104857600?)
+
+Don't reset filters when changing the view?
+
+More batch edit
