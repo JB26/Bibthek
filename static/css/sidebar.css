@@ -102,9 +102,17 @@ body {
   margin-top:5px;
 }
 
-.divid_groups {
+.divid_groups_l {
   background-color:#777777;
-  height:1px; margin-top:0px;
+  height:5px;
+  margin-top:0px;
+  margin-bottom:0px;
+}
+
+.divid_groups_s {
+  background-color:#777777;
+  height:2px;
+  margin-top:0px;
   margin-bottom:0px;
 }
 

@@ -122,7 +122,7 @@ class Bibthek(object):
         """
         username = cherrypy.session.get('username')
         array = None
-        if field in ['authors', 'artist', 'colorist', 'cover_artist', 'genre']:
+        if field in VARIABLES.name_fields + ['genre']:
             array = True
         elif field in ['publisher', 'series', 'language', 'form', 'shelf']:
             array = False
