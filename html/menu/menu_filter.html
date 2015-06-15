@@ -30,7 +30,7 @@
         else:
           new_filter = quote(_filter['short'] + row['name'], '')
       %>
-        % if row['name'] in ['No format', 'No language', 'Not shelfed', 'Read', 'Unread']:
+        % if row['name'] in ['No format', 'No language', 'Not shelfed', 'Read', 'Unread', 'Currently reading']:
           <li><a href="${url}${new_filter}">${_(row['name'])} (${row['#items']})</a></li>
         % else:
           <li><a href="${url}${new_filter}">${row['name']} (${row['#items']})</a></li>

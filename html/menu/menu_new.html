@@ -5,7 +5,7 @@
   <a class="dropdown-toggle" data-toggle="dropdown" href="#">${_('New')}<span class="caret"></span></a>
   <ul class="dropdown-menu">
     % for value in ORDER:
-      <li><a href="?book_id=new_${value}" id="link_new_${value}">${TEMPLATES[value]['name']}</a></li>
+      <li><a href="?book_id=new_${value}" id="link_new_${value}">${_(TEMPLATES[value]['name'])}</a></li>
     % endfor
   </ul>
 </li>
