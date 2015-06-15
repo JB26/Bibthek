@@ -48,4 +48,8 @@ def init_books(username):
         if name not in columns:
             cursor.execute('alter table ' + username + ' add column ' + name +
                            ' list')
+    # DB Update
+    if 'read_current' not in columns:
+        cursor.execute('alter table ' + username + ' add column read_current' +
+                       ' integer')
     conn.close()
