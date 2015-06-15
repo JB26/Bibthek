@@ -63,14 +63,14 @@ body {
   background:#FFFFFF;
 }
 
-.sidebar a {
+.book_title {
   white-space:normal;
   margin-left: 20px;
   margin-right: 20px;
   padding: 5px 5px !important;
 }
 
-.sidebar a:hover {
+.book_title:hover {
   cursor: pointer;
 }
 
@@ -128,4 +128,10 @@ body {
 
 .dropdown-header {
   padding-left: 0px;
+}
+
+.cover_link {
+  margin-left: 2%;
+  margin-right: 2%;
+  margin-bottom: 3px;  
 }

@@ -3,13 +3,11 @@
 % for i, title in enumerate(name['books']):
   % if i%2 == 0:
     <li>
-      <form action="">
+      <div>
   % endif
-      <button style="width:49%;" type="submit" name="book_id" value="${title['_id']}" class="book_title" id="${title['_id']}">
-        <img src="/${covers[str(title['_id'])]}" alt="Cover" style="width:100%">
-      </button>
+        <a href="?book_id=${title['_id']}" class="cover_link load_book"><img src="/${covers[str(title['_id'])]}" alt="Cover" style="width:45%"></a>
   % if i%2 == 1 or i+1 == len(name['books']):
-      </form>
+      </div>
     </li>
   % endif
 % endfor

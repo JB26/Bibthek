@@ -67,7 +67,7 @@ $('.show-toggle').click(function(event) {
   $('#' + idx + '_ul').toggle();
 });
 
-$( '.book_title' ).click(function( event ) {
+$( '.load_book' ).click(function( event ) {
   save_state();
   $('.alert').alert('close');
 });

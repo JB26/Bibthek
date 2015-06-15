@@ -1,12 +1,10 @@
 <%page args="idx, last_sub_item, name" /> 
 % if idx%2 != last_sub_item%2:
   <li>
-    <form action="">
+    <div>
 % endif
-    <button style="width:49%;" type="submit" name="book_id" value="${name['books']['_id']}" class="book_title" id="${name['books']['_id']}">
-      <img src="/${covers[str(name['books']['_id'])]}" alt="Cover" style="width:100%">
-    </button>
+      <a href="?book_id=${name['books']['_id']}" class="cover_link load_book"><img src="/${covers[str(name['books']['_id'])]}" alt="Cover" style="width:45%"></a>
 % if idx%2 == last_sub_item%2 or idx+1 == len(items) or items[idx+1]['sub_items']:
-    </form>
+    </div>
   </li>
 % endif
