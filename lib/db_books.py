@@ -163,23 +163,26 @@ def update(username, data):
         if not isinstance(data['finish_date'], list):
             data['finish_date'] = [data['finish_date']]
         temp = [False] * len(data['start_date'])
-        data['read_count'] = len(data['start_date'])
-        if data['start_date'][-1] != '' and data['finish_date'][-1] == '':
-            data['read_current'] = 1
-        else:
-            data['read_current'] = 0
         if 'abdoned' in data:
             if not isinstance(data['abdoned'], list):
                 data['abdoned'] = [data['abdoned']]
             for i in data['abdoned']:
                 temp[int(i)-1] = True
         data['abdoned'] = temp
+        data['read_count'] = 0
+        data['read_current'] = 0
         for start, finish, abdoned in zip(data['start_date'],
                                           data['finish_date'],
                                           data['abdoned']):
             data['reading_stats'].append({'start_date' : start,
                                           'finish_date' : finish,
                                           'abdoned' : abdoned})
+            if (finish != '' or start == '') and not abdoned:
+                data['read_count'] += 1
+            if start != '' and finish == '' and not abdoned:
+                data['read_current'] = 1
+            else:
+                data['read_current'] = 0
         del data['start_date']
         del data['finish_date']
         del data['abdoned']
