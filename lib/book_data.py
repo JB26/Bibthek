@@ -23,6 +23,8 @@ def get_book_data(username, book_id):
             if key not in book or book[key] == None:
                 book[key] = value
         book['_id'] = str(book['_id'])
+        if book['front'] == '':
+            book['front'] = book_empty['front']
     return book
 
 def save_book_data(username, params):
