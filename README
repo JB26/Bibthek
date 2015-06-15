@@ -14,3 +14,28 @@ python3
 python3-cherrypy
 python3-passlib
 python3-pillow
+
+JS, CSS, Fonts, Icons distributed with this release:
+Bootstrap:
+http://getbootstrap.com/
+
+GLYPHICONS:
+http://glyphicons.com/
+
+jQuery:
+https://jquery.com/
+
+OpenIconic:
+https://useiconic.com/open
+
+Chart.js:
+http://www.chartjs.org/
+
+Jasny Bootstrap:
+http://jasny.github.io/bootstrap/
+
+jQuery-Autocomplete:
+https://github.com/devbridge/jQuery-Autocomplete
+
+jQuery-Storage-API:
+https://github.com/julien-maurel/jQuery-Storage-API
