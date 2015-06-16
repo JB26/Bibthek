@@ -33,7 +33,7 @@ $ python bibthek.py
 ### Sort by artist in books view mode
 ![Screenshot](screenshots/comic_artist-view.png)
 
-Of course more sorting options are avaible.
+There are more sorting options are avaible.
 ### Statistics 
 Tipp: click on a year to get more detailed statistics for that year.
 
